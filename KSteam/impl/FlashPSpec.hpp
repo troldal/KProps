@@ -125,7 +125,7 @@ namespace KSteam
             // Check if the guess is within the limits
             if (guess.has_value() && *guess >= limits.first && *guess <= limits.second) {
                 using namespace nxx::roots;
-                return *search(BracketExpandOut(func, limits), std::make_pair(*guess - 1.0, *guess + 1.0));
+                return *search(BracketExpandOut(func/*, limits*/), std::make_pair(*guess - 1.0, *guess + 1.0));
             }
 
             // Otherwise, make an initial guess, and search for the root brackets
@@ -133,7 +133,7 @@ namespace KSteam
                 auto propLower = calcPropertyPT(pressure, limits.first, OtherType);
                 auto propUpper = calcPropertyPT(pressure, limits.second, OtherType);
                 auto tempEst   = limits.first + (limits.second - limits.first) * (otherSpec - propLower) / (propUpper - propLower);
-                return *search(nxx::roots::BracketExpandOut(func, limits), std::make_pair(tempEst - 1.0, tempEst + 1.0));
+                return *search(BracketExpandOut(func/*, limits*/), std::make_pair(tempEst - 1.0, tempEst + 1.0));
             }
         }
 

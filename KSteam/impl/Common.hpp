@@ -44,10 +44,9 @@ SOFTWARE.
 
 #include "impl/Config.hpp"
 #include "impl/Error.hpp"
-//#include "impl/IF97/IF97.h"
 #include <deps/IF97/IF97.h>
 
-#include <numerixx.hpp>
+#include <Roots.hpp>
 
 #include <algorithm>
 #include <array>

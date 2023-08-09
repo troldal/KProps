@@ -45,7 +45,7 @@ SOFTWARE.
 #include "Common.hpp"
 #include "FlashPSpec.hpp"
 
-#include <numerixx.hpp>
+#include <Roots.hpp>
 
 #include <algorithm>
 #include <array>
@@ -109,7 +109,7 @@ namespace KSteam
             // Check if the guess is within the limits
             if (guess.has_value() && *guess >= limits.first && *guess <= limits.second) {
                 using namespace nxx::roots;
-                auto bounds = search(BracketExpandOut(func, limits), std::make_pair(*guess - 1.0, *guess + 1.0));
+                auto bounds = search(BracketExpandOut(func/*, limits*/), std::make_pair(*guess - 1.0, *guess + 1.0));
                 return *bounds;
             }
 
@@ -118,7 +118,7 @@ namespace KSteam
                 auto propLower = calcPropertyPT(limits.first, temperature, OtherType);
                 auto propUpper = calcPropertyPT(limits.second, temperature, OtherType);
                 auto tempEst   = limits.first + (limits.second - limits.first) * (otherSpec - propLower) / (propUpper - propLower);
-                auto bounds    = search(nxx::roots::BracketExpandOut(func, limits), std::make_pair(tempEst - 1.0, tempEst + 1.0));
+                auto bounds    = search(BracketExpandOut(func/*, limits*/), std::make_pair(tempEst - 1.0, tempEst + 1.0));
                 return *bounds;
             }
         }
