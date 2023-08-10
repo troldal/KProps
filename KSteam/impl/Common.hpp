@@ -58,13 +58,16 @@ SOFTWARE.
 
 namespace KSteam
 {
+
     /**
-     * @brief Checks if a given std::expected object contains a valid temperature value, and if not, throws an appropriate error.
+     * @brief Checks the result of an operation and returns a boolean value indicating success or failure.
      *
-     * @tparam T The type of the std::expected object.
-     * @param temperature A std::expected object containing a temperature value or an error.
-     * @return The temperature value if the std::expected object is valid.
-     * @throws RootError The error object from the std::expected if it is invalid and does not contain a valid temperature value.
+     * This function takes a result value and checks whether it represents a successful operation or a failure. It returns
+     * true if the result is considered successful, and false otherwise. The interpretation of what constitutes a successful
+     * result depends on the context in which this function is used.
+     *
+     * @param result The result value to be checked.
+     * @return A bool indicating whether the result is successful or not.
      */
     inline auto checkResult(auto result)
     {
@@ -77,6 +80,15 @@ namespace KSteam
         throw result.error();    // NOLINT
     }
 
+    /**
+     * @brief Calculates the temperature limits based on the given pressure.
+     *
+     * This function calculates the temperature limits based on the provided pressure value.
+     * The temperature limits are determined according to a specific algorithm.
+     *
+     * @param pressure The pressure value used to calculate the temperature limits.
+     * @return A std::pair with the temperature limits for the given pressure.
+     */
     inline auto TemperatureLimits(FLOAT pressure)
     {
         if (pressure >= 0.0 && pressure <= 50000000.0) return std::make_pair<FLOAT, FLOAT>(273.16, 2273.15);
@@ -86,6 +98,15 @@ namespace KSteam
         throw KSteamError("Pressure out of range", "TemperatureLimits", { { "P", pressure } });
     }
 
+    /**
+     * @brief Calculates the pressure limits based on the given temperature.
+     *
+     * This function calculates the pressure limits based on the provided temperature value.
+     * The pressure limits are determined according to a specific algorithm.
+     *
+     * @param temperature The temperature value used to calculate the pressure limits.
+     * @return A std::pair with the pressure limits for the given temperature.
+     */
     inline auto PressureLimits(FLOAT temperature)
     {
         if (temperature >= 273.16 && temperature <= 1073.15) return std::make_pair<FLOAT, FLOAT>(611.657, 100000000.0);
@@ -95,6 +116,15 @@ namespace KSteam
         throw KSteamError("Temperature out of range", "PressureLimits", { { "T", temperature } });
     }
 
+    /**
+     * @brief Calculates the inflection temperature based on the given pressure.
+     *
+     * This function calculates the inflection temperature based on the provided pressure value.
+     * The inflection temperature is determined according to a specific algorithm.
+     *
+     * @param pressure The pressure value used to calculate the inflection temperature.
+     * @return The inflection temperature for the given pressure.
+     */
     inline auto InflectionTemperature(FLOAT pressure)
     {
         if (pressure > 10000.0) return std::max(273.16, -2.103006E-7 * pressure + 2.771633E2);
@@ -105,17 +135,49 @@ namespace KSteam
 
     /**
      * @class Property
-     * @brief Encapsulates the concept of a thermodynamic property.
+     * @brief Represents a thermodynamic property.
      *
-     * This class represents a thermodynamic property and provides several ways
-     * to instantiate a property, either directly from its Type or from a string ID.
+     * The Property class is used to represent different types of thermodynamic properties.
+     * It provides methods to construct a Property object from a Type or a string-like ID,
+     * assign a new property type, retrieve the type of the property, convert the property
+     * to a string representation, and compare properties for ordering.
      */
     class Property
     {
     public:
         /**
          * @enum Type
-         * @brief Enumeration of the possible thermodynamic properties.
+         * @brief Enumeration representing different types of properties.
+         *
+         * The Type enum represents different types of properties that can be
+         * calculated or measured. Each type corresponds to a specific property
+         * that can be used in thermodynamic calculations.
+         *
+         * The available types are:
+         * - Pressure
+         * - Temperature
+         * - SaturationPressure
+         * - SaturationTemperature
+         * - Density
+         * - Volume
+         * - Enthalpy
+         * - Entropy
+         * - InternalEnergy
+         * - Cp
+         * - Cv
+         * - SpeedOfSound
+         * - IsentropicExponent
+         * - HelmholtzEnergy
+         * - GibbsEnergy
+         * - CompressibilityFactor
+         * - VaporQuality
+         * - DynamicViscosity
+         * - KinematicViscosity
+         * - ThermalConductivity
+         * - PrandtlNumber
+         *
+         * These types can be used to specify the property of interest when
+         * performing calculations or accessing data in a thermodynamic system.
          */
         enum Type : size_t {
             Pressure = 0,
@@ -143,8 +205,19 @@ namespace KSteam
 
     private:
         /**
-         * @var PropertyArray
-         * @brief Map from string identifiers to property types.
+         * @brief An array representing a mapping between property names and their corresponding types.
+         *
+         * The PropertyArray variable is used to map property names to their corresponding types. Each element
+         * in the array consists of a property name and its associated type. The property name can be accessed
+         * using the key, whereas the property type can be accessed using the value.
+         *
+         * The array follows the format:
+         *     { { <property_name>, <property_type> },
+         *       { <property_name>, <property_type> },
+         *       ...
+         *       { <property_name>, <property_type> } }
+         *
+         * Note: This is a constant array and cannot be modified.
          */
         constexpr static const std::array<std::pair<std::string_view, Type>, 40> PropertyArray = {
             { { "P", Type::Pressure },
@@ -190,9 +263,14 @@ namespace KSteam
         };
 
     public:
+
         /**
          * @brief Construct a Property object from a Type.
-         * @param propertyType Type of the property.
+         *
+         * This constructor is used to construct a Property object from a Type.
+         * It sets the property type to the specified Type.
+         *
+         * @param propertyType The Type of the property.
          */
         constexpr Property(Type propertyType) : m_propertyType(propertyType) {}    // NOLINT
 
@@ -279,11 +357,18 @@ namespace KSteam
         Type m_propertyType; /*< Type of the property. */
     };
 
-    // The following functions are used to calculate the properties of steam from pressure and temperature.
-    // The functions are implemented as lambda functions in an array of pairs, where the first element is the
-    // property type and the second element is the lambda function. The lambda functions take two arguments,
-    // pressure and temperature, and return the requested property. The functions are called from the
-    // XLSteamPT() function below.
+    /**
+     * @brief A map of property functions that calculate various properties based on temperature and pressure.
+     *
+     * The PropertyFunctionsPT variable is a map that contains lambda functions for each property, where the lambda
+     * function takes in the temperature and pressure as arguments and returns the calculated property value. Each
+     * lambda function also performs error checking and throws an exception if the calculated value is not finite.
+     *
+     * The map is structured as follows:
+     * - The key of each entry is the Property enum value, representing the property for which the lambda function calculates the value.
+     * - The value of each entry is a lambda function that takes in two FLOAT arguments: T (temperature) and P (pressure).
+     *   The lambda function calculates the property value based on T and P, performs error checking, and returns the calculated value.
+     */
     static const std::array<std::pair<Property, std::function<FLOAT(FLOAT, FLOAT)>>, 21> PropertyFunctionsPT = {
         { { Property::Pressure,
             [](FLOAT T, FLOAT P) {
@@ -430,11 +515,18 @@ namespace KSteam
             } } }
     };
 
-    // The following functions are used to calculate the properties of steam from pressure and quality.
-    // The functions are implemented as lambda functions in an array of pairs, where the first element is the
-    // property type and the second element is the lambda function. The lambda functions take two arguments,
-    // pressure and quality, and return the requested property. The functions are called from the
-    // XLSteamPX() function below.
+    /**
+     * @brief A map of property functions that calculate various properties based on pressure and vapor fraction.
+     *
+     * The PropertyFunctionsPX variable is a map that contains lambda functions for each property, where the lambda
+     * function takes in the pressure and vapor fraction as arguments and returns the calculated property value. Each
+     * lambda function also performs error checking and throws an exception if the calculated value is not finite.
+     *
+     * The map is structured as follows:
+     * - The key of each entry is the Property enum value, representing the property for which the lambda function calculates the value.
+     * - The value of each entry is a lambda function that takes in two FLOAT arguments: P (pressure) and X (vapor fraction).
+     *   The lambda function calculates the property value based on P and X, performs error checking, and returns the calculated value.
+     */
     static const std::array<std::pair<Property, std::function<FLOAT(FLOAT, FLOAT)>>, 21> PropertyFunctionsPX = {
         { { Property::Pressure,
             [](FLOAT P, FLOAT x) {

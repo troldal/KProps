@@ -49,25 +49,53 @@ SOFTWARE.
 
 namespace KSteam
 {
+
     /**
-     * @brief The RootError class is a base class for root-finding errors.
+     * @class KSteamError
+     * @brief Represents an error encountered in the KSteam class.
+     *
+     * This class inherits from std::runtime_error, providing the ability to
+     * describe and propagate runtime errors in the KSteam class. It stores
+     * information about the error message, the function name where the error
+     * occurred, and a map of parameters relevant to the error.
      */
     class KSteamError : public std::runtime_error
     {
     public:
+
         /**
-         * @brief Constructor.
+         * @brief Constructor taking a message string.
          * @param msg The error message.
          */
         explicit KSteamError(const char* msg) : std::runtime_error(msg) {};
 
+        /**
+         * @brief Constructor taking a message string and a function name.
+         * @param msg The error message.
+         * @param functionName The name of the function where the error occurred.
+         */
         KSteamError(const char* msg, const char* functionName, const std::map<std::string, double>& parameters)
             : std::runtime_error(msg),
               m_functionName(functionName),
               m_parameters(parameters) {};
 
+        /**
+         * @brief This function is the description of the functionName.
+         *
+         * It is a const member function and does not modify the state of the object.
+         * The function does not return any example code.
+         *
+         * @return The name of the function where the error occurred.
+         */
         [[nodiscard]] std::string functionName() const { return m_functionName; }
 
+        /**
+         * @brief Get the value of the parameters.
+         *
+         * This function returns the current value of the parameters.
+         *
+         * @return The value of the parameters.
+         */
         [[nodiscard]] std::string parameters() const
         {
             std::stringstream ss;
@@ -78,8 +106,8 @@ namespace KSteam
         }
 
     private:
-        std::string                   m_functionName {};
-        std::map<std::string, double> m_parameters {};
+        std::string                   m_functionName {};   ///< The name of the function where the error occurred.
+        std::map<std::string, double> m_parameters {};    ///< A map of parameters relevant to the error.
     };
 }    // namespace XLSteam
 

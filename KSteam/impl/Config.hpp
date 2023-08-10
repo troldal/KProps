@@ -44,14 +44,21 @@ SOFTWARE.
 
 namespace KSteam
 {
-
-
+    /**
+     * @brief The FLOAT type is used to define the floating point precision used in the calculations.
+     */
     using FLOAT = double;
 
+    /**
+     * @brief The EPS constant defines the precision used in the calculations.
+     */
     constexpr FLOAT EPS = 1.0E-8;
 
+    /**
+     * @brief The MAXITER constant defines the maximum number of iterations used in the calculations.
+     */
     constexpr int MAXITER = 100;
 
-}
+}    // namespace KSteam
 
 #endif    // KSTEAM_CONFIG_HPP

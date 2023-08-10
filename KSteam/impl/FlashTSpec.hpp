@@ -52,13 +52,24 @@ SOFTWARE.
 
 namespace KSteam
 {
+
     /**
-     * @brief Calculates the specified thermodynamic property of water/steam at given temperature and quality using the IAPWS-IF97 model.
-     * @param temperature The temperature in K.
-     * @param quality The steam quality (mass fraction of vapor phase).
-     * @param property The thermodynamic property to be calculated (as PropertyType enumeration).
-     * @return The calculated property value.
-     * @throws XLSteamError If input values are out of range.
+     * @brief Calculates the property value for a given temperature and quality.
+     *
+     * This function calculates the value of the specified property, based on the provided temperature
+     * and quality values. The result is returned as a FLOAT type value.
+     *
+     * @param temperature The temperature value used for the property calculation.
+     * @param quality The quality value used for the property calculation.
+     * @param property The property for which the value needs to be calculated.
+     *
+     * @return The calculated property value as a FLOAT type.
+     *
+     * @note This function assumes that the temperature and quality values are valid and within the
+     * acceptable range for the specified property. It does not perform any input validation.
+     * Therefore, it is the caller's responsibility to ensure that the input values are valid.
+     *
+     * @see Property
      */
     inline FLOAT calcPropertyTX(FLOAT temperature, FLOAT quality, Property property)
     {
@@ -313,7 +324,7 @@ namespace KSteam
      *
      * @note The inputs temperature and density must be in appropriate units as defined by the property.
      *
-     * @warning This function does not check for valid input range of temperature, density, or property.
+     * @warning This function does not check for valid input range of the inputs.
      *          It is the responsibility of the caller to ensure inputs are within valid range.
      */
     inline FLOAT calcPropertyTRHO(FLOAT temperature, FLOAT density, Property property)
@@ -337,9 +348,9 @@ namespace KSteam
      *
      * @return The calculated value of the specified property.
      *
-     * @note The inputs temperature and density must be in appropriate units as defined by the property.
+     * @note The inputs temperature and volume must be in appropriate units as defined by the property.
      *
-     * @warning This function does not check for valid input range of temperature, density, or property.
+     * @warning This function does not check for valid input range of the inputs.
      *          It is the responsibility of the caller to ensure inputs are within valid range.
      */
     inline FLOAT calcPropertyTV(FLOAT temperature, FLOAT volume, Property property)
@@ -350,16 +361,73 @@ namespace KSteam
             return impl::calcTSpec<Property::Density>(temperature, 1.0 / volume, property);
     }
 
+    /**
+     * @brief Calculate property value for a given temperature and enthalpy.
+     *
+     * This function calculates the property value for a given temperature and enthalpy,
+     * based on the inputs provided by the user. The property can be any valid property of a substance,
+     * such as specific heat capacity, viscosity, or thermal conductivity.
+     *
+     * @param temperature The temperature in a Kelvin.
+     * @param enthalpy The enthalpy of the substance in J/kg.
+     * @param property The property to be calculated.
+     * @param guess An optional guess value for the pressure. If not provided, the solver will use a default guess.
+     *
+     * @return The calculated value of the specified property.
+     *
+     * @note The inputs temperature and enthalpy must be in appropriate units as defined by the property.
+     *
+     * @warning This function does not check for valid input range of the inputs.
+     *          It is the responsibility of the caller to ensure inputs are within valid range.
+     */
     inline FLOAT calcPropertyTH(FLOAT temperature, FLOAT enthalpy, Property property, std::optional<FLOAT> guess = std::nullopt)
     {
         return impl::calcTSpec<Property::Enthalpy>(temperature, enthalpy, property, guess);
     }
 
+    /**
+     * @brief Calculate property value for a given temperature and entropy.
+     *
+     * This function calculates the property value for a given temperature and entropy,
+     * based on the inputs provided by the user. The property can be any valid property of a substance,
+     * such as specific heat capacity, viscosity, or thermal conductivity.
+     *
+     * @param temperature The temperature in a Kelvin.
+     * @param entropy The entropy of the substance in J/kg-K.
+     * @param property The property to be calculated.
+     * @param guess An optional guess value for the pressure. If not provided, the solver will use a default guess.
+     *
+     * @return The calculated value of the specified property.
+     *
+     * @note The inputs temperature and entropy must be in appropriate units as defined by the property.
+     *
+     * @warning This function does not check for valid input range of the inputs.
+     *          It is the responsibility of the caller to ensure inputs are within valid range.
+     */
     inline FLOAT calcPropertyTS(FLOAT temperature, FLOAT entropy, Property property, std::optional<FLOAT> guess = std::nullopt)
     {
         return impl::calcTSpec<Property::Entropy>(temperature, entropy, property, guess);
     }
 
+    /**
+     * @brief Calculate property value for a given temperature and internal energy.
+     *
+     * This function calculates the property value for a given temperature and internal energy,
+     * based on the inputs provided by the user. The property can be any valid property of a substance,
+     * such as specific heat capacity, viscosity, or thermal conductivity.
+     *
+     * @param temperature The temperature in a Kelvin.
+     * @param internalEnergy The internal energy of the substance in J/kg.
+     * @param property The property to be calculated.
+     * @param guess An optional guess value for the pressure. If not provided, the solver will use a default guess.
+     *
+     * @return The calculated value of the specified property.
+     *
+     * @note The inputs temperature and internal energy must be in appropriate units as defined by the property.
+     *
+     * @warning This function does not check for valid input range of the inputs.
+     *          It is the responsibility of the caller to ensure inputs are within valid range.
+     */
     inline FLOAT calcPropertyTU(FLOAT temperature, FLOAT internalEnergy, Property property, std::optional<FLOAT> guess = std::nullopt)
     {
         return impl::calcTSpec<Property::InternalEnergy>(temperature, internalEnergy, property, guess);
