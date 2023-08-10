@@ -72,9 +72,28 @@ namespace KSteam
 
     namespace impl
     {
+
+        /**
+         * @brief Check if the given temperature is within the valid range.
+         *
+         * This function takes a floating-point temperature value and determines if it falls within a valid range.
+         *
+         * @param temperature The temperature value to be checked.
+         * @return True if the temperature is within the valid range, false otherwise.
+         */
         inline bool temperatureIsInRange(FLOAT temperature) { return temperature >= 273.16 || temperature <= 2273.15; }
 
-        // TODO: This function can be removed when a minimization algorithm is implemented.
+        /**
+         * @brief Calculate the infliction pressure based on the given temperature.
+         *
+         * This function calculates the infliction pressure using the given temperature.
+         * The infliction pressure represents the pressure at which a substance undergoes
+         * a phase change, typically from liquid to gas state.
+         *
+         * @param temperature The temperature in degrees Celsius.
+         * @return The infliction pressure in Pascals (Pa).
+         * @todo This function can be removed when a minimization algorithm is implemented.
+         */
         template<Property::Type OtherType>
         inline std::optional<FLOAT> inflictionPressure(FLOAT temperature)
         {
@@ -100,6 +119,20 @@ namespace KSteam
             return std::nullopt;
         }
 
+        /**
+         * @brief Find pressure bounds based on given inputs.
+         *
+         * This function calculates the pressure bounds by performing a search algorithm on a specified function.
+         * The search is performed within a specified interval and using an optional initial guess.
+         *
+         * @param func The function to search for pressure bounds.
+         * @param temperature The temperature value used in the function.
+         * @param otherSpec Additional specification value used in the function.
+         * @param limits The interval within which to search for pressure bounds.
+         * @param guess (Optional) The initial guess value for the pressure bounds.
+         *
+         * @return A pair of pressure bounds (lower and upper limits).
+         */
         template<Property::Type OtherType, typename FN>
         inline auto findPressureBounds(
             FN func, FLOAT temperature, FLOAT otherSpec, std::pair<FLOAT, FLOAT> limits, std::optional<FLOAT> guess = std::nullopt)
@@ -265,6 +298,24 @@ namespace KSteam
         }
     }    // namespace impl
 
+    /**
+     * @brief Calculate property value for a given temperature and density.
+     *
+     * This function calculates the property value for a given temperature and density,
+     * based on the inputs provided by the user. The property can be any valid property of a substance,
+     * such as specific heat capacity, viscosity, or thermal conductivity.
+     *
+     * @param temperature The temperature in a Kelvin.
+     * @param density The density of the substance in kg/m^3.
+     * @param property The property to be calculated.
+     *
+     * @return The calculated value of the specified property.
+     *
+     * @note The inputs temperature and density must be in appropriate units as defined by the property.
+     *
+     * @warning This function does not check for valid input range of temperature, density, or property.
+     *          It is the responsibility of the caller to ensure inputs are within valid range.
+     */
     inline FLOAT calcPropertyTRHO(FLOAT temperature, FLOAT density, Property property)
     {
         if (density > 1.0)

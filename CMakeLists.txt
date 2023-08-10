@@ -22,7 +22,6 @@ FetchContent_Declare(numerixx
 FetchContent_MakeAvailable(numerixx)
 
 #==============================================================================
-
 # Add the XLSteam Core library
 #==============================================================================
 add_subdirectory(KSteam)
