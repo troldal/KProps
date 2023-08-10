@@ -324,6 +324,24 @@ namespace KSteam
             return impl::calcTSpec<Property::Volume>(temperature, 1.0 / density, property);
     }
 
+    /**
+     * @brief Calculate property value for a given temperature and volume.
+     *
+     * This function calculates the property value for a given temperature and volume,
+     * based on the inputs provided by the user. The property can be any valid property of a substance,
+     * such as specific heat capacity, viscosity, or thermal conductivity.
+     *
+     * @param temperature The temperature in a Kelvin.
+     * @param volume The volume of the substance in m^3/kg.
+     * @param property The property to be calculated.
+     *
+     * @return The calculated value of the specified property.
+     *
+     * @note The inputs temperature and density must be in appropriate units as defined by the property.
+     *
+     * @warning This function does not check for valid input range of temperature, density, or property.
+     *          It is the responsibility of the caller to ensure inputs are within valid range.
+     */
     inline FLOAT calcPropertyTV(FLOAT temperature, FLOAT volume, Property property)
     {
         if (volume > 1.0)
