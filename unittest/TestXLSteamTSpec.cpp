@@ -95,7 +95,7 @@ TEST_CASE("Fuzz Test T")
             std::uniform_real_distribution<double> distT(273.16, 2273.15);
             auto                                   temperature = distT(mt_generator);
 
-            auto                                   p_range = XLSteam::PressureLimits(temperature);
+            auto                                   p_range = KSteam::PressureLimits(temperature);
             std::uniform_real_distribution<double> distP(p_range.first, p_range.second);
             auto                                   pressure = distP(mt_generator);
 
@@ -109,7 +109,7 @@ TEST_CASE("Fuzz Test T")
             std::uniform_real_distribution<double> distT(273.16, 2273.15);
             auto                                   temperature = distT(mt_generator);
 
-            auto                                   p_range = XLSteam::PressureLimits(temperature);
+            auto                                   p_range = KSteam::PressureLimits(temperature);
             std::uniform_real_distribution<double> distP(p_range.first, p_range.second);
             auto                                   pressure = distP(mt_generator);
 
@@ -123,7 +123,7 @@ TEST_CASE("Fuzz Test T")
             std::uniform_real_distribution<double> distT(273.16, 2273.15);
             auto                                   temperature = distT(mt_generator);
 
-            auto                                   p_range = XLSteam::PressureLimits(temperature);
+            auto                                   p_range = KSteam::PressureLimits(temperature);
             std::uniform_real_distribution<double> distP(p_range.first, p_range.second);
             auto                                   pressure = distP(mt_generator);
 
@@ -137,7 +137,7 @@ TEST_CASE("Fuzz Test T")
             std::uniform_real_distribution<double> distT(273.16, 2273.15);
             auto                                   temperature = distT(mt_generator);
 
-            auto                                   p_range = XLSteam::PressureLimits(temperature);
+            auto                                   p_range = KSteam::PressureLimits(temperature);
             std::uniform_real_distribution<double> distP(p_range.first, p_range.second);
             auto                                   pressure = distP(mt_generator);
 
@@ -151,7 +151,7 @@ TEST_CASE("Fuzz Test T")
             std::uniform_real_distribution<double> distT(273.16, 2273.15);
             auto                                   temperature = distT(mt_generator);
 
-            auto                                   p_range = XLSteam::PressureLimits(temperature);
+            auto                                   p_range = KSteam::PressureLimits(temperature);
             std::uniform_real_distribution<double> distP(p_range.first, p_range.second);
             auto                                   pressure = distP(mt_generator);
 

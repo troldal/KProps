@@ -121,12 +121,12 @@ int main()
         auto funcPV = [](double arg1, double arg2, const char* arg3, double tg) { return KSteam::calcPropertyPV(arg1, arg2, arg3, tg); };
         printProps(computeProps(funcPV, pres, baseProps[2], baseProps[1]), "PV");
 
-        auto funcTD = [](double arg1, double arg2, const char* arg3) { return KSteam::calcPropertyTRHO(arg1, arg2, arg3); };
-        printProps(computeProps(funcTD, temp, 1.0 / baseProps[2]), "TD");
-
-        auto funcTV = [](double arg1, double arg2, const char* arg3) { return KSteam::calcPropertyTV(arg1, arg2, arg3); };
-        printProps(computeProps(funcTV, temp, baseProps[2]), "TV");
-
+//        auto funcTD = [](double arg1, double arg2, const char* arg3) { return KSteam::calcPropertyTRHO(arg1, arg2, arg3); };
+//        printProps(computeProps(funcTD, temp, 1.0 / baseProps[2]), "TD");
+//
+//        auto funcTV = [](double arg1, double arg2, const char* arg3) { return KSteam::calcPropertyTV(arg1, arg2, arg3); };
+//        printProps(computeProps(funcTV, temp, baseProps[2]), "TV");
+//
         auto funcTH = [](double arg1, double arg2, const char* arg3, double g) { return KSteam::calcPropertyTH(arg1, arg2, arg3, g); };
         printProps(computeProps(funcTH, temp, baseProps[3], baseProps[0]), "TH");
 

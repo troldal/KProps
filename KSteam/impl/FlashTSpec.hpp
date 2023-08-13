@@ -98,8 +98,7 @@ namespace KSteam
          * @brief Calculate the infliction pressure based on the given temperature.
          *
          * This function calculates the infliction pressure using the given temperature.
-         * The infliction pressure represents the pressure at which a substance undergoes
-         * a phase change, typically from liquid to gas state.
+         * The infliction pressure is the point at which the volume of the liquid water is the lowest (typically around 4 Celcius).
          *
          * @param temperature The temperature in degrees Celsius.
          * @return The infliction pressure in Pascals (Pa).
@@ -118,13 +117,9 @@ namespace KSteam
 
             if (temperature >= 520.7 && temperature <= 613.04) {
                 if constexpr (OtherType == Property::Enthalpy)
-                    return { 4.8578897349E-08 * std::pow(temperature,6)
-                             - 1.7515287788E-04 * std::pow(temperature,5)
-                             + 2.6219531615E-01 * std::pow(temperature,4)
-                             - 2.0863091760E+02 * std::pow(temperature,3)
-                             + 9.2365021333E+04 * std::pow(temperature,2)
-                             - 2.0225509689E+07 * temperature
-                             + 1.4082100314E+09};
+                    return { 4.8578897349E-08 * std::pow(temperature, 6) - 1.7515287788E-04 * std::pow(temperature, 5) +
+                             2.6219531615E-01 * std::pow(temperature, 4) - 2.0863091760E+02 * std::pow(temperature, 3) +
+                             9.2365021333E+04 * std::pow(temperature, 2) - 2.0225509689E+07 * temperature + 1.4082100314E+09 };
             }
 
             return std::nullopt;
@@ -145,15 +140,18 @@ namespace KSteam
          * @return A pair of pressure bounds (lower and upper limits).
          */
         template<Property::Type OtherType, typename FN>
-        inline auto findPressureBounds(
-            FN func, FLOAT temperature, FLOAT otherSpec, std::pair<FLOAT, FLOAT> limits, std::optional<FLOAT> guess = std::nullopt)
+        inline auto findPressureBounds(FN                      func,
+                                       FLOAT                   temperature,
+                                       FLOAT                   otherSpec,
+                                       std::pair<FLOAT, FLOAT> limits,
+                                       std::optional<FLOAT>    guess = std::nullopt)
         {
             using namespace nxx::roots;
 
             // Check if the guess is within the limits
             if (guess.has_value() && *guess >= limits.first && *guess <= limits.second) {
                 using namespace nxx::roots;
-                auto bounds = search(BracketExpandOut(func/*, limits*/), std::make_pair(*guess - 1.0, *guess + 1.0));
+                auto bounds = search(BracketExpandOut(func /*, limits*/), std::make_pair(*guess - 1.0, *guess + 1.0));
                 return *bounds;
             }
 
@@ -162,7 +160,7 @@ namespace KSteam
                 auto propLower = calcPropertyPT(limits.first, temperature, OtherType);
                 auto propUpper = calcPropertyPT(limits.second, temperature, OtherType);
                 auto tempEst   = limits.first + (limits.second - limits.first) * (otherSpec - propLower) / (propUpper - propLower);
-                auto bounds    = search(BracketExpandOut(func/*, limits*/), std::make_pair(tempEst - 1.0, tempEst + 1.0));
+                auto bounds    = search(BracketExpandOut(func /*, limits*/), std::make_pair(tempEst - 1.0, tempEst + 1.0));
                 return *bounds;
             }
         }
@@ -247,39 +245,52 @@ namespace KSteam
             return calcPropertyPT((pressure.has_value() ? *pressure : pressure.error().value()), temperature, property);
         }
 
+        /**
+         * @brief Calculate the specific temperature.
+         *
+         * This function computes the requested property at the given temperature and other specification value.
+         * The actual computation is delegated to the appropriate function defined above.
+         *
+         * @param temperature The temperature value used in the calculation.
+         * @param otherSpec The other specification value used in the calculation.
+         * @param property The property value to compute
+         * @param guess The optional guess value used for optimization. Defaults to std::nullopt.
+         *
+         * @return The calculated property.
+         */
         template<Property::Type OtherType>
         inline FLOAT calcTSpec(FLOAT temperature, FLOAT otherSpec, Property property, std::optional<FLOAT> guess = std::nullopt)
         {
-            // Look up the string representation of the other property
+            // ===== Look up the string representation of the other property
             auto specString = Property(OtherType).asString();
-                //std::find_if(PropertyList.begin(), PropertyList.end(), [&](const auto& s) { return s.second == OtherType; })->first;
 
-            // Check if the temperature is in range
+            // ===== Check if the temperature is in range. If not, throw an error.
             if (!temperatureIsInRange(temperature))
                 throw KSteamError("Temperature out of range", "calcPropertyTV", { { "T", temperature }, { specString, otherSpec } });
 
-            // Check if we are in the supercritical region
+            // ===== Check if we are in the supercritical region. If so, use the supercritical solver and return.
             if (temperature > IF97::get_Tcrit()) return calcTSpecSupercritical<OtherType>(temperature, otherSpec, property);
 
-            auto limits       = PressureLimits(temperature);
-            auto inflPressure = inflictionPressure<OtherType>(temperature);
+            // ===== If not supercritical, continue...
+            auto limits       = PressureLimits(temperature);                   // Determine the lower and upper bounds for the pressure.
+            auto inflPressure = inflictionPressure<OtherType>(temperature);    // Determine the inflection pressure.
 
             // Determine the volume of the saturated liquid and saturated vapor
             auto propMin    = calcPropertyPT(limits.first, temperature, OtherType);
             auto propVapSat = calcPropertyTX(temperature, 1.0, OtherType);
             auto propLiqSat = calcPropertyTX(temperature, 0.0, OtherType);
 
-
-            std::array<FLOAT, 3> liqVal {propLiqSat,
+            std::array<FLOAT, 3> liqVal { propLiqSat,
                                           calcPropertyPT(limits.second, temperature, OtherType),
-                                          (inflPressure ? calcPropertyPT(inflPressure.value(), temperature, OtherType) : propLiqSat)};
-//            auto propLiqMin = (inflPressure ? calcPropertyPT(inflPressure.value(), temperature, OtherType) : propLiqSat);
-//            auto propLiqMax = calcPropertyPT(limits.second, temperature, OtherType);
+                                          (inflPressure ? calcPropertyPT(inflPressure.value(), temperature, OtherType) : propLiqSat) };
+
             auto propLiqMin = *std::min_element(liqVal.begin(), liqVal.end());
             auto propLiqMax = *std::max_element(liqVal.begin(), liqVal.end());
 
             // TODO: the addition/subtraction of 0.005 is to account for the tolerance of the solver. Can this be improved?
-            auto isInRange = [](std::array<FLOAT, 2> range, FLOAT value, FLOAT tol = 0.0) { return value > range.front() - tol && value < range.back() + tol; };
+            auto isInRange = [](std::array<FLOAT, 2> range, FLOAT value, FLOAT tol = 0.0) {
+                return value > range.front() - tol && value < range.back() + tol;
+            };
 
             // Check the limits for the liquid, vapor, and saturation regions
             auto rangeVap = std::array<FLOAT, 2> { propMin, propVapSat };
@@ -291,9 +302,8 @@ namespace KSteam
             std::sort(rangeLiq.begin(), rangeLiq.end());
 
             if (guess) {
-
-                auto isVapor = [&] {return isInRange(rangeVap, otherSpec) && guess.value() < IF97::psat97(temperature);};
-                auto isLiquid = [&] {return isInRange(rangeLiq, otherSpec, 0.005) && guess.value() > IF97::psat97(temperature);};
+                auto isVapor  = [&] { return isInRange(rangeVap, otherSpec) && guess.value() < IF97::psat97(temperature); };
+                auto isLiquid = [&] { return isInRange(rangeLiq, otherSpec, 0.005) && guess.value() > IF97::psat97(temperature); };
 
                 if (isVapor()) return calcTSpecVapor<OtherType>(temperature, otherSpec, property);
                 if (isLiquid()) return calcTSpecLiquid<OtherType>(temperature, otherSpec, property, guess);
@@ -432,6 +442,6 @@ namespace KSteam
     {
         return impl::calcTSpec<Property::InternalEnergy>(temperature, internalEnergy, property, guess);
     }
-}    // namespace XLSteam
+}    // namespace KSteam
 
 #endif    // KSTEAM_FLASHTSPEC_HPP
