@@ -45,6 +45,7 @@ SOFTWARE.
 #include "Common.hpp"
 #include "FlashPSpec.hpp"
 
+#include <Optim.hpp>
 #include <Roots.hpp>
 
 #include <algorithm>
@@ -92,7 +93,7 @@ namespace KSteam
          * @param temperature The temperature value to be checked.
          * @return True if the temperature is within the valid range, false otherwise.
          */
-        inline bool temperatureIsInRange(FLOAT temperature) { return temperature >= 273.16 || temperature <= 2273.15; }
+        inline bool temperatureIsInRange(FLOAT temperature) { return temperature >= 273.16 && temperature <= 2273.15; }
 
         /**
          * @brief Calculate the infliction pressure based on the given temperature.
@@ -108,18 +109,33 @@ namespace KSteam
         inline std::optional<FLOAT> inflictionPressure(FLOAT temperature)
         {
             if (temperature < 277.15) {
-                if constexpr (OtherType == Property::Entropy)
-                    return { -5.41875E4 * temperature * temperature + 2.5066E7 * temperature - 2.78485E9 };
+                if constexpr (OtherType == Property::Entropy) {
+                    // return { -5.41875E4 * temperature * temperature + 2.5066E7 * temperature - 2.78485E9 };
+                    auto result =
+                        nxx::optim::fmaximize<nxx::optim::GoldenSearch>([temperature](FLOAT p) { return IF97::smass_Tp(temperature, p); },
+                                                                        { 2000000.0, 25000000.0 });
+                    return result;
+                }
 
-                if constexpr (OtherType == Property::InternalEnergy)
-                    return { -2.66288E5 * temperature * temperature + 1.36472e8 * temperature - 1.73692e10 };
+                if constexpr (OtherType == Property::InternalEnergy) {
+                    // auto result = -2.66288E5 * temperature * temperature + 1.36472e8 * temperature - 1.73692e10;
+                    auto result =
+                        nxx::optim::fmaximize<nxx::optim::GoldenSearch>([temperature](FLOAT p) { return IF97::umass_Tp(temperature, p); },
+                                                                        { 100000.0, 45000000.0 });
+                    return result;
+                }
             }
 
             if (temperature >= 520.7 && temperature <= 613.04) {
-                if constexpr (OtherType == Property::Enthalpy)
-                    return { 4.8578897349E-08 * std::pow(temperature, 6) - 1.7515287788E-04 * std::pow(temperature, 5) +
-                             2.6219531615E-01 * std::pow(temperature, 4) - 2.0863091760E+02 * std::pow(temperature, 3) +
-                             9.2365021333E+04 * std::pow(temperature, 2) - 2.0225509689E+07 * temperature + 1.4082100314E+09 };
+                if constexpr (OtherType == Property::Enthalpy) {
+                    // auto result =   4.8578897349E-08 * std::pow(temperature, 6) - 1.7515287788E-04 * std::pow(temperature, 5) +
+                    //          2.6219531615E-01 * std::pow(temperature, 4) - 2.0863091760E+02 * std::pow(temperature, 3) +
+                    //          9.2365021333E+04 * std::pow(temperature, 2) - 2.0225509689E+07 * temperature + 1.4082100314E+09;
+                    auto result =
+                        nxx::optim::fminimize<nxx::optim::GoldenSearch>([temperature](FLOAT p) { return IF97::hmass_Tp(temperature, p); },
+                                                                        { IF97::psat97(temperature) + EPS, 100000000.0 - EPS });
+                    return result;
+                }
             }
 
             return std::nullopt;
@@ -150,8 +166,8 @@ namespace KSteam
 
             // Check if the guess is within the limits
             if (guess.has_value() && *guess >= limits.first && *guess <= limits.second) {
-                using namespace nxx::roots;
-                auto bounds = search(BracketExpandOut(func /*, limits*/), std::make_pair(*guess - 1.0, *guess + 1.0));
+                // auto bounds = search<BracketExpandOut>(func /*, limits*/, std::make_pair(*guess - 1.0, *guess + 1.0));
+                auto bounds = search<BracketSubdivide>(func, limits);
                 return *bounds;
             }
 
@@ -160,7 +176,8 @@ namespace KSteam
                 auto propLower = calcPropertyPT(limits.first, temperature, OtherType);
                 auto propUpper = calcPropertyPT(limits.second, temperature, OtherType);
                 auto tempEst   = limits.first + (limits.second - limits.first) * (otherSpec - propLower) / (propUpper - propLower);
-                auto bounds    = search(BracketExpandOut(func /*, limits*/), std::make_pair(tempEst - 1.0, tempEst + 1.0));
+                // auto bounds    = search<BracketExpandOut>(func /*, limits*/, std::make_pair(tempEst - 1.0, tempEst + 1.0));
+                auto bounds = search<BracketSubdivide>(func, limits);
                 return *bounds;
             }
         }
@@ -181,7 +198,7 @@ namespace KSteam
             auto bounds = findPressureBounds<OtherType>(func, temperature, otherSpec, limits, guess);
 
             // Solve the function
-            auto pressure = fsolve(Bisection(func), bounds, EPS * EPS);    // TODO: Can the tolerance be improved?
+            auto pressure = fsolve<Bisection>(func, bounds, EPS * EPS);    // TODO: Can the tolerance be improved?
             return calcPropertyPT((pressure.has_value() ? *pressure : pressure.error().value()), temperature, property);
         }
 
@@ -194,7 +211,7 @@ namespace KSteam
             auto func = [&](FLOAT x) { return calcPropertyTX(temperature, x, OtherType) - otherSpec; };
 
             // Solve the function
-            auto quality = fsolve(Bisection(func), { 0.0, 1.0 }, EPS);
+            auto quality = fsolve<Bisection>(func, { 0.0, 1.0 }, EPS);
             return calcPropertyTX(temperature, *quality, property);
         }
 
@@ -207,7 +224,7 @@ namespace KSteam
             auto func = [&](FLOAT p) { return calcPropertyPT(p, temperature, OtherType) - otherSpec; };
 
             auto lower  = IF97::psat97(temperature) + EPS;
-            auto upper  = PressureLimits(temperature).second;
+            auto upper  = PressureLimits(temperature).second - EPS;
             auto limits = std::make_pair(lower, upper);
 
             auto inflection = inflictionPressure<OtherType>(temperature);
@@ -222,7 +239,7 @@ namespace KSteam
             auto bounds = findPressureBounds<OtherType>(func, temperature, otherSpec, limits, guess);
 
             // Solve the function
-            auto pressure = fsolve(Bisection(func), bounds, EPS);
+            auto pressure = fsolve<Bisection>(func, bounds, EPS);
             return calcPropertyPT((pressure.has_value() ? *pressure : pressure.error().value()), temperature, property);
         }
 
@@ -241,7 +258,7 @@ namespace KSteam
             auto bounds = findPressureBounds<OtherType>(func, temperature, otherSpec, limits, guess);
 
             // Solve the function
-            auto pressure = fsolve(Bisection(func), bounds, EPS);
+            auto pressure = fsolve<Bisection>(func, bounds, EPS);
             return calcPropertyPT((pressure.has_value() ? *pressure : pressure.error().value()), temperature, property);
         }
 
@@ -292,14 +309,66 @@ namespace KSteam
                 return value > range.front() - tol && value < range.back() + tol;
             };
 
+            // auto printer = [&](const auto& data) {
+            //     auto [iter, lower, guess, upper] = data;
+            //     auto obj = [temperature](FLOAT p) { return p > IF97::psat97(temperature) ? calcPropertyPT(p, temperature, OtherType) : calcPropertyTX(temperature, 0.0, OtherType); };
+            //
+            //     if (iter == 0) {
+            //         std::cout << "----------------------------------------------------------------------------------\n";
+            //         std::cout << fmt::format("{:>10} | {:>15} | {:>15} | {:>15} | {:>15} ", "#", "Lower", "f(lower)", "Upper", "f(upper)") << "\n";
+            //         std::cout << "----------------------------------------------------------------------------------\n";
+            //     }
+            //
+            //     std::cout << fmt::format("{:10} | {:15.4f} | {:15.4f} | {:15.4f} | {:15.4f} ", iter, lower, obj(lower), upper, obj(upper)) << "\n";
+            //
+            //     nxx::optim::BracketTerminator term;
+            //
+            //     if (term(data)) {
+            //         std::cout << "----------------------------------------------------------------------------------\n";
+            //         return true;
+            //     }
+            //     return false;
+            // };
+
+            auto getVapRange = [temperature, limits] {
+                auto obj = [temperature](FLOAT p) { return p < IF97::psat97(temperature) ? calcPropertyPT(p, temperature, OtherType) : calcPropertyTX(temperature, 1.0, OtherType); };
+                auto min = nxx::optim::fminimize<nxx::optim::GoldenSearch>(obj, { limits.first, IF97::psat97(temperature) });
+                auto max = nxx::optim::fmaximize<nxx::optim::GoldenSearch>(obj, { limits.first, IF97::psat97(temperature) });
+                return std::array<FLOAT, 2> { obj(min), obj(max) };
+            };
+
+            auto getLiqRange = [temperature, limits] {
+                auto obj = [temperature](FLOAT p) { return p > IF97::psat97(temperature) ? calcPropertyPT(p, temperature, OtherType) : calcPropertyTX(temperature, 0.0, OtherType); };
+                auto sat = obj(IF97::psat97(temperature));
+                auto lim = obj(limits.second);
+                auto min = nxx::optim::fminimize<nxx::optim::Brent>(obj, { IF97::psat97(temperature), limits.second });
+                auto max = nxx::optim::fmaximize<nxx::optim::Brent>(obj, { IF97::psat97(temperature), limits.second });
+                std::array<FLOAT, 4> results {sat, lim, min, max};
+                std::sort(results.begin(), results.end());
+                return std::array<FLOAT, 2> { results[0], results[1] };
+            };
+
+            auto getSatRange = [temperature] {
+                auto obj = [temperature](FLOAT x) { return calcPropertyTX(temperature, x, OtherType); };
+                auto min = obj(0.0);
+                auto max = obj(1.0);
+                return std::array<FLOAT, 2> { min, max };
+            };
+
             // Check the limits for the liquid, vapor, and saturation regions
-            auto rangeVap = std::array<FLOAT, 2> { propMin, propVapSat };
-            auto rangeSat = std::array<FLOAT, 2> { propLiqSat, propVapSat };
-            auto rangeLiq = std::array<FLOAT, 2> { propLiqMin, propLiqMax };
+            // auto rangeVap = std::array<FLOAT, 2> { propMin, propVapSat };
+            // auto rangeSat = std::array<FLOAT, 2> { propLiqSat, propVapSat };
+            // auto rangeLiq = std::array<FLOAT, 2> { propLiqMin, propLiqMax };
+
+            auto rangeVap = getVapRange();
+            auto rangeSat = getSatRange();
+            auto rangeLiq = getLiqRange();
 
             std::sort(rangeVap.begin(), rangeVap.end());
             std::sort(rangeSat.begin(), rangeSat.end());
             std::sort(rangeLiq.begin(), rangeLiq.end());
+
+            //if (calcPropertyTX(temperature, 0.0, OtherType) > rangeLiq[1]) rangeLiq[1] = calcPropertyTX(temperature, 0.0, OtherType);
 
             if (guess) {
                 auto isVapor  = [&] { return isInRange(rangeVap, otherSpec) && guess.value() < IF97::psat97(temperature); };

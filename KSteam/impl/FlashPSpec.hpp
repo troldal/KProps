@@ -1,42 +1,42 @@
 /*
-KKKKKKKKK    KKKKKKK   SSSSSSSSSSSSSSS      tttt
-K:::::::K    K:::::K SS:::::::::::::::S  ttt:::t
-K:::::::K    K:::::KS:::::SSSSSS::::::S  t:::::t
-K:::::::K   K::::::KS:::::S     SSSSSSS  t:::::t
-KK::::::K  K:::::KKKS:::::S        ttttttt:::::ttttttt        eeeeeeeeeeee    aaaaaaaaaaaaa      mmmmmmm    mmmmmmm
-  K:::::K K:::::K   S:::::S        t:::::::::::::::::t      ee::::::::::::ee  a::::::::::::a   mm:::::::m  m:::::::mm
-  K::::::K:::::K     S::::SSSS     t:::::::::::::::::t     e::::::eeeee:::::eeaaaaaaaaa:::::a m::::::::::mm::::::::::m
-  K:::::::::::K       SS::::::SSSSStttttt:::::::tttttt    e::::::e     e:::::e         a::::a m::::::::::::::::::::::m
-  K:::::::::::K         SSS::::::::SS    t:::::t          e:::::::eeeee::::::e  aaaaaaa:::::a m:::::mmm::::::mmm:::::m
-  K::::::K:::::K           SSSSSS::::S   t:::::t          e:::::::::::::::::e aa::::::::::::a m::::m   m::::m   m::::m
-  K:::::K K:::::K               S:::::S  t:::::t          e::::::eeeeeeeeeee a::::aaaa::::::a m::::m   m::::m   m::::m
-KK::::::K  K:::::KKK            S:::::S  t:::::t    tttttte:::::::e         a::::a    a:::::a m::::m   m::::m   m::::m
-K:::::::K   K::::::KSSSSSSS     S:::::S  t::::::tttt:::::te::::::::e        a::::a    a:::::a m::::m   m::::m   m::::m
-K:::::::K    K:::::KS::::::SSSSSS:::::S  tt::::::::::::::t e::::::::eeeeeeeea:::::aaaa::::::a m::::m   m::::m   m::::m
-K:::::::K    K:::::KS:::::::::::::::SS     tt:::::::::::tt  ee:::::::::::::e a::::::::::aa:::am::::m   m::::m   m::::m
-KKKKKKKKK    KKKKKKK SSSSSSSSSSSSSSS         ttttttttttt      eeeeeeeeeeeeee  aaaaaaaaaa  aaaammmmmm   mmmmmm   mmmmmm
+    KKKKKKKKK    KKKKKKK   SSSSSSSSSSSSSSS      tttt
+    K:::::::K    K:::::K SS:::::::::::::::S  ttt:::t
+    K:::::::K    K:::::KS:::::SSSSSS::::::S  t:::::t
+    K:::::::K   K::::::KS:::::S     SSSSSSS  t:::::t
+    KK::::::K  K:::::KKKS:::::S        ttttttt:::::ttttttt        eeeeeeeeeeee    aaaaaaaaaaaaa      mmmmmmm    mmmmmmm
+      K:::::K K:::::K   S:::::S        t:::::::::::::::::t      ee::::::::::::ee  a::::::::::::a   mm:::::::m  m:::::::mm
+      K::::::K:::::K     S::::SSSS     t:::::::::::::::::t     e::::::eeeee:::::eeaaaaaaaaa:::::a m::::::::::mm::::::::::m
+      K:::::::::::K       SS::::::SSSSStttttt:::::::tttttt    e::::::e     e:::::e         a::::a m::::::::::::::::::::::m
+      K:::::::::::K         SSS::::::::SS    t:::::t          e:::::::eeeee::::::e  aaaaaaa:::::a m:::::mmm::::::mmm:::::m
+      K::::::K:::::K           SSSSSS::::S   t:::::t          e:::::::::::::::::e aa::::::::::::a m::::m   m::::m   m::::m
+      K:::::K K:::::K               S:::::S  t:::::t          e::::::eeeeeeeeeee a::::aaaa::::::a m::::m   m::::m   m::::m
+    KK::::::K  K:::::KKK            S:::::S  t:::::t    tttttte:::::::e         a::::a    a:::::a m::::m   m::::m   m::::m
+    K:::::::K   K::::::KSSSSSSS     S:::::S  t::::::tttt:::::te::::::::e        a::::a    a:::::a m::::m   m::::m   m::::m
+    K:::::::K    K:::::KS::::::SSSSSS:::::S  tt::::::::::::::t e::::::::eeeeeeeea:::::aaaa::::::a m::::m   m::::m   m::::m
+    K:::::::K    K:::::KS:::::::::::::::SS     tt:::::::::::tt  ee:::::::::::::e a::::::::::aa:::am::::m   m::::m   m::::m
+    KKKKKKKKK    KKKKKKK SSSSSSSSSSSSSSS         ttttttttttt      eeeeeeeeeeeeee  aaaaaaaaaa  aaaammmmmm   mmmmmm   mmmmmm
 
-MIT License
+    MIT License
 
-Copyright (c) 2023 Kenneth Troldal Balslev
+    Copyright (c) 2023 Kenneth Troldal Balslev
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
 */
 
 #ifndef KSTEAM_FLASHPSPEC_HPP
@@ -125,7 +125,8 @@ namespace KSteam
             // Check if the guess is within the limits
             if (guess.has_value() && *guess >= limits.first && *guess <= limits.second) {
                 using namespace nxx::roots;
-                return *search(BracketExpandOut(func/*, limits*/), std::make_pair(*guess - 1.0, *guess + 1.0));
+                // return *search<BracketExpandOut>(func/*, limits*/, std::make_pair(*guess - 1.0, *guess + 1.0));
+                return *search<BracketSubdivide>(func/*, limits*/, {limits.first, limits.second});
             }
 
             // Otherwise, make an initial guess, and search for the root brackets
@@ -133,7 +134,8 @@ namespace KSteam
                 auto propLower = calcPropertyPT(pressure, limits.first, OtherType);
                 auto propUpper = calcPropertyPT(pressure, limits.second, OtherType);
                 auto tempEst   = limits.first + (limits.second - limits.first) * (otherSpec - propLower) / (propUpper - propLower);
-                return *search(BracketExpandOut(func/*, limits*/), std::make_pair(tempEst - 1.0, tempEst + 1.0));
+                // return *search<BracketExpandOut>(func/*, limits*/, std::make_pair(tempEst - 1.0, tempEst + 1.0));
+                return *search<BracketSubdivide>(func/*, limits*/, {limits.first, limits.second});
             }
         }
 
@@ -163,7 +165,7 @@ namespace KSteam
             auto bounds = findTemperatureBounds<OtherType>(func, pressure, otherSpec, limits, guess);
 
             // Solve the function
-            auto temperature = fsolve(Bisection(func), bounds, EPS);
+            auto temperature = fsolve<Bisection>(func, bounds, EPS);
             return calcPropertyPT(pressure, checkResult(temperature), property);
         }
 
@@ -186,7 +188,7 @@ namespace KSteam
             auto func = [&](FLOAT x) { return calcPropertyPX(pressure, x, OtherType) - otherSpec; };
 
             // Solve the function
-            auto quality = fsolve(Bisection(func), { 0.0, 1.0 }, EPS);
+            auto quality = fsolve<Bisection>(func, { 0.0, 1.0 }, EPS);
             return calcPropertyPX(pressure, checkResult(quality), property);
         }
 
@@ -218,7 +220,7 @@ namespace KSteam
             auto bounds = findTemperatureBounds<OtherType>(func, pressure, otherSpec, limits, guess);
 
             // Solve the function
-            auto temperature = fsolve(Bisection(func), bounds, EPS);
+            auto temperature = fsolve<Bisection>(func, bounds, EPS);
             return calcPropertyPT(pressure, checkResult(temperature), property);
         }
 
@@ -244,13 +246,13 @@ namespace KSteam
             // Determine the limits for the temperature for the given pressure.
             // The lower limit is the saturation temperature at the given pressure, plus EPS to ensure
             // that the solver does not fail due to the saturation curve being discontinuous.
-            auto limits = std::make_pair(IF97::Tsat97(pressure) + EPS, TemperatureLimits(pressure).second);
+            auto limits = std::make_pair(IF97::Tsat97(pressure) + EPS, TemperatureLimits(pressure).second - EPS);
 
             // Define the bounds for the temperature
             auto bounds = findTemperatureBounds<OtherType>(func, pressure, otherSpec, limits, guess);
 
             // Solve the function
-            auto temperature = fsolve(Bisection(func), bounds, EPS);
+            auto temperature = fsolve<Bisection>(func, bounds, EPS);
             return calcPropertyPT(pressure, checkResult(temperature), property);
         }
 
@@ -406,7 +408,7 @@ namespace KSteam
                 auto func = [&](FLOAT t) { return calcPropertyPT(pressure, t, Property::Density) - density; };
 
                 // Solve the function
-                auto temperature = fsolve(Bisection(func), { limits.first, inflectionTemp }, EPS);
+                auto temperature = fsolve<Bisection>(func, { limits.first, inflectionTemp }, EPS);
                 return calcPropertyPT(pressure, checkResult(temperature), property);
             }
 
@@ -425,7 +427,7 @@ namespace KSteam
                 // Solve the function.
                 // The upper limit is set to the saturation temperature minus EPS, to ensure that the solver does not
                 // return a temperature that is in the vapor region.
-                auto temperature = fsolve(Bisection(func), { inflectionTemp, IF97::Tsat97(pressure) - EPS }, EPS);
+                auto temperature = fsolve<Bisection>(func, { inflectionTemp, IF97::Tsat97(pressure) - EPS }, EPS);
                 return calcPropertyPT(pressure, checkResult(temperature), property);
             }
 
@@ -491,7 +493,7 @@ namespace KSteam
                 auto func = [&](FLOAT t) { return calcPropertyPT(pressure, t, Property::Volume) - volume; };
 
                 // Solve the function.
-                auto temperature = fsolve(Bisection(func), { limits.first, inflectionTemp }, EPS);
+                auto temperature = fsolve<Bisection>(func, { limits.first, inflectionTemp }, EPS);
                 return calcPropertyPT(pressure, checkResult(temperature), property);
             }
 
@@ -509,7 +511,7 @@ namespace KSteam
 
                 // Solve the function. The upper limit is set to the saturation temperature minus EPS, to ensure that the
                 // solver does not return a temperature that is in the vapor region.
-                auto temperature = fsolve(Bisection(func), { inflectionTemp, IF97::Tsat97(pressure) - EPS }, EPS);
+                auto temperature = fsolve<Bisection>(func, { inflectionTemp, IF97::Tsat97(pressure) - EPS }, EPS);
                 return calcPropertyPT(pressure, checkResult(temperature), property);
             }
 

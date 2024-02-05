@@ -7,7 +7,7 @@
 
 #include "KSteamError.hpp"
 #include "Properties.hpp"
-#include "deps/IF97/IF97.h"
+#include "impl/_external.hpp"
 
 #include <concepts>
 #include <functional>

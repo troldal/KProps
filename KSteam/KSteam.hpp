@@ -45,5 +45,8 @@ SOFTWARE.
 //#include "impl/FlashHS.hpp" // TODO: Implement this function properly
 #include "impl/FlashPSpec.hpp"
 #include "impl/FlashTSpec.hpp"
+#include "impl/Properties.hpp"
+#include "impl/PropertyProxy.hpp"
+#include "impl/Flash.hpp"
 
 #endif    // KSTEAM_KSTEAM_HPP

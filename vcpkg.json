@@ -3,14 +3,25 @@
   "version-string" : "1.0.0",
   "builtin-baseline" : "1c5a340f6e10985e2d92af174a68dbd15c1fa4e1",
   "dependencies" : [ {
-    "name" : "blaze",
-    "version>=" : "3.8.2",
-    "$comment" : "    # this is heuristically generated, and may not be correct\n\n    find_package(blaze CONFIG REQUIRED)\n\n    target_link_libraries(main PRIVATE blaze::blaze)\n"
-  }, {
     "name" : "gcem",
     "version>=" : "1.16.0"
   }, {
     "name" : "tl-expected",
     "version>=" : "1.1.0"
+  }, {
+    "name" : "boost-multiprecision",
+    "version>=" : "1.84.0"
+  }, {
+    "name" : "boost-stacktrace",
+    "version>=" : "1.84.0"
+  }, {
+    "name" : "sciplot",
+    "version>=" : "0.3.1#1"
+  }, {
+    "name" : "lapack",
+    "version>=" : "2022-02-22#2"
+  }, {
+    "name" : "openblas",
+    "version>=" : "0.3.25"
   } ]
 }

@@ -42,9 +42,11 @@ SOFTWARE.
 #ifndef KSTEAM_COMMON_HPP
 #define KSTEAM_COMMON_HPP
 
+#include "_external.hpp"
+
 #include "impl/Config.hpp"
 #include "impl/Error.hpp"
-#include <deps/IF97/IF97.h>
+// #include <deps/IF97/IF97.h>
 
 #include <Roots.hpp>
 
