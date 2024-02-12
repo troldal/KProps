@@ -128,16 +128,16 @@ int main()
 
 
         printProps(baseProps, "PT");
-        printProps(computeProps(funcPH, pres, baseProps[3]), "PH");
-        printProps(computeProps(funcPS, pres, baseProps[4]), "PS");
-        printProps(computeProps(funcPU, pres, baseProps[6]), "PU");
+        //printProps(computeProps(funcPH, pres, baseProps[3]), "PH");
+        //printProps(computeProps(funcPS, pres, baseProps[4]), "PS");
+        //printProps(computeProps(funcPU, pres, baseProps[6]), "PU");
         printProps(computeProps(funcPD, pres, 1.0 / baseProps[2], baseProps[1]), "PD");
         printProps(computeProps(funcPV, pres, baseProps[2], baseProps[1]), "PV");
-        // printProps(computeProps(funcTD, temp, 1.0 / baseProps[2]), "TD");
-        // printProps(computeProps(funcTV, temp, baseProps[2]), "TV");
-        // printProps(computeProps(funcTH, temp, baseProps[3], baseProps[0]), "TH");
+        //printProps(computeProps(funcTD, temp, 1.0 / baseProps[2]), "TD");
+        //printProps(computeProps(funcTV, temp, baseProps[2]), "TV");
+        printProps(computeProps(funcTH, temp, baseProps[3], baseProps[0]), "TH");
         printProps(computeProps(funcTS, temp, baseProps[4], baseProps[0]), "TS");
-        // printProps(computeProps(funcTU, temp, baseProps[6], baseProps[0]), "TU");
+        printProps(computeProps(funcTU, temp, baseProps[6], baseProps[0]), "TU");
     }
 
     return 0;

@@ -59,7 +59,7 @@ struct ImplicitlyConvertibleTo
     {
         operator Destination() const
         {
-            return this->underlying().get();
+            return Destination{this->underlying().get()};
         }
     };
 };

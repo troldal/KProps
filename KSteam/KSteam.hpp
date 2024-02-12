@@ -43,10 +43,11 @@ SOFTWARE.
 #define KSTEAM_KSTEAM_HPP
 
 //#include "impl/FlashHS.hpp" // TODO: Implement this function properly
-#include "impl/FlashPSpec.hpp"
-#include "impl/FlashTSpec.hpp"
-#include "impl/Properties.hpp"
-#include "impl/PropertyProxy.hpp"
-#include "impl/Flash.hpp"
+// #include "impl/FlashPSpec.hpp"
+// #include "impl/FlashTSpec.hpp"
+#include "impl/Fluid.hpp"
+#include "impl/FlashResults.hpp"
+#include "impl/ThermoModel.hpp"
+#include "impl/Water.hpp"
 
 #endif    // KSTEAM_KSTEAM_HPP
