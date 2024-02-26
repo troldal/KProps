@@ -8,8 +8,8 @@ project(KSteam VERSION 0.1.0 LANGUAGES CXX)
 # Set compiler settings
 #==============================================================================
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
+#set(CMAKE_CXX_STANDARD_REQUIRED ON)
+#set(CMAKE_CXX_EXTENSIONS OFF)
 add_compile_definitions(NOMINMAX)
 #==============================================================================
 # Import Numerixx
@@ -22,6 +22,9 @@ FetchContent_Declare(numerixx
         SYSTEM
 )
 FetchContent_MakeAvailable(numerixx)
+
+set(COOLPROP_STATIC_LIBRARY ON)
+add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/../../CoolProp ${CMAKE_CURRENT_BINARY_DIR}/CoolProp)
 
 ##==============================================================================
 ## Import ImGui
@@ -38,6 +41,7 @@ FetchContent_MakeAvailable(numerixx)
 #==============================================================================
 # Add the XLSteam Core library
 #==============================================================================
+add_subdirectory(PCProps)
 add_subdirectory(KSteam)
 
 option(KSTEAM_ENABLE_DEMOS "Enable demo programs" ${PROJECT_IS_TOP_LEVEL})

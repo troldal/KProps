@@ -6,7 +6,7 @@
 
 #include <tuple>
 
-namespace KSteam::detail {
+namespace pcprops::detail {
 
     // Concept to check for tuple-like types
     template<typename T>

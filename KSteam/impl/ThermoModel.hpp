@@ -28,7 +28,6 @@ namespace KSteam
                 return PROPERTY_T { m_model.criticalTemperature() };
         }
 
-
         template<IsProperty PROPERTY_T>
             requires std::same_as<PROPERTY_T, TSat>
         auto property(P pressure) const

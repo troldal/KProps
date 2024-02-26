@@ -170,7 +170,6 @@ namespace KSteam
             return guessAtTD<PROPERTY_T>(temperature, 1.0 / volume);
         }
 
-
         template<typename PROPERTY_T, typename S1, typename S2>
         auto find(S1 s1, S2 s2) const
         {
