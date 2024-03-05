@@ -4,13 +4,15 @@
 
 #pragma once
 
-#include "Config.hpp"
-#include "PropertyTypes.hpp"
+#include "../Utils/Config.hpp"
+#include "../Types/PropertyTypes.hpp"
+#include "../Interfaces/IFluid.hpp"
 
 #include <Deriv.hpp>
 
 namespace pcprops
 {
+
     template<typename T>
     struct Of
     {
@@ -210,20 +212,20 @@ namespace pcprops
         return -model.property<S>();
     }
 
-    inline FLOAT derivative(const IFluid& model, Of<U>, Wrt<T>, AtConst<V>)
-    {
-        return model.property<Cv>();
-    }
+//    inline FLOAT derivative(const IFluid& model, Of<U>, Wrt<T>, AtConst<V>)
+//    {
+//        return model.property<Cv>();
+//    }
 
     inline FLOAT derivative(const IFluid& model, Of<S>, Wrt<T>, AtConst<V>)
     {
         return model.property<Cv>() / model.property<T>();
     }
 
-    inline FLOAT derivative(const IFluid& model, Of<H>, Wrt<T>, AtConst<P>)
-    {
-        return model.property<Cp>();
-    }
+//    inline FLOAT derivative(const IFluid& model, Of<H>, Wrt<T>, AtConst<P>)
+//    {
+//        return model.property<Cp>();
+//    }
 
     inline FLOAT derivative(const IFluid& model, Of<S>, Wrt<T>, AtConst<P>)
     {

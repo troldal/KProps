@@ -451,7 +451,7 @@ class poly : detail::poly_base,
   constexpr poly &operator=(poly &&)
       noexcept(std::is_nothrow_move_constructible_v<TStorage>) = default;
 
- private:
+ //private:
 
   template <
     class T,

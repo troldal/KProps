@@ -5,8 +5,9 @@
 #pragma once
 
 // #include "../_external.hpp"
+#include <NamedType/named_type.hpp>
 
-#include "Config.hpp"
+#include "../Utils/Config.hpp"
 
 namespace pcprops
 {
@@ -40,44 +41,38 @@ namespace pcprops
         Volume = 8,
         Vol    = 8,
 
-        PSat               = 9,
-        SaturationPressure = 9,
+        Cp = 9,
 
-        TSat                  = 10,
-        SaturationTemperature = 10,
+        Cv = 10,
 
-        Cp = 11,
+        Kappa              = 11,
+        IsothermalCompressibility = 11,
 
-        Cv = 12,
+        W            = 12,
+        SpeedOfSound = 12,
 
-        Kappa              = 13,
-        IsentropicExponent = 13,
+        Z                     = 13,
+        CompressibilityFactor = 13,
 
-        W            = 14,
-        SpeedOfSound = 14,
+        X            = 14,
+        Q            = 14,
+        VaporQuality = 14,
 
-        Z                     = 15,
-        CompressibilityFactor = 15,
+        Eta              = 15,
+        DynamicViscosity = 15,
 
-        X            = 16,
-        Q            = 16,
-        VaporQuality = 16,
+        Nu                 = 16,
+        KinematicViscosity = 16,
 
-        Eta              = 17,
-        DynamicViscosity = 17,
+        TC                  = 17,
+        ThermalConductivity = 17,
 
-        Nu                 = 18,
-        KinematicViscosity = 18,
+        PR            = 18,
+        PrandtlNumber = 18,
 
-        TC                  = 19,
-        ThermalConductivity = 19,
-
-        PR            = 20,
-        PrandtlNumber = 20,
-
-        MW              = 21,
-        MolecularWeight = 21,
-        MolarMass       = 21
+        MW              = 19,
+        MolecularWeight = 19,
+        MolarMass       = 19
 
     };
 
@@ -174,46 +169,6 @@ namespace pcprops
     using Volume = V;
     using Vol    = V;
 
-    using PSat               = fluent::NamedType<FLOAT,
-                                                 struct PSatTag,
-                                                 fluent::Printable,
-                                                 fluent::Addable,
-                                                 fluent::Subtractable,
-                                                 fluent::Multiplicable,
-                                                 fluent::ImplicitlyConvertibleTo<FLOAT>::templ,
-                                                 fluent::ImplicitlyConvertibleTo<P>::templ>;
-    using SaturationPressure = PSat;
-
-    using TSat                  = fluent::NamedType<FLOAT,
-                                                    struct TSatTag,
-                                                    fluent::Printable,
-                                                    fluent::Addable,
-                                                    fluent::Subtractable,
-                                                    fluent::Multiplicable,
-                                                    fluent::ImplicitlyConvertibleTo<FLOAT>::templ,
-                                                    fluent::ImplicitlyConvertibleTo<T>::templ>;
-    using SaturationTemperature = TSat;
-
-    using PCrit            = fluent::NamedType<FLOAT,
-                                               struct PCritTag,
-                                               fluent::Printable,
-                                               fluent::Addable,
-                                               fluent::Subtractable,
-                                               fluent::Multiplicable,
-                                               fluent::ImplicitlyConvertibleTo<FLOAT>::templ,
-                                               fluent::ImplicitlyConvertibleTo<P>::templ>;
-    using CriticalPressure = PCrit;
-
-    using TCrit               = fluent::NamedType<FLOAT,
-                                                  struct TCritTag,
-                                                  fluent::Printable,
-                                                  fluent::Addable,
-                                                  fluent::Subtractable,
-                                                  fluent::Multiplicable,
-                                                  fluent::ImplicitlyConvertibleTo<FLOAT>::templ,
-                                                  fluent::ImplicitlyConvertibleTo<T>::templ>;
-    using CriticalTemperature = TCrit;
-
     using Cp = fluent::NamedType<FLOAT,
                                  struct CpTag,
                                  fluent::Printable,
@@ -230,7 +185,6 @@ namespace pcprops
                                  fluent::Multiplicable,
                                  fluent::ImplicitlyConvertibleTo<FLOAT>::templ>;
 
-    // TODO: Is this the right name?
     using Kappa              = fluent::NamedType<FLOAT,
                                                  struct KappaTag,
                                                  fluent::Printable,
@@ -238,7 +192,16 @@ namespace pcprops
                                                  fluent::Subtractable,
                                                  fluent::Multiplicable,
                                                  fluent::ImplicitlyConvertibleTo<FLOAT>::templ>;
-    using IsentropicExponent = Kappa;
+    using IsothermalCompressibility = Kappa;
+
+    using Alpha              = fluent::NamedType<FLOAT,
+                                                        struct AlphaTag,
+                                                        fluent::Printable,
+                                                        fluent::Addable,
+                                                        fluent::Subtractable,
+                                                        fluent::Multiplicable,
+                                                        fluent::ImplicitlyConvertibleTo<FLOAT>::templ>;
+    using ThermalExpansion = Kappa;
 
     using W            = fluent::NamedType<FLOAT,
                                            struct SpeedOfSoundTag,
@@ -308,10 +271,10 @@ namespace pcprops
     concept IsProperty =
         std::same_as<PROPERTY, T> || std::same_as<PROPERTY, P> || std::same_as<PROPERTY, H> || std::same_as<PROPERTY, S> ||
         std::same_as<PROPERTY, U> || std::same_as<PROPERTY, A> || std::same_as<PROPERTY, G> || std::same_as<PROPERTY, Rho> ||
-        std::same_as<PROPERTY, V> || std::same_as<PROPERTY, PSat> || std::same_as<PROPERTY, TSat> || std::same_as<PROPERTY, Cp> ||
+        std::same_as<PROPERTY, V>   || std::same_as<PROPERTY, Cp> ||
         std::same_as<PROPERTY, Cv> || std::same_as<PROPERTY, Kappa> || std::same_as<PROPERTY, W> || std::same_as<PROPERTY, Z> ||
         std::same_as<PROPERTY, X> || std::same_as<PROPERTY, Eta> || std::same_as<PROPERTY, Nu> || std::same_as<PROPERTY, TC> ||
-        std::same_as<PROPERTY, PR> || std::same_as<PROPERTY, PCrit> || std::same_as<PROPERTY, TCrit> || std::same_as<PROPERTY, MW>;
+        std::same_as<PROPERTY, PR>  || std::same_as<PROPERTY, MW> || std::same_as<PROPERTY, Alpha>;
 
     template<typename S1, typename S2>
     concept IsSpecificationPT = (std::same_as<S1, P> && std::same_as<S2, T>) || (std::same_as<S1, T> && std::same_as<S2, P>);
@@ -380,6 +343,6 @@ namespace pcprops
         IsSpecificationTS<S1, S2> || IsSpecificationTU<S1, S2> || IsSpecificationTD<S1, S2> || IsSpecificationTV<S1, S2> ||
         IsSpecificationTX<S1, S2> || IsSpecificationHS<S1, S2> || IsSpecificationUV<S1, S2> || IsSpecificationHV<S1, S2>;
 
-    using PropertyVariant = std::variant<MW, P, T, H, S, U, A, G, Rho, V, PSat, TSat, Cp, Cv, Kappa, W, Z, X, Eta, Nu, TC, PR>;
+    using PropertyVariant = std::variant<MW, P, T, H, S, U, A, G, Rho, V, Cp, Cv, Kappa, W, Z, X, Eta, Nu, TC, PR>;
 
 }    // namespace pcprops

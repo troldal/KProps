@@ -58,5 +58,7 @@ namespace pcprops
      */
     constexpr int MAXITER = 100;
 
+    constexpr FLOAT R = 8.31446261815324;  // J/(mol*K)
+
 }    // namespace pcprops
 

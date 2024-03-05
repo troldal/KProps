@@ -4,32 +4,19 @@
 
 #include "_external.hpp"
 
+#include <HEOS.hpp>
+#include <KProps.hpp>
+
 #include <format>
 #include <iostream>
-#include <ranges>
 #include <string>
-#include <tuple>
 #include <variant>
-#include <vector>
-
-#include <KSteam.hpp>
-#include <PCProps.hpp>
-
-#include "AbstractState.h"
 #include <iomanip>
-#include <iostream>
-#include <memory>
-
-#include <algorithm>
-#include <iomanip>
-#include <iostream>
 #include <numbers>
-#include <ranges>
 
 using namespace sciplot;
 namespace rng = std::ranges;
 
-namespace ks = KSteam;
 namespace pc = pcprops;
 
 struct MyProps
@@ -131,80 +118,72 @@ int main()
     //
     // auto props = properties<P, T, V, Rho, H, S, U>(water).get<MyProps>();
 
-    MyProps props;
-    auto    water = Fluid(CoolPropBackend("Water"));
+    auto water = FluidWrapper(CoolPropBackend("Water"));
+    water.setState(P{101325.0}, T{298.15});
+    // water.setState(P { 101325.0 }, T { 298.15 });
 
-    io::CSVReader<5, io::trim_chars<' ', '\t'>, io::no_quote_escape<';'>> in("C:/Users/kenne/Desktop/Table03.csv");
-    // in.read_header(io::ignore_extra_column, "P", "t", "v", "h", "s", "cp", "w", "k", "eta", "lambda");
-    in.read_header(io::ignore_extra_column, "P", "t", "v", "h", "s");
-    double p, t, v, h, s;
-    while (in.read_row(p, t, v, h, s)) {
-        props.p   = pc::P { p * 100000 < water.min<P>() ? water.min<P>() : p * 100000 };
-        props.t   = pc::T { t + 273.15 };
-        props.v   = pc::V { v };
-        props.h   = pc::H { h * 1000 };
-        props.s   = pc::S { s * 1000 };
-        props.rho = pc::Rho { 1.0 / props.v };
-        props.u   = pc::U { props.h - props.p * props.v };
+    std::cout << std::fixed << std::setprecision(20);
 
-        if (p <= 1.01) continue;
-        if (t <= 2.01) continue;
+    //std::cout << "LIQ: "<< phase<Liquid>(water).property<H, MassUnits>() << std::endl;
+    //std::cout << "MIX:" << phase<Mixture>(water).property<H, MassUnits>() << std::endl;
+    //std::cout << "VAP:" << phase<Gas>(water).property<H, MassUnits>() << std::endl;
 
-        // auto tsat = water.property<TSat>();
+    //auto v1 = phase<Liquid>(water).properties<P, T, V, Rho, H, S, U>().get<MyProps, MassUnits>();
+    //auto v2 = phase<Mixture>(water).properties<P, T, V, Rho, H, S, U>().get<MyProps, MassUnits>();
+    //auto v3 = phase<Gas>(water).properties<P, T, V, Rho, H, S, U>().get<MyProps, MassUnits>();
 
-        // if (p < 220.0) continue;
-        // if (t < 603.15 - 273.15) continue;
+    std::cout << "MW    :" << property<MW>(water) << std::endl;
+//    std::cout << "W     :" << property<W>(water) << std::endl;
+//    std::cout << "Kappa :" << property<Kappa>(water) << std::endl;
+//    std::cout << "Alpha :" << property<Alpha>(water) << std::endl;
+    std::cout << "Cp    :" << property<Cp>(water) << std::endl;
+    std::cout << "Cv    :" << property<Cv>(water) << std::endl;
+    std::cout << "Rho   :" << property<Rho>(water) << std::endl;
+    std::cout << "P     :" << property<P>(water) << std::endl;
+    std::cout << "T     :" << property<T>(water) << std::endl;
+    std::cout << "G     :" << property<G>(water) << std::endl;
+    std::cout << "A     :" << property<A>(water) << std::endl;
+    std::cout << "H     :" << property<H>(water) << std::endl;
+    std::cout << "U     :" << property<U>(water) << std::endl;
+    std::cout << "S     :" << property<S>(water) << std::endl;
+    std::cout << "TSat  :" << saturation<T>(water) << std::endl;
+    std::cout << "PSat  :" << saturation<P>(water) << std::endl;
+    std::cout << "Z     :" << property<Z>(water) << std::endl;
+    std::cout << "dPdT  :" << derivative<Of<P>, Wrt<T>, AtConst<V>>(water) << std::endl;
+    std::cout << "dPdRho:" << derivative<Of<P>, Wrt<Rho>, AtConst<T>>(water) << std::endl;
 
-        printHeader();
-        printProps(props, "Table");
 
-        water.setState(props.p, props.t);
-        props = properties<P, T, V, Rho, H, S, U>(water).get<MyProps>();
-        printProps(props, "PT");
 
-        water.setState(props.p, props.h);
-        props = properties<P, T, V, Rho, H, S, U>(water).get<MyProps>();
-        printProps(props, "PH");
+    // std::cout << property<T>(water) << std::endl;
+    // std::cout << property<Q>(water) << std::endl;
+    // std::cout << property<H, MassUnits>(water) / 1000<< std::endl;
+    // std::cout << property<U, MassUnits>(water) / 1000<< std::endl;
+    // std::cout << property<S, MassUnits>(water) / 1000 << std::endl;
+    // std::cout << property<Rho, MassUnits>(water) << std::endl;
+    // std::cout << property<Cp>(water) << std::endl;
+    // std::cout << property<Cv>(water) << std::endl;
+    //
+    // std::cout << saturation<P>(water) << std::endl;
+    // std::cout << saturation<T>(water) << std::endl;
+    // std::cout << critical<T>(water) << std::endl;
+    // std::cout << critical<P>(water) << std::endl;
+    // std::cout << min<T>(water) << std::endl;
+    // std::cout << max<T>(water) << std::endl;
+    // std::cout << min<P>(water) << std::endl;
+    // std::cout << max<P>(water) << std::endl;
+    //
+    // std::cout << std::endl;
+    //
+    // water.setState(property<T>(water), property<S>(water));
+    // std::cout << property<T>(water) << std::endl;
+    // std::cout << property<Q>(water) << std::endl;
+    // std::cout << property<H>(water) << std::endl;
+    // std::cout << property<U>(water) << std::endl;
+    // std::cout << property<S>(water) << std::endl;
+    // std::cout << property<Rho>(water) << std::endl;
+    // std::cout << property<Cp>(water) << std::endl;
+    // std::cout << property<Cv>(water) << std::endl;
 
-        water.setState(props.p, props.s);
-        props = properties<P, T, V, Rho, H, S, U>(water).get<MyProps>();
-        printProps(props, "PS");
-
-        water.setState(props.p, props.u);
-        props = properties<P, T, V, Rho, H, S, U>(water).get<MyProps>();
-        printProps(props, "PU");
-
-        water.setState(props.rho, props.t);
-        props = properties<P, T, V, Rho, H, S, U>(water).get<MyProps>();
-        printProps(props, "DT");
-
-        water.setState(props.rho, props.u);
-        props = properties<P, T, V, Rho, H, S, U>(water).get<MyProps>();
-        printProps(props, "DU");
-
-        // if (t > tsat.get()) {
-        //     water.setState(props.h, props.s);
-        //     props = properties<P, T, V, Rho, H, S, U>(water).get<MyProps>();
-        //     printProps(props, "HS");
-        // }
-
-        water.setState(props.rho, props.h);
-        props = properties<P, T, V, Rho, H, S, U>(water).get<MyProps>();
-        printProps(props, "DH");
-
-        water.setState(props.rho, props.s);
-        props = properties<P, T, V, Rho, H, S, U>(water).get<MyProps>();
-        printProps(props, "DS");
-
-        // water.setState(props.t, props.s);
-        // props = properties<P, T, V, Rho, H, S, U>(water).get<MyProps>();
-        // printProps(props, "TS");
-
-        // water.setState(props.p, props.rho);
-        // props = properties<P, T, V, Rho, H, S, U>(water).get<MyProps>();
-        // printProps(props, "DP");
-
-    }
 
     return 0;
 }
