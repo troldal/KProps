@@ -2,7 +2,7 @@
 # Preamble
 #==============================================================================
 cmake_minimum_required(VERSION 3.26)
-project(KSteam VERSION 0.1.0 LANGUAGES CXX)
+project(KProps VERSION 0.1.0 LANGUAGES CXX)
 
 #==============================================================================
 # Set compiler settings
@@ -11,11 +11,11 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 add_compile_definitions(NOMINMAX)
+include(FetchContent)
 #==============================================================================
 # Import Numerixx
 #==============================================================================
 set(FETCHCONTENT_SOURCE_DIR_NUMERIXX ${CMAKE_CURRENT_LIST_DIR}/../Numerixx)
-include(FetchContent)
 FetchContent_Declare(numerixx
         GIT_REPOSITORY https://github.com/troldal/Numerixx.git
         GIT_TAG        master
@@ -23,26 +23,21 @@ FetchContent_Declare(numerixx
 )
 FetchContent_MakeAvailable(numerixx)
 
-set(COOLPROP_STATIC_LIBRARY ON)
-add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/../../CoolProp ${CMAKE_CURRENT_BINARY_DIR}/CoolProp)
-
-##==============================================================================
-## Import ImGui
-##==============================================================================
-#set(FETCHCONTENT_SOURCE_DIR_IMGUIWRAPPER ${CMAKE_CURRENT_LIST_DIR}/../ImGui-Wrapper)
-#include(FetchContent)
-#FetchContent_Declare(ImGuiWrapper
-#        GIT_REPOSITORY https://github.com/troldal/ImGui-Wrapper.git
-#        GIT_TAG        main
-#        SYSTEM
-#)
-#FetchContent_MakeAvailable(ImGuiWrapper)
+#set(COOLPROP_STATIC_LIBRARY ON)
+#add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/../../CoolProp ${CMAKE_CURRENT_BINARY_DIR}/CoolProp)
+set(FETCHCONTENT_SOURCE_DIR_COOLPROP ${CMAKE_CURRENT_LIST_DIR}/../CoolProp)
+FetchContent_Declare(CoolProp
+        GIT_REPOSITORY https://github.com/CoolProp/CoolProp.git
+        GIT_TAG        ba21c74
+        SYSTEM
+)
+FetchContent_MakeAvailable(CoolProp)
 
 #==============================================================================
 # Add the XLSteam Core library
 #==============================================================================
-add_subdirectory(KProps)
-add_subdirectory(CPBackend)
+add_subdirectory(Core)
+add_subdirectory(Backends)
 #add_subdirectory(KSteam)
 
 option(KSTEAM_ENABLE_DEMOS "Enable demo programs" ${PROJECT_IS_TOP_LEVEL})

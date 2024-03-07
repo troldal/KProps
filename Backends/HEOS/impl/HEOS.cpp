@@ -1,18 +1,16 @@
 //
-// Created by kenne on 16/02/2024.
+// Created by kenne on 06/03/2024.
 //
 
-#pragma once
+#include "../HEOS.hpp"
 
 #include <AbstractState.h>
 #include <CoolProp.h>
-#include <KProps.hpp>
-#include <memory>
 
 namespace pcprops
 {
 
-    class CoolPropBackend
+    struct HEOS::impl
     {
         enum class Specification { None, PT, PH, PS, PX, DP, DT, DS, DH, DU, HS, PU, TS, TX };
 
@@ -95,8 +93,7 @@ namespace pcprops
                 m_spec = Specification::TX;
             }
             else
-                []<bool flag = false> { static_assert(flag, "Invalid specification pair."); }
-            ();
+                []<bool flag = false> { static_assert(flag, "Invalid specification pair."); }();
         }
 
         double twoPhaseProperty(auto func) const
@@ -116,7 +113,6 @@ namespace pcprops
         }
 
     public:
-
         // The setState functions (required)
         void setStatePT(P pressure, T temperature) { setState(pressure, temperature); }
         void setStatePX(P pressure, X quality) { setState(pressure, quality); }
@@ -143,11 +139,7 @@ namespace pcprops
 
         // Required property functions
         double temperature() const { return m_state->T(); }
-        double pressure() const
-        {
-            auto tmp = m_state->p();
-            return m_state->p();
-        }
+        double pressure() const { return m_state->p(); }
         double vaporQuality() const
         {
             if (m_state->phase() == CoolProp::iphase_gas) return 1.0;
@@ -176,12 +168,10 @@ namespace pcprops
         }
 
         // Derived properties
-        double volume() const { return 1.0/density(); }
+        double volume() const { return 1.0 / density(); }
         double gibbsEnergy() const { return m_state->gibbsmolar(); }
         double helmholtzEnergy() const { return m_state->helmholtzmolar(); }
-        double compressibility() const {
-            return m_state->compressibility_factor();
-        }
+        double compressibility() const { return m_state->compressibility_factor(); }
 
         // Optional properties
         double cp() const
@@ -247,7 +237,7 @@ namespace pcprops
             }
         }
 
-        explicit CoolPropBackend(const std::string& fluidName)
+        explicit impl(const std::string& fluidName)
             : m_state(CoolProp::AbstractState::factory("HEOS", fluidName)),
               m_fluidName(fluidName),
               m_spec(Specification::None)
@@ -255,7 +245,7 @@ namespace pcprops
 
         template<typename S1, typename S2>
             requires IsSpecificationPT<S1, S2> || IsSpecificationPX<S1, S2> || IsSpecificationPH<S1, S2>
-        CoolPropBackend(const std::string& fluidName, S1 state1, S2 state2) : CoolPropBackend(fluidName)
+        impl(const std::string& fluidName, S1 state1, S2 state2) : impl(fluidName)
         {
             auto spec = std::make_pair(state1, state2);
 
@@ -271,9 +261,9 @@ namespace pcprops
                 setStateDT(std::get<Rho>(spec), std::get<T>(spec));
         }
 
-        ~CoolPropBackend() = default;
+        ~impl() = default;
 
-        CoolPropBackend(const CoolPropBackend& other) : CoolPropBackend(other.m_fluidName)
+        impl(const impl& other) : impl(other.m_fluidName)
         {
             switch (other.m_spec) {
                 case Specification::PT:
@@ -320,7 +310,53 @@ namespace pcprops
             }
         }
 
-        CoolPropBackend(CoolPropBackend&& other) noexcept = default;
+        impl(impl&& other) noexcept = default;
     };
+
+    void   HEOS::setStatePT(P pressure, T temperature) { m_impl->setStatePT(pressure, temperature); }
+    void   HEOS::setStatePX(P pressure, X quality) { m_impl->setStatePX(pressure, quality); }
+    void   HEOS::setStatePH(P pressure, H enthalpy) { m_impl->setStatePH(pressure, enthalpy); }
+    void   HEOS::setStatePS(P pressure, S entropy) { m_impl->setStatePS(pressure, entropy); }
+    void   HEOS::setStateDP(Rho density, P pressure) { m_impl->setStateDP(density, pressure); }
+    void   HEOS::setStateDT(Rho density, T temperature) { m_impl->setStateDT(density, temperature); }
+    void   HEOS::setStateDS(Rho density, S entropy) { m_impl->setStateDS(density, entropy); }
+    void   HEOS::setStateDH(Rho density, H enthalpy) { m_impl->setStateDH(density, enthalpy); }
+    void   HEOS::setStateDU(Rho density, U internalEnergy) { m_impl->setStateDU(density, internalEnergy); }
+    void   HEOS::setStateHS(H enthalpy, S entropy) { m_impl->setStateHS(enthalpy, entropy); }
+    void   HEOS::setStatePU(P pressure, U internalEnergy) { m_impl->setStatePU(pressure, internalEnergy);}
+    void   HEOS::setStateTS(T temperature, S entropy) { m_impl->setStateTS(temperature, entropy); }
+    void   HEOS::setStateTX(T temperature, X quality) { m_impl->setStateTX(temperature, quality); }
+
+    double HEOS::molarMass() const { return m_impl->molarMass(); }
+    double HEOS::criticalPressure() const { return m_impl->criticalPressure(); }
+    double HEOS::criticalTemperature() const { return m_impl->criticalTemperature(); }
+    double HEOS::minTemperature() const { return m_impl->minTemperature(); }
+    double HEOS::minPressure() const { return m_impl->minPressure(); }
+    double HEOS::maxTemperature() const { return m_impl->maxTemperature(); }
+    double HEOS::maxPressure() const { return m_impl->maxPressure();}
+    double HEOS::temperature() const { return m_impl->temperature(); }
+    double HEOS::pressure() const { return m_impl->pressure();}
+    double HEOS::vaporQuality() const { return m_impl->vaporQuality(); }
+    double HEOS::enthalpy() const { return m_impl->enthalpy(); }
+    double HEOS::entropy() const { return m_impl->entropy(); }
+    double HEOS::density() const { return m_impl->density(); }
+    double HEOS::internalEnergy() const { return m_impl->internalEnergy();}
+    double HEOS::volume() const { return m_impl->volume(); }
+    double HEOS::gibbsEnergy() const { return m_impl->gibbsEnergy(); }
+    double HEOS::helmholtzEnergy() const { return m_impl->helmholtzEnergy(); }
+    double HEOS::compressibility() const { return m_impl->compressibility(); }
+    double HEOS::cp() const { return m_impl->cp(); }
+    double HEOS::cv() const { return m_impl->cv(); }
+    double HEOS::speedOfSound() const { return m_impl->speedOfSound(); }
+    double HEOS::isothermalCompressibility() const { return m_impl->isothermalCompressibility();}
+    double HEOS::thermalExpansion() const { return m_impl->thermalExpansion();}
+    double HEOS::saturationTemperature() const { return m_impl->saturationTemperature(); }
+    double HEOS::saturationPressure() const { return m_impl->saturationPressure();}
+    Phase  HEOS::phase() const { return m_impl->phase(); }
+
+    HEOS::HEOS(const std::string& fluidName) : m_impl {std::make_unique<impl>(fluidName)} {}
+    HEOS::HEOS(const HEOS& other) : m_impl(std::make_unique<impl>(*other.m_impl)) {}
+    HEOS::HEOS(HEOS&& other) noexcept = default;
+    HEOS::~HEOS() = default;
 
 }    // namespace pcprops

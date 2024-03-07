@@ -5,6 +5,9 @@
 #pragma once
 
 // #include "../_external.hpp"
+
+#include <variant>
+
 #include <NamedType/named_type.hpp>
 
 #include "../Utils/Config.hpp"

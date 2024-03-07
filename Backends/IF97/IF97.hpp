@@ -176,11 +176,11 @@ namespace pcprops
 
         // Derived properties
         double volume() const { return 1.0/density(); }
-        double gibbsEnergy() const { return m_state->gibbsmolar(); }
-        double helmholtzEnergy() const { return m_state->helmholtzmolar(); }
-        double compressibility() const {
-            return m_state->compressibility_factor();
-        }
+//        double gibbsEnergy() const { return m_state->gibbsmolar(); }
+//        double helmholtzEnergy() const { return m_state->helmholtzmolar(); }
+//        double compressibility() const {
+//            return m_state->compressibility_factor();
+//        }
 
         // Optional properties
         double cp() const

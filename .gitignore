@@ -37,3 +37,4 @@ venv
 # CMake
 _build
 cmake-build-*
+*cmake-build-*
