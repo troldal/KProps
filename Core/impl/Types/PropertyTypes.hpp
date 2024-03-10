@@ -6,6 +6,8 @@
 
 // #include "../_external.hpp"
 
+#include <algorithm>
+#include <array>
 #include <variant>
 
 #include <NamedType/named_type.hpp>
@@ -48,34 +50,39 @@ namespace pcprops
 
         Cv = 10,
 
-        Kappa              = 11,
+        Kappa                     = 11,
         IsothermalCompressibility = 11,
 
-        W            = 12,
-        SpeedOfSound = 12,
+        Alpha            = 12,
+        ThermalExpansion = 12,
 
-        Z                     = 13,
-        CompressibilityFactor = 13,
+        W            = 13,
+        SpeedOfSound = 13,
 
-        X            = 14,
-        Q            = 14,
-        VaporQuality = 14,
+        Z                     = 14,
+        CompressibilityFactor = 14,
 
-        Eta              = 15,
-        DynamicViscosity = 15,
+        X            = 15,
+        Q            = 15,
+        VaporQuality = 15,
 
-        Nu                 = 16,
-        KinematicViscosity = 16,
+        Eta              = 16,
+        DynamicViscosity = 16,
 
-        TC                  = 17,
-        ThermalConductivity = 17,
+        Nu                 = 17,
+        KinematicViscosity = 17,
 
-        PR            = 18,
-        PrandtlNumber = 18,
+        TC                  = 18,
+        ThermalConductivity = 18,
 
-        MW              = 19,
-        MolecularWeight = 19,
-        MolarMass       = 19
+        PR            = 19,
+        PrandtlNumber = 19,
+
+        MW              = 20,
+        MolecularWeight = 20,
+        MolarMass       = 20,
+
+        Undefined = 99
 
     };
 
@@ -188,23 +195,23 @@ namespace pcprops
                                  fluent::Multiplicable,
                                  fluent::ImplicitlyConvertibleTo<FLOAT>::templ>;
 
-    using Kappa              = fluent::NamedType<FLOAT,
-                                                 struct KappaTag,
-                                                 fluent::Printable,
-                                                 fluent::Addable,
-                                                 fluent::Subtractable,
-                                                 fluent::Multiplicable,
-                                                 fluent::ImplicitlyConvertibleTo<FLOAT>::templ>;
-    using IsothermalCompressibility = Kappa;
-
-    using Alpha              = fluent::NamedType<FLOAT,
-                                                        struct AlphaTag,
+    using Kappa                     = fluent::NamedType<FLOAT,
+                                                        struct KappaTag,
                                                         fluent::Printable,
                                                         fluent::Addable,
                                                         fluent::Subtractable,
                                                         fluent::Multiplicable,
                                                         fluent::ImplicitlyConvertibleTo<FLOAT>::templ>;
-    using ThermalExpansion = Kappa;
+    using IsothermalCompressibility = Kappa;
+
+    using Alpha            = fluent::NamedType<FLOAT,
+                                               struct AlphaTag,
+                                               fluent::Printable,
+                                               fluent::Addable,
+                                               fluent::Subtractable,
+                                               fluent::Multiplicable,
+                                               fluent::ImplicitlyConvertibleTo<FLOAT>::templ>;
+    using ThermalExpansion = Alpha;
 
     using W            = fluent::NamedType<FLOAT,
                                            struct SpeedOfSoundTag,
@@ -274,10 +281,10 @@ namespace pcprops
     concept IsProperty =
         std::same_as<PROPERTY, T> || std::same_as<PROPERTY, P> || std::same_as<PROPERTY, H> || std::same_as<PROPERTY, S> ||
         std::same_as<PROPERTY, U> || std::same_as<PROPERTY, A> || std::same_as<PROPERTY, G> || std::same_as<PROPERTY, Rho> ||
-        std::same_as<PROPERTY, V>   || std::same_as<PROPERTY, Cp> ||
-        std::same_as<PROPERTY, Cv> || std::same_as<PROPERTY, Kappa> || std::same_as<PROPERTY, W> || std::same_as<PROPERTY, Z> ||
-        std::same_as<PROPERTY, X> || std::same_as<PROPERTY, Eta> || std::same_as<PROPERTY, Nu> || std::same_as<PROPERTY, TC> ||
-        std::same_as<PROPERTY, PR>  || std::same_as<PROPERTY, MW> || std::same_as<PROPERTY, Alpha>;
+        std::same_as<PROPERTY, V> || std::same_as<PROPERTY, Cp> || std::same_as<PROPERTY, Cv> || std::same_as<PROPERTY, Kappa> ||
+        std::same_as<PROPERTY, W> || std::same_as<PROPERTY, Z> || std::same_as<PROPERTY, X> || std::same_as<PROPERTY, Eta> ||
+        std::same_as<PROPERTY, Nu> || std::same_as<PROPERTY, TC> || std::same_as<PROPERTY, PR> || std::same_as<PROPERTY, MW> ||
+        std::same_as<PROPERTY, Alpha>;
 
     template<typename S1, typename S2>
     concept IsSpecificationPT = (std::same_as<S1, P> && std::same_as<S2, T>) || (std::same_as<S1, T> && std::same_as<S2, P>);
@@ -346,6 +353,116 @@ namespace pcprops
         IsSpecificationTS<S1, S2> || IsSpecificationTU<S1, S2> || IsSpecificationTD<S1, S2> || IsSpecificationTV<S1, S2> ||
         IsSpecificationTX<S1, S2> || IsSpecificationHS<S1, S2> || IsSpecificationUV<S1, S2> || IsSpecificationHV<S1, S2>;
 
-    using PropertyVariant = std::variant<MW, P, T, H, S, U, A, G, Rho, V, Cp, Cv, Kappa, W, Z, X, Eta, Nu, TC, PR>;
+    using PropertyVariant = std::variant<T, P, H, S, U, A, G, Rho, V, Cp, Cv, Kappa, Alpha, W, Z, X, /*Eta, Nu, TC, PR,*/ MW>;
+
+    inline PropertyVariant mapPropertyToVariant(Property prop)
+    {
+        switch (prop) {
+            case Property::T:
+                return T { 0.0 };
+            case Property::P:
+                return P { 0.0 };
+            case Property::H:
+                return H { 0.0 };
+            case Property::S:
+                return S { 0.0 };
+            case Property::U:
+                return U { 0.0 };
+            case Property::A:
+                return A { 0.0 };
+            case Property::G:
+                return G { 0.0 };
+            case Property::Rho:
+                return Rho { 0.0 };
+            case Property::V:
+                return V { 0.0 };
+            case Property::Cp:
+                return Cp { 0.0 };
+            case Property::Cv:
+                return Cv { 0.0 };
+            case Property::Kappa:
+                return Kappa { 0.0 };
+            case Property::Alpha:
+                return Alpha { 0.0 };
+            case Property::W:
+                return W { 0.0 };
+            case Property::Z:
+                return Z { 0.0 };
+            case Property::X:
+                return X { 0.0 };
+                //            case Property::Eta:
+                //                return Eta{0.0};
+                //            case Property::Nu:
+                //                return Nu{0.0};
+                //            case Property::TC:
+                //                return TC{0.0};
+                //            case Property::PR:
+                //                return PR{0.0};
+            case Property::MW:
+                return MW { 0.0 };
+            // Add more cases as needed
+            default:
+                throw std::invalid_argument("Unsupported property");
+        }
+    }
+
+    inline Property mapStringToProperty(std::string propString)
+    {
+        using prop = std::pair<std::string_view, Property>;
+        std::transform(propString.begin(), propString.end(), propString.begin(), [](unsigned char c) { return std::toupper(c); });
+
+        static constexpr std::array<prop, 43> propMap = { { { "T", Property::T },
+                                                            { "TEMPERATURE", Property::T },
+                                                            { "P", Property::P },
+                                                            { "PRESSURE", Property::P },
+                                                            { "H", Property::H },
+                                                            { "ENTHALPY", Property::H },
+                                                            { "S", Property::S },
+                                                            { "ENTROPY", Property::S },
+                                                            { "U", Property::U },
+                                                            { "INTERNAL ENERGY", Property::U },
+                                                            { "A", Property::A },
+                                                            { "HELMHOLTZ ENERGY", Property::A },
+                                                            { "G", Property::G },
+                                                            { "GIBBS ENERGY", Property::G },
+                                                            { "RHO", Property::Rho },
+                                                            { "DENSITY", Property::Rho },
+                                                            { "V", Property::V },
+                                                            { "VOLUME", Property::V },
+                                                            { "VOL", Property::V },
+                                                            { "CP", Property::Cp },
+                                                            { "CV", Property::Cv },
+                                                            { "KAPPA", Property::Kappa },
+                                                            { "ISOTHERMAL COMPRESSIBILITY", Property::Kappa },
+                                                            { "ALPHA", Property::Alpha },
+                                                            { "THERMAL EXPANSION", Property::Alpha },
+                                                            { "W", Property::W },
+                                                            { "SPEED OF SOUND", Property::W },
+                                                            { "Z", Property::Z },
+                                                            { "COMPRESSIBILITY FACTOR", Property::Z },
+                                                            { "X", Property::X },
+                                                            { "Q", Property::X },
+                                                            { "VAPOR QUALITY", Property::X },
+                                                            { "ETA", Property::Eta },
+                                                            { "DYNAMIC VISCOSITY", Property::Eta },
+                                                            { "NU", Property::Nu },
+                                                            { "KINEMATIC VISCOSITY", Property::Nu },
+                                                            { "TC", Property::TC },
+                                                            { "THERMAL CONDUCTIVITY", Property::TC },
+                                                            { "PR", Property::PR },
+                                                            { "PRANDTL NUMBER", Property::PR },
+                                                            { "MW", Property::MW },
+                                                            { "MOLAR MASS", Property::MW },
+                                                            { "MOLECULAR WEIGHT", Property::MW } } };
+
+        auto it = std::find_if(propMap.begin(), propMap.end(), [&propString](const prop& p) { return p.first == propString; });
+
+        if (it != propMap.end()) {
+            return it->second;
+        }
+        else {
+            return Property::Undefined;
+        }
+    }
 
 }    // namespace pcprops

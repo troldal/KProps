@@ -8,12 +8,13 @@
 #include <IF97.hpp>
 #include <KProps.hpp>
 
+#include <deque>
 #include <format>
+#include <iomanip>
 #include <iostream>
+#include <numbers>
 #include <string>
 #include <variant>
-#include <iomanip>
-#include <numbers>
 
 using namespace sciplot;
 namespace rng = std::ranges;
@@ -22,6 +23,8 @@ namespace pc = pcprops;
 
 struct MyProps
 {
+    pc::Cp  cp { 0.0 };
+    pc::Cv  cv { 0.0 };
     pc::P   p { 0.0 };
     pc::T   t { 0.0 };
     pc::V   v { 0.0 };
@@ -69,122 +72,55 @@ void printProps(const MyProps& props, const std::string& spec)
 int main()
 {
     using namespace pcprops;
-
-    // using namespace sciplot;
-    // namespace rng = std::ranges;
-    //
-    // double p = 220.0 * 100000;
-    //
-    // Vec t = sciplot::linspace(271.45, 646.85, 200);
-    //
-    // std::vector< double > y_lin;
-    // auto water = Fluid(CoolPropBackend("Water"));
-    // rng::transform(t, std::back_inserter(y_lin), [&](auto val) {
-    //     water.setState(P{p}, T{val});
-    //     return property<H>(water) - H{27055.32};
-    // });
-    //
-    // Plot2D plot1;
-    // plot1.palette("paired");
-    // plot1.drawCurve(t, y_lin).label("Linear").lineWidth(4);
-    //
-    // Figure figure = { { plot1 } };
-    // Canvas canvas = { { figure } };
-    //
-    // canvas.defaultPalette("set1");
-    // canvas.size(1600, 1200);
-    // canvas.show();
-
-    // std::cout << std::fixed << std::setprecision(20);
-    //
-    // auto water = Fluid(CoolPropBackend("Water"));
-    // //water.setState(P { 101325.0 }, T { 298.15 });
-    // water.setState(P { 101325.0 }, H { 1890.164 });
-    // std::cout << property<Cp>(water) / property<MW>(water) << std::endl;
-    //
-    // auto pip = derivative<Of<P>, Wrt<V, T>>(water) / derivative<Of<P>, Wrt<T>, AtConst<V>>(water);
-    // pip -= derivative<Of<P>, Wrt<V, V>, AtConst<T>>(water) / derivative<Of<P>, Wrt<V>, AtConst<T>>(water);
-    // pip *= property<V>(water);
-    //
-    // std::cout << pip << std::endl;
-    //
-    // std::cout << derivative<Of<H>, Wrt<T>, AtConst<P>>(water) << std::endl;
-    // std::cout << derivative<Of<P>, Wrt<Rho, Rho>, AtConst<T>>(water) << std::endl;
-    // std::cout << derivative<Of<P>, Wrt<V, T>>(water) << std::endl;
-    // std::cout << derivative<Of<S>, Wrt<T>, AtConst<V>>(water) << std::endl;
-    // std::cout << derivative<Of<S>, Wrt<T>, AtConst<P>>(water) << std::endl;
-    //
-    // std::cout << property<H>(water) << std::endl;
-    // std::cout << property<MW>(water) * 1000 << std::endl;
-    //
-    // auto props = properties<P, T, V, Rho, H, S, U>(water).get<MyProps>();
-
-    auto water = FluidWrapper(HEOS("Water"));
-    water.setState(P{101325.0}, T{300.0});
-    // water.setState(P { 101325.0 }, T { 298.15 });
-
     std::cout << std::fixed << std::setprecision(20);
 
-    //std::cout << "LIQ: "<< phase<Liquid>(water).property<H, MassUnits>() << std::endl;
-    //std::cout << "MIX:" << phase<Mixture>(water).property<H, MassUnits>() << std::endl;
-    //std::cout << "VAP:" << phase<Gas>(water).property<H, MassUnits>() << std::endl;
+    auto water = FluidWrapper(HEOS("Water"));
+    // water.setState(P { 101325.0 }, T { 298.15 });
 
-    //auto v1 = phase<Liquid>(water).properties<P, T, V, Rho, H, S, U>().get<MyProps, MassUnits>();
-    //auto v2 = phase<Mixture>(water).properties<P, T, V, Rho, H, S, U>().get<MyProps, MassUnits>();
-    //auto v3 = phase<Gas>(water).properties<P, T, V, Rho, H, S, U>().get<MyProps, MassUnits>();
+    auto results     = flash(water, P { 101325.0 }, T { 298.15 });
+    auto propsStatic = results.properties<Cp, Cv, P, T, V, Rho, H, S, U>().get<MyProps, MassUnits>();
 
-    std::cout << "MW    :" << property<MW>(water) << std::endl;
-    std::cout << "W     :" << property<W>(water) << std::endl;
-//    std::cout << "Kappa :" << property<Kappa>(water) << std::endl;
-//    std::cout << "Alpha :" << property<Alpha>(water) << std::endl;
-    std::cout << "Cp    :" << property<Cp, MassUnits>(water) << std::endl;
-    std::cout << "Cv    :" << property<Cv, MassUnits>(water) << std::endl;
-    std::cout << "Rho   :" << property<Rho, MassUnits>(water) << std::endl;
-    std::cout << "P     :" << property<P>(water) << std::endl;
-    std::cout << "T     :" << property<T>(water) << std::endl;
-    std::cout << "G     :" << property<G, MassUnits>(water) << std::endl;
-    std::cout << "A     :" << property<A, MassUnits>(water) << std::endl;
-    std::cout << "H     :" << property<H, MassUnits>(water) << std::endl;
-    std::cout << "U     :" << property<U, MassUnits>(water) << std::endl;
-    std::cout << "S     :" << property<S, MassUnits>(water) << std::endl;
-    std::cout << "TSat  :" << saturation<T>(water) << std::endl;
-    std::cout << "PSat  :" << saturation<P>(water) << std::endl;
-    std::cout << "Z     :" << property<Z>(water) << std::endl;
-//    std::cout << "dPdT  :" << derivative<Of<P>, Wrt<T>, AtConst<V>>(water) << std::endl;
-//    std::cout << "dPdRho:" << derivative<Of<P>, Wrt<Rho>, AtConst<T>>(water) << std::endl;
+    std::cout << "Cp        : " << propsStatic.cp << std::endl;
+    std::cout << "Cv        : " << propsStatic.cv << std::endl;
+    std::cout << "P         : " << propsStatic.p << std::endl;
+    std::cout << "T         : " << propsStatic.t << std::endl;
+    std::cout << "V         : " << propsStatic.v << std::endl;
+    std::cout << "Rho       : " << propsStatic.rho << std::endl;
+    std::cout << "H         : " << propsStatic.h << std::endl;
+    std::cout << "S         : " << propsStatic.s << std::endl;
+    std::cout << "U         : " << propsStatic.u << std::endl;
 
+    std::cout << std::endl;
 
+    auto propsDynamic =
+        results
+            .properties(
+                { Property::Cp, Property::Cv, Property::P, Property::T, Property::V, Property::Rho, Property::H, Property::S, Property::U })
+            .get<std::deque, MassUnits>();
 
-    // std::cout << property<T>(water) << std::endl;
-    // std::cout << property<Q>(water) << std::endl;
-    // std::cout << property<H, MassUnits>(water) / 1000<< std::endl;
-    // std::cout << property<U, MassUnits>(water) / 1000<< std::endl;
-    // std::cout << property<S, MassUnits>(water) / 1000 << std::endl;
-    // std::cout << property<Rho, MassUnits>(water) << std::endl;
-    // std::cout << property<Cp>(water) << std::endl;
-    // std::cout << property<Cv>(water) << std::endl;
-    //
-    // std::cout << saturation<P>(water) << std::endl;
-    // std::cout << saturation<T>(water) << std::endl;
-    // std::cout << critical<T>(water) << std::endl;
-    // std::cout << critical<P>(water) << std::endl;
-    // std::cout << min<T>(water) << std::endl;
-    // std::cout << max<T>(water) << std::endl;
-    // std::cout << min<P>(water) << std::endl;
-    // std::cout << max<P>(water) << std::endl;
-    //
-    // std::cout << std::endl;
-    //
-    // water.setState(property<T>(water), property<S>(water));
-    // std::cout << property<T>(water) << std::endl;
-    // std::cout << property<Q>(water) << std::endl;
-    // std::cout << property<H>(water) << std::endl;
-    // std::cout << property<U>(water) << std::endl;
-    // std::cout << property<S>(water) << std::endl;
-    // std::cout << property<Rho>(water) << std::endl;
-    // std::cout << property<Cp>(water) << std::endl;
-    // std::cout << property<Cv>(water) << std::endl;
+    std::cout << "Cp        : " << propsDynamic[0] << std::endl;
+    std::cout << "Cv        : " << propsDynamic[1] << std::endl;
+    std::cout << "P         : " << propsDynamic[2] << std::endl;
+    std::cout << "T         : " << propsDynamic[3] << std::endl;
+    std::cout << "V         : " << propsDynamic[4] << std::endl;
+    std::cout << "Rho       : " << propsDynamic[5] << std::endl;
+    std::cout << "H         : " << propsDynamic[6] << std::endl;
+    std::cout << "S         : " << propsDynamic[7] << std::endl;
+    std::cout << "U         : " << propsDynamic[8] << std::endl;
 
+    std::cout << std::endl;
+
+    auto propsString = results.properties({ "Cp", "Cv", "P", "T", "V", "Rho", "H", "S", "U" }).get<std::deque, MassUnits>();
+
+    std::cout << "Cp        : " << propsString[0] << std::endl;
+    std::cout << "Cv        : " << propsString[1] << std::endl;
+    std::cout << "P         : " << propsString[2] << std::endl;
+    std::cout << "T         : " << propsString[3] << std::endl;
+    std::cout << "V         : " << propsString[4] << std::endl;
+    std::cout << "Rho       : " << propsString[5] << std::endl;
+    std::cout << "H         : " << propsString[6] << std::endl;
+    std::cout << "S         : " << propsString[7] << std::endl;
+    std::cout << "U         : " << propsString[8] << std::endl;
 
     return EXIT_SUCCESS;
 }

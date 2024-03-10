@@ -109,6 +109,15 @@ namespace pcprops::detail {
                 return PROPERTY_T { derived().isothermalCompressibility() };
             else if constexpr (std::same_as<PROPERTY_T, Alpha>)
                 return PROPERTY_T { derived().thermalExpansion() };
+//            else if constexpr (std::same_as<PROPERTY_T, Eta>)
+//                return PROPERTY_T { 0.0 };
+//            else if constexpr (std::same_as<PROPERTY_T, Nu>)
+//                return PROPERTY_T { 0.0 };
+//            else if constexpr (std::same_as<PROPERTY_T, TC>)
+//                return PROPERTY_T { 0.0 };
+//            else if constexpr (std::same_as<PROPERTY_T, PR>)
+//                return PROPERTY_T { 0.0 };
+
             else
                 std::invoke([]<bool flag = false>() { static_assert(flag, "Invalid property"); });
         }

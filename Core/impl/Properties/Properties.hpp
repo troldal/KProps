@@ -98,7 +98,7 @@ namespace pcprops
 
             template<typename UNITS_T = MolarUnits>
                 requires std::same_as<UNITS_T, MolarUnits> || std::same_as<UNITS_T, MassUnits>
-            auto get() &&
+            auto as() &&
             {
                 if (!m_isValid) return std::make_tuple(PROPERTIES_T { std::nan("") }...);
                 return std::make_tuple(m_fluid.property<PROPERTIES_T, UNITS_T>()...);
@@ -107,7 +107,7 @@ namespace pcprops
             template<typename STRUCT_T, typename UNITS_T = MolarUnits>
                 requires(std::same_as<UNITS_T, MolarUnits> || std::same_as<UNITS_T, MassUnits>) && (!std::same_as<STRUCT_T, MolarUnits>) &&
                         (!std::same_as<STRUCT_T, MassUnits>)
-            STRUCT_T get() &&
+            STRUCT_T as() &&
             {
                 if (!m_isValid) {
                     auto result = std::make_tuple(PROPERTIES_T { std::nan("") }...);
@@ -120,7 +120,7 @@ namespace pcprops
 
             template<template<typename...> typename TUPLE_T, typename UNITS_T = MolarUnits>
                 requires detail::IsTuple<TUPLE_T<double, double>>    // Check if container is tuple-like
-            auto get() &&
+            auto as() &&
             {
                 if (!m_isValid) return TUPLE_T<PROPERTIES_T...> { PROPERTIES_T { std::nan("") }... };
 
@@ -129,7 +129,7 @@ namespace pcprops
 
             template<template<typename...> typename CONTAINER_T, typename UNITS_T = MolarUnits>    // typename VALUE_T = FLOAT>
                 requires detail::IsContainer<CONTAINER_T<FLOAT>>    // Check if container is a homogeneous container
-            auto get() &&
+            auto as() &&
             {
                 CONTAINER_T<FLOAT> container;
                 container.reserve(sizeof...(PROPERTIES_T));    // Optimize for number of elements

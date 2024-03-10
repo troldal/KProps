@@ -4,7 +4,10 @@
 
 #pragma once
 
-#include <KProps.hpp>
+//#include <KProps.hpp>
+#include <PropertyTypes.hpp>
+#include <MiscTypes.hpp>
+
 #include <memory>
 
 namespace pcprops

@@ -13,3 +13,5 @@
 
 #include "impl/Properties/Derivatives.hpp"
 #include "impl/Properties/Properties.hpp"
+#include "impl/Properties/Flash.hpp"
+#include "impl/Properties/FlashResults.hpp"

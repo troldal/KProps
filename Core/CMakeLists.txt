@@ -27,3 +27,9 @@ target_include_directories(KPropsCore INTERFACE $<BUILD_INTERFACE:${CMAKE_CURREN
 target_link_libraries(KPropsCore INTERFACE external numerixx::deriv)
 
 add_library(KProps::Core ALIAS KPropsCore)
+
+add_library(KPropsTypes INTERFACE)
+target_include_directories(KPropsTypes INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}>/impl/Types)
+target_link_libraries(KPropsTypes INTERFACE external)
+
+add_library(KProps::Types ALIAS KPropsTypes)

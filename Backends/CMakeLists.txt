@@ -23,7 +23,7 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 add_library(KPropsHEOS SHARED)
 target_sources(KPropsHEOS PUBLIC HEOS/impl/HEOS.cpp)
 target_include_directories(KPropsHEOS PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}>/HEOS)
-target_link_libraries(KPropsHEOS PRIVATE CoolProp KProps::Core)
+target_link_libraries(KPropsHEOS PUBLIC CoolProp KProps::Types)
 
 add_library(KProps::HEOS ALIAS KPropsHEOS)
 
@@ -32,6 +32,6 @@ add_library(KProps::HEOS ALIAS KPropsHEOS)
 #==============================================================================
 add_library(KPropsIF97 INTERFACE)
 target_include_directories(KPropsIF97 INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}>/IF97)
-target_link_libraries(KPropsIF97 INTERFACE KProps::Core CoolProp)
+target_link_libraries(KPropsIF97 INTERFACE KProps::Types CoolProp)
 
 add_library(KProps::IF97 ALIAS KPropsIF97)
