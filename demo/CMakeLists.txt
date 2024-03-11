@@ -6,10 +6,6 @@ project(KSteam.Demo)
 
 
 
-#=======================================================================================================================
-# Include the fmt library
-#=======================================================================================================================
-#add_subdirectory(fmt SYSTEM)
 
 add_library(FastCSV INTERFACE IMPORTED)
 target_include_directories(FastCSV SYSTEM INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/FastCSV/>)

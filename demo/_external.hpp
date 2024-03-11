@@ -5,6 +5,5 @@
 #pragma once
 #pragma system_header
 
-// #include <fmt/format.h>
 #include <csv.h>
 #include <sciplot/sciplot.hpp>

@@ -36,9 +36,7 @@ FetchContent_MakeAvailable(CoolProp)
 #==============================================================================
 # Add the XLSteam Core library
 #==============================================================================
-add_subdirectory(Core)
-add_subdirectory(Backends)
-#add_subdirectory(KSteam)
+add_subdirectory(KProps)
 
 option(KSTEAM_ENABLE_DEMOS "Enable demo programs" ${PROJECT_IS_TOP_LEVEL})
 if(KSTEAM_ENABLE_DEMOS)

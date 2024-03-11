@@ -122,5 +122,9 @@ int main()
     std::cout << "S         : " << propsString[7] << std::endl;
     std::cout << "U         : " << propsString[8] << std::endl;
 
+    std::cout << std::endl;
+
+    std::cout << results.property<MassUnits>("H") << std::endl;
+
     return EXIT_SUCCESS;
 }
