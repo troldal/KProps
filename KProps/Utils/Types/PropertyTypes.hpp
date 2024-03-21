@@ -517,6 +517,14 @@ namespace KProps
         return os;
     }
 
+ using Undefined            = fluent::NamedType<FLOAT,
+                                     struct UndefinedTag,
+                                     fluent::Printable,
+                                     fluent::Addable,
+                                     fluent::Subtractable,
+                                     fluent::Multiplicable,
+                                     fluent::ImplicitlyConvertibleTo<FLOAT>::templ>;
+
     /**
      * @concept IsProperty
      * @brief Ensures that a type is a valid property type.
@@ -536,7 +544,7 @@ namespace KProps
         std::same_as<PROPERTY, V> || std::same_as<PROPERTY, Cp> || std::same_as<PROPERTY, Cv> || std::same_as<PROPERTY, Kappa> ||
         std::same_as<PROPERTY, W> || std::same_as<PROPERTY, Z> || std::same_as<PROPERTY, X> || std::same_as<PROPERTY, Eta> ||
         std::same_as<PROPERTY, Nu> || std::same_as<PROPERTY, TC> || std::same_as<PROPERTY, PR> || std::same_as<PROPERTY, MW> ||
-        std::same_as<PROPERTY, Alpha> || std::same_as<PROPERTY, Phase>;
+        std::same_as<PROPERTY, Alpha> || std::same_as<PROPERTY, Phase>|| std::same_as<PROPERTY, Undefined>;
 
     /**
      * @concept IsSpecificationPT

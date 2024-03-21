@@ -11,24 +11,24 @@
 namespace KProps
 {
     class Property : public std::variant<KProps::T,
-                                          KProps::P,
-                                          KProps::H,
-                                          KProps::S,
-                                          KProps::U,
-                                          KProps::A,
-                                          KProps::G,
-                                          KProps::Rho,
-                                          KProps::V,
-                                          KProps::Cp,
-                                          KProps::Cv,
-                                          KProps::Kappa,
-                                          KProps::Alpha,
-                                          KProps::W,
-                                          KProps::Z,
-                                          KProps::X,
-                                          /*Eta, Nu, TC, PR,*/
-                                          KProps::MW,
-                                          KProps::Phase>
+                                         KProps::P,
+                                         KProps::H,
+                                         KProps::S,
+                                         KProps::U,
+                                         KProps::A,
+                                         KProps::G,
+                                         KProps::Rho,
+                                         KProps::V,
+                                         KProps::Cp,
+                                         KProps::Cv,
+                                         KProps::Kappa,
+                                         KProps::Alpha,
+                                         KProps::W,
+                                         KProps::Z,
+                                         KProps::X,
+                                         /*Eta, Nu, TC, PR,*/
+                                         KProps::MW,
+                                         KProps::Phase, KProps::Undefined>
     {
         using BASE = std::variant<KProps::T,
                                   KProps::P,
@@ -48,7 +48,7 @@ namespace KProps
                                   KProps::X,
                                   /*Eta, Nu, TC, PR,*/
                                   KProps::MW,
-                                  KProps::Phase>;
+                                  KProps::Phase, KProps::Undefined>;
 
     public:
         using BASE::BASE;
@@ -120,7 +120,7 @@ namespace KProps
 
             Phase = 17, /**< Phase (e.g., liquid, vapor, two-phase) */
 
-            Undefined = 99 /**< Placeholder for undefined or unknown properties */
+            Undefined = 18 /**< Placeholder for undefined or unknown properties */
         };
 
     private:
@@ -219,58 +219,57 @@ namespace KProps
                                                                              { Type::Undefined, "UNDEFINED" } } };
 
     public:
-
-        explicit Property(Type t) : BASE(T{0.0})
+        explicit Property(Type t) : BASE(T { 0.0 })
         {
             switch (t) {
                 case Type::T:
                     *this = T { 0.0 };
-                break;
+                    break;
                 case Type::P:
                     *this = P { 0.0 };
-                break;
+                    break;
                 case Type::H:
                     *this = H { 0.0 };
-                break;
+                    break;
                 case Type::S:
                     *this = S { 0.0 };
-                break;
+                    break;
                 case Type::U:
                     *this = U { 0.0 };
-                break;
+                    break;
                 case Type::A:
                     *this = A { 0.0 };
-                break;
+                    break;
                 case Type::G:
                     *this = G { 0.0 };
-                break;
+                    break;
                 case Type::Rho:
                     *this = Rho { 0.0 };
-                break;
+                    break;
                 case Type::V:
                     *this = V { 0.0 };
-                break;
+                    break;
                 case Type::Cp:
                     *this = Cp { 0.0 };
-                break;
+                    break;
                 case Type::Cv:
                     *this = Cv { 0.0 };
-                break;
+                    break;
                 case Type::Kappa:
                     *this = Kappa { 0.0 };
-                break;
+                    break;
                 case Type::Alpha:
                     *this = Alpha { 0.0 };
-                break;
+                    break;
                 case Type::W:
                     *this = W { 0.0 };
-                break;
+                    break;
                 case Type::Z:
                     *this = Z { 0.0 };
-                break;
+                    break;
                 case Type::X:
                     *this = X { 0.0 };
-                break;
+                    break;
                     //            case Property::Eta:
                     //                return Eta{0.0};
                     //            case Property::Nu:
@@ -281,9 +280,12 @@ namespace KProps
                     //                return PR{0.0};
                 case Type::MW:
                     *this = MW { 0.0 };
-                break;
+                    break;
                 case Type::Phase:
                     *this = Phase { Phase::Unknown };
+                    break;
+                case Type::Undefined:
+                    *this = Undefined { 0.0 };
                 break;
                 // Add more cases as needed
                 default:
@@ -291,31 +293,26 @@ namespace KProps
             }
         }
 
-        template <typename TYPE = Type>
-        requires std::same_as<TYPE, Type> || std::same_as<TYPE, std::string>
+        template<typename TYPE = Type>
+            requires std::same_as<TYPE, Type> || std::same_as<TYPE, std::string>
         auto type() const
         {
             if constexpr (std::same_as<TYPE, Type>)
                 return static_cast<Type>(index());
             else {
-                auto t = type<Type>();
-                auto it = std::find_if(TypeToString.begin(), TypeToString.end(), [=](const auto& pair) {
-                    return t == pair.first;
-                });
+                auto t  = type<Type>();
+                auto it = std::find_if(TypeToString.begin(), TypeToString.end(), [=](const auto& pair) { return t == pair.first; });
 
                 if (it != TypeToString.end())
                     return it->second;
                 else
                     return TypeToString.back().second;
-
             }
         }
 
         static Type typeFromString(const std::string& str)
         {
-            auto it = std::find_if(StringToType.begin(), StringToType.end(), [&](const auto& pair) {
-                return str == pair.first;
-            });
+            auto it = std::find_if(StringToType.begin(), StringToType.end(), [&](const auto& pair) { return str == pair.first; });
 
             if (it != StringToType.end())
                 return it->second;
@@ -323,15 +320,14 @@ namespace KProps
                 return Type::Undefined;
         }
 
-        static std::string typeAsString(Type type) {
-            auto it = std::find_if(TypeToString.begin(), TypeToString.end(), [=](const auto& pair) {
-                return type == pair.first;
-            });
+        static std::string typeAsString(Type type)
+        {
+            auto it = std::find_if(TypeToString.begin(), TypeToString.end(), [=](const auto& pair) { return type == pair.first; });
 
             if (it != TypeToString.end())
-                return std::string{it->second};
+                return std::string { it->second };
             else
-                return std::string{TypeToString.back().second};
+                return std::string { TypeToString.back().second };
         }
     };
 

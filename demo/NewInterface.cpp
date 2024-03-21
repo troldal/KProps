@@ -44,13 +44,18 @@ int main()
     std::cout << std::fixed << std::setprecision(20);
 
     auto water = FluidWrapper(HEOS("Water"));
-    // water.setState(P { 101325.0 }, T { 298.15 });
+    water.setState(P { 101325.0 }, T { 298.15 });
+
+    auto propsStatic = properties<Cp, Cv, P, T, V, Rho, H, S, U, X, Phase>(water).get<MyProps, MassUnits>();
+
+    auto val = property(water, "H");
 
     // auto results     = flash(water, P { 101325.0 }, T { 298.15 });
     // auto results     = flash(water, P { 101325.0 }, X { 0.5 });
     // auto results = flash(water, P { 101325.0 * 250 }, T { 700.0 });
-    auto results     = flash(water, P { 101325.0 }, T { 398.15 });
-    auto propsStatic = results.properties<Cp, Cv, P, T, V, Rho, H, S, U, X, Phase>().get<MyProps, MassUnits>();
+    // auto results     = flash(water, P { 101325.0 }, T { 398.15 });
+    // auto propsStatic = results.properties<Cp, Cv, P, T, V, Rho, H, S, U, X, Phase>().get<MyProps, MassUnits>();
+
 
     std::cout << "Cp        : " << propsStatic.cp << std::endl;
     std::cout << "Cv        : " << propsStatic.cv << std::endl;
@@ -66,18 +71,23 @@ int main()
 
     std::cout << std::endl;
 
-    auto propsStaticDeque = results.properties<Cp, Cv, P, T, V, Rho, H, S, U, X, Phase>().get<std::deque, MassUnits>();
+    //auto propsStaticDeque = results.properties<Cp, Cv, P, T, V, Rho, H, S, U, X, Phase>().get<std::deque, MassUnits>();
+    auto propsStaticDeque = properties<Cp, Cv, P, T, V, Rho, H, S, U, X, Phase>(water).get<std::deque, MassUnits>();
     for (auto prop : propsStaticDeque) printProperty(prop);
     std::cout << std::endl;
 
     using Type = Property::Type;
+    // auto propsDynamic =
+    //     results.properties({ Type::Cp, Type::Cv, Type::P, Type::T, Type::V, Type::Rho, Type::H, Type::S, Type::U, Type::X, Type::Phase, Type::Undefined })
+    //         .get<std::deque, MassUnits>();
     auto propsDynamic =
-        results.properties({ Type::Cp, Type::Cv, Type::P, Type::T, Type::V, Type::Rho, Type::H, Type::S, Type::U, Type::X, Type::Phase })
-            .get<std::deque, MassUnits>();
+    properties(water, { Type::Cp, Type::Cv, Type::P, Type::T, Type::V, Type::Rho, Type::H, Type::S, Type::U, Type::X, Type::Phase })
+        .get<std::deque, MassUnits>();
     for (auto prop : propsDynamic) printProperty(prop);
     std::cout << std::endl;
 
-    auto propsString = results.properties({ "Cp", "Cv", "P", "T", "V", "Rho", "H", "S", "U", "X", "PHASE" }).get<std::deque, MassUnits>();
+    //auto propsString = results.properties({ "Cp", "Cv", "P", "T", "V", "Rho", "H", "S", "U", "X", "PHASE", "UNDEFINED" }).get<std::deque, MassUnits>();
+    auto propsString = properties(water, { "Cp", "Cv", "P", "T", "V", "Rho", "H", "S", "U", "X", "PHASE" }).get<std::deque, MassUnits>();
     for (auto prop : propsString) printProperty(prop);
     std::cout << std::endl;
 

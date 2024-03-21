@@ -228,6 +228,8 @@ namespace KProps::detail
                 return PROPERTY_T { derived().thermalExpansion() };
             else if constexpr (std::same_as<PROPERTY_T, Phase>)
                 return PROPERTY_T { derived().phase() };
+            else if constexpr (std::same_as<PROPERTY_T, Undefined>)
+                return PROPERTY_T { std::nan("") };
             //            else if constexpr (std::same_as<PROPERTY_T, Eta>)
             //                return PROPERTY_T { 0.0 };
             //            else if constexpr (std::same_as<PROPERTY_T, Nu>)
