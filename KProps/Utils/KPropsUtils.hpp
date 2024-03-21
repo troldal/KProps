@@ -7,3 +7,4 @@
 #include "Config/Config.hpp"
 #include "Types/PropertyTypes.hpp"
 #include "Types/MiscTypes.hpp"
+#include "Types/Property.hpp"

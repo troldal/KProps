@@ -8,7 +8,7 @@
 
 #include <memory>
 
-namespace pcprops
+namespace KProps
 {
 
     class HEOS

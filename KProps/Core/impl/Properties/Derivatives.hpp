@@ -10,7 +10,7 @@
 
 #include <Deriv.hpp>
 
-namespace pcprops
+namespace KProps
 {
 
     template<typename T>

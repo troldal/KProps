@@ -7,7 +7,7 @@
 #include <AbstractState.h>
 #include <CoolProp.h>
 
-namespace pcprops
+namespace KProps
 {
 
     struct HEOS::impl
@@ -334,6 +334,7 @@ namespace pcprops
     double HEOS::minPressure() const { return m_impl->minPressure(); }
     double HEOS::maxTemperature() const { return m_impl->maxTemperature(); }
     double HEOS::maxPressure() const { return m_impl->maxPressure();}
+
     double HEOS::temperature() const { return m_impl->temperature(); }
     double HEOS::pressure() const { return m_impl->pressure();}
     double HEOS::vaporQuality() const { return m_impl->vaporQuality(); }
@@ -347,7 +348,19 @@ namespace pcprops
     double HEOS::compressibility() const { return m_impl->compressibility(); }
     double HEOS::cp() const { return m_impl->cp(); }
     double HEOS::cv() const { return m_impl->cv(); }
-    double HEOS::speedOfSound() const { return m_impl->speedOfSound(); }
+    double HEOS::speedOfSound() const
+    {
+        double result;
+
+        try {
+            result = m_impl->speedOfSound();
+        }
+        catch(...) {
+            result = std::nan("");
+        }
+
+        return result;
+    }
     double HEOS::isothermalCompressibility() const { return m_impl->isothermalCompressibility();}
     double HEOS::thermalExpansion() const { return m_impl->thermalExpansion();}
     double HEOS::saturationTemperature() const { return m_impl->saturationTemperature(); }

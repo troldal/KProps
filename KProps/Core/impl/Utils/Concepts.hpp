@@ -8,7 +8,7 @@
 
 #include <tuple>
 
-namespace pcprops::detail
+namespace KProps::detail
 {
 
     // Concept to check for tuple-like types

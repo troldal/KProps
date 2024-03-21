@@ -30,18 +30,18 @@ using namespace sciplot;
 namespace rng = std::ranges;
 
 namespace ks = KSteam;
-namespace pc = pcprops;
+namespace kp = KProps;
 
 struct MyProps
 {
-    pc::P   p { 0.0 };
-    pc::T   t { 0.0 };
-    pc::X   x { 0.0 };
-    pc::V   v { 0.0 };
-    pc::Rho rho { 0.0 };
-    pc::H   h { 0.0 };
-    pc::S   s { 0.0 };
-    pc::U   u { 0.0 };
+    kp::P   p { 0.0 };
+    kp::T   t { 0.0 };
+    kp::X   x { 0.0 };
+    kp::V   v { 0.0 };
+    kp::Rho rho { 0.0 };
+    kp::H   h { 0.0 };
+    kp::S   s { 0.0 };
+    kp::U   u { 0.0 };
 };
 
 void printHeader()
@@ -82,7 +82,7 @@ void printProps(const MyProps& props, const std::string& spec)
 template<typename T1, typename T2>
 void computeProps(auto& fluid, MyProps& props, const T1& prop1, const T2& prop2, const std::string& spec)
 {
-    using namespace pcprops;
+    using namespace KProps;
 
     std::cout << std::fixed << std::setprecision(20);
 
@@ -115,7 +115,7 @@ void computeProps(auto& fluid, MyProps& props, const T1& prop1, const T2& prop2,
 
 int main()
 {
-    using namespace pcprops;
+    using namespace KProps;
 
     std::cout << std::fixed << std::setprecision(20);
 

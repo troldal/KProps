@@ -9,7 +9,7 @@
 #include <memory>
 #include <utility>
 
-namespace pcprops
+namespace KProps
 {
     // clang-format off
     class IFluid : public detail::FluidProtocol<IFluid>
@@ -19,7 +19,7 @@ namespace pcprops
 
     public:
         template<typename IMPL>
-        IFluid(IMPL fluid) : m_pimpl(std::make_unique<Model<IMPL>>(std::move(fluid))) {}
+        IFluid(IMPL fluid) : m_pimpl(std::make_unique<Model<IMPL>>(std::move(fluid))) {} // NOLINT
 
         IFluid(IFluid const& other) : m_pimpl(other.m_pimpl->clone()) {}
 
@@ -73,7 +73,7 @@ namespace pcprops
         [[nodiscard]] Alpha thermalExpansion() const { return m_pimpl->thermalExpansion(); }
         [[nodiscard]] T     saturationTemperature() const { return m_pimpl->saturationTemperature(); }
         [[nodiscard]] P     saturationPressure() const { return m_pimpl->saturationPressure(); }
-        [[nodiscard]] Phase phase_impl() const { return m_pimpl->phase_impl(); }
+        [[nodiscard]] Phase phase() const { return m_pimpl->phase(); }
 
         // Trivial properties (required)
         [[nodiscard]] T criticalTemperature() const { return m_pimpl->criticalTemperature(); }
@@ -127,7 +127,7 @@ namespace pcprops
             [[nodiscard]] virtual Alpha thermalExpansion() const          = 0;
             [[nodiscard]] virtual T saturationTemperature() const         = 0;
             [[nodiscard]] virtual P saturationPressure() const            = 0;
-            [[nodiscard]] virtual Phase phase_impl() const                = 0;
+            [[nodiscard]] virtual Phase phase() const                = 0;
 
             // Trivial properties
             [[nodiscard]] virtual T criticalTemperature() const     = 0;
@@ -186,7 +186,7 @@ namespace pcprops
             [[nodiscard]] Alpha thermalExpansion() const override { return m_fluid.template property<Alpha>(); }
             [[nodiscard]] T saturationTemperature() const override { return m_fluid.template saturation<T>(); }
             [[nodiscard]] P saturationPressure() const override { return m_fluid.template saturation<P>(); }
-            [[nodiscard]] Phase phase_impl() const override { return m_fluid.phase(); }
+            [[nodiscard]] Phase phase() const override { return m_fluid.template property<Phase>(); }
 
             // Trivial properties
             [[nodiscard]] T criticalTemperature() const override { return m_fluid.template critical<T>(); }

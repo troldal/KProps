@@ -9,7 +9,7 @@
 #include <KProps.hpp>
 #include <memory>
 
-namespace pcprops
+namespace KProps
 {
 
     class IF97Backend

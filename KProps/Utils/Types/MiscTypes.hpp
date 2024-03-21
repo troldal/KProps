@@ -4,7 +4,7 @@
 
 #pragma once
 
-namespace pcprops
+namespace KProps
 {
     struct MolarUnits
     {
@@ -23,14 +23,6 @@ namespace pcprops
     {
     };
 
-    enum class Phase
-    {
-        Liquid,
-        Gas,
-        TwoPhase,
-        Critical,
-        Supercritical,
-        Unknown
-    };
+
 
 }    // namespace pcprops
