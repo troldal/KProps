@@ -12,7 +12,6 @@
 
 #include "../Utils/Concepts.hpp"
 
-
 namespace KProps::detail
 {
 
@@ -30,9 +29,9 @@ namespace KProps::detail
     PROPERTY_T makeDefault()
     {
         if constexpr (std::same_as<PROPERTY_T, Phase>)
-            return Phase::Unknown;
+            return Phase::State::Unknown;
         else
-            return PROPERTY_T{std::nan("")};
+            return PROPERTY_T { std::nan("") };
     }
 
     /**
@@ -96,26 +95,25 @@ namespace KProps::detail
     template<typename DERIVED>
     class PropertiesBase
     {
-        friend DERIVED; ///< Grants access to the derived class, allowing it to utilize protected members of this base class.
+        friend DERIVED;    ///< Grants access to the derived class, allowing it to utilize protected members of this base class.
 
-        IFluid m_fluid; ///< Encapsulated fluid object, representing the fluid associated with this set of properties.
+        IFluid m_fluid;    ///< Encapsulated fluid object, representing the fluid associated with this set of properties.
 
     protected:
-        ~PropertiesBase() = default; ///< Default destructor to ensure proper cleanup and resource management.
+        ~PropertiesBase() = default;    ///< Default destructor to ensure proper cleanup and resource management.
 
     public:
-
         /**
          * @brief Constructs a PropertiesBase instance with an associated fluid object.
          * @param fluid The fluid object to be associated with this instance, enabling property queries and manipulations.
          */
-        explicit PropertiesBase(IFluid fluid) : m_fluid { std::move(fluid) }{}
+        explicit PropertiesBase(IFluid fluid) : m_fluid { std::move(fluid) } {}
 
-        PropertiesBase(const PropertiesBase&)     = delete; ///< Deleted copy constructor.
-        PropertiesBase(PropertiesBase&&) noexcept = delete; ///< Deleted move constructor.
+        PropertiesBase(const PropertiesBase&)     = delete;    ///< Deleted copy constructor.
+        PropertiesBase(PropertiesBase&&) noexcept = delete;    ///< Deleted move constructor.
 
-        PropertiesBase& operator=(const PropertiesBase&)     = delete; ///< Deleted copy assignment operator.
-        PropertiesBase& operator=(PropertiesBase&&) noexcept = delete; ///< Deleted move assignment operator.
+        PropertiesBase& operator=(const PropertiesBase&)     = delete;    ///< Deleted copy assignment operator.
+        PropertiesBase& operator=(PropertiesBase&&) noexcept = delete;    ///< Deleted move assignment operator.
     };
 
     /**
@@ -135,7 +133,7 @@ namespace KProps::detail
         using BASE = PropertiesBase<StaticProperties<PROPERTIES_T...>>;
 
     public:
-        using BASE::BASE; // Inherit constructor from PropertiesBase.
+        using BASE::BASE;    // Inherit constructor from PropertiesBase.
 
         /**
          * @brief Retrieves the specified properties in a tuple, using the specified unit system.
@@ -251,7 +249,7 @@ namespace KProps::detail
         {
             CONTAINER_T<Property> container;
             // Adjust the container's size upfront, which might lead to default initialization of elements
-            container.resize(sizeof...(PROPERTIES_T), T{std::nan("")});
+            container.resize(sizeof...(PROPERTIES_T), T { std::nan("") });
 
             // Since direct emplacement is not ideal after resize (due to default initialization),
             // we should assign the values. Assuming we can iterate and assign:
@@ -273,24 +271,36 @@ namespace KProps::detail
      * @tparam TYPE The type of property identifiers stored in this class, typically a variant or enumeration that represents
      * different possible fluid properties.
      */
-    template<typename TYPE>
-    requires std::same_as<TYPE, Property::Type> || std::same_as<TYPE, std::string>
-    class DynamicProperties : public PropertiesBase<DynamicProperties<TYPE>>
+    // template<typename TYPE>
+    // requires std::same_as<TYPE, Property::Type> || std::same_as<TYPE, std::string>
+    class DynamicProperties : public PropertiesBase<DynamicProperties>
     {
-        using BASE = PropertiesBase<DynamicProperties<TYPE>>;
+        using BASE = PropertiesBase<DynamicProperties>;
 
-        std::vector<TYPE> m_properties { }; ///< A vector of property identifiers for dynamic querying.
+        std::vector<Property::Type> m_properties {};    ///< A vector of property identifiers for dynamic querying.
 
     public:
-
         /**
          * @brief Constructs a `DynamicProperties` instance with an associated fluid object and a collection of property identifiers.
          *
          * @param fluid The fluid object to which the dynamic properties pertain.
          * @param properties A vector of property identifiers specifying which properties are to be dynamically queried.
          */
-        explicit DynamicProperties(IFluid fluid, std::vector<TYPE> properties)
-            : BASE (std::move(fluid)) , m_properties {std::move( properties )} {}
+
+        DynamicProperties(IFluid fluid, std::vector<Property::Type> properties)
+            : BASE(std::move(fluid)),
+              m_properties { std::move(properties) }
+        {}
+
+        DynamicProperties(IFluid fluid, std::vector<std::string> properties)
+            : BASE(std::move(fluid)),
+              m_properties { [&] {
+                  std::vector<Property::Type> result;
+                  result.reserve(properties.size());
+                  for (const auto& prop : properties) result.emplace_back(Property::typeFromString(prop));
+                  return result;
+              }() }
+        {}
 
         /**
          * @brief Retrieves the specified properties in a user-defined, homogeneous container.
@@ -317,13 +327,14 @@ namespace KProps::detail
         auto get() &&
         {
             CONTAINER_T<Property> container;
-            container.resize(m_properties.size(), T{std::nan("")});    // Optimize for number of elements
+            container.resize(m_properties.size(), T { std::nan("") });    // Optimize for number of elements
 
-            std::transform(m_properties.begin(), m_properties.end(), container.begin(),
-                           [this](auto prop) { return BASE::m_fluid.template property<UNITS_T>(prop); });
+            std::transform(m_properties.begin(), m_properties.end(), container.begin(), [this](auto prop) {
+                return m_fluid.property<UNITS_T>(prop);
+            });
 
             return container;
         }
     };
 
-}    // namespace pcprops
+}    // namespace KProps::detail

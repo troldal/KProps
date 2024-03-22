@@ -230,6 +230,8 @@ namespace KProps::detail
                 return PROPERTY_T { derived().phase() };
             else if constexpr (std::same_as<PROPERTY_T, Undefined>)
                 return PROPERTY_T { std::nan("") };
+            else if constexpr (std::same_as<PROPERTY_T, Unknown>)
+                return PROPERTY_T { std::nan("") };
             //            else if constexpr (std::same_as<PROPERTY_T, Eta>)
             //                return PROPERTY_T { 0.0 };
             //            else if constexpr (std::same_as<PROPERTY_T, Nu>)
@@ -275,17 +277,60 @@ namespace KProps::detail
          */
         template<typename UNITS_T = MolarUnits>
         [[nodiscard]]
-        auto property(Property::Type prop) const
+        Property property(Property::Type prop) const
         {
-            Property var(prop);
-            std::visit(
-                [&]<typename ARGUMENT>(ARGUMENT&& arg) {
-                    using PROPERTY_T = std::decay_t<decltype(arg)>;
-                    var = property<PROPERTY_T, UNITS_T>();
-                },
-                var);
+            auto phase = property<Phase>();
 
-            return var;
+            switch (prop) {
+                case Property::Type::T:
+                    return property<T, UNITS_T>();
+                case Property::Type::P:
+                    return property<P, UNITS_T>();
+                case Property::Type::H:
+                    return property<H, UNITS_T>();
+                case Property::Type::S:
+                    return property<S, UNITS_T>();
+                case Property::Type::U:
+                    return property<U, UNITS_T>();
+                case Property::Type::A:
+                    return property<A, UNITS_T>();
+                case Property::Type::G:
+                    return property<G, UNITS_T>();
+                case Property::Type::Rho:
+                    return property<Rho, UNITS_T>();
+                case Property::Type::V:
+                    return property<V, UNITS_T>();
+                case Property::Type::Cp:
+                    return property<Cp, UNITS_T>();
+                case Property::Type::Cv:
+                    return property<Cv, UNITS_T>();
+                case Property::Type::Kappa:
+                    return phase.state() != Phase::State::TwoPhase ? Property { property<Kappa, UNITS_T>() }
+                                                                  : Property { property<Undefined, UNITS_T>() };
+                case Property::Type::Alpha:
+                    return phase.state() != Phase::State::TwoPhase ? Property { property<Alpha, UNITS_T>() }
+                                                                  : Property { property<Undefined, UNITS_T>() };
+                case Property::Type::W:
+                    return phase.state() != Phase::State::TwoPhase ? Property { property<W, UNITS_T>() }
+                                                                  : Property { property<Undefined, UNITS_T>() };
+                case Property::Type::Z:
+                    return phase.state() != Phase::State::TwoPhase ? Property { property<Z, UNITS_T>() }
+                                                                  : Property { property<Undefined, UNITS_T>() };
+                case Property::Type::X:
+                    return phase.state() != Phase::State::Critical && phase.state() != Phase::State::Supercritical
+                               ? Property { property<X, UNITS_T>() }
+                               : Property { property<Undefined, UNITS_T>() };
+                case Property::Type::MW:
+                    return property<MW, UNITS_T>();
+                case Property::Type::Phase:
+                    return phase;
+                case Property::Type::Undefined:
+                    return property<Undefined, UNITS_T>();
+                case Property::Type::Unknown:
+                    return property<Unknown, UNITS_T>();
+                default:
+                    throw std::runtime_error("Invalid property type");
+            }
         }
 
         /**
@@ -471,4 +516,4 @@ namespace KProps::detail
         }
     };
 
-}    // namespace pcprops::detail
+}    // namespace KProps::detail

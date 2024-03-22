@@ -231,18 +231,18 @@ namespace KProps
             switch (m_state->phase()) {
                 case CoolProp::iphase_liquid:
                 case CoolProp::iphase_supercritical_liquid:
-                    return Phase::Liquid;
+                    return Phase{Phase::State::Liquid};
                 case CoolProp::iphase_gas:
                 case CoolProp::iphase_supercritical_gas:
-                    return Phase::Gas;
+                    return Phase{Phase::State::Gas};
                 case CoolProp::iphase_twophase:
-                    return Phase::TwoPhase;
+                    return Phase{Phase::State::TwoPhase};
                 case CoolProp::iphase_critical_point:
-                    return Phase::Critical;
+                    return Phase{Phase::State::Critical};
                 case CoolProp::iphase_supercritical:
-                    return Phase::Supercritical;
+                    return Phase{Phase::State::Supercritical};
                 default:
-                    return Phase::Unknown;
+                    return Phase{Phase::State::Unknown};
             }
         }
 

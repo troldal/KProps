@@ -27,7 +27,7 @@ struct MyProps
     kp::S     s { 0.0 };
     kp::U     u { 0.0 };
     kp::X     x { 0.0 };
-    kp::Phase phase { kp::Phase::Unknown };
+    kp::Phase phase { kp::Phase::State::Unknown };
 };
 
 void printProperty(kp::Property prop)
@@ -44,7 +44,10 @@ int main()
     std::cout << std::fixed << std::setprecision(20);
 
     auto water = FluidWrapper(HEOS("Water"));
-    water.setState(P { 101325.0 }, T { 298.15 });
+    //water.setState(P { 101325.0 }, T { 298.15 });
+    water.setState(P { 101325.0 }, X { 1.0 });
+    //water.setState(P { 101325.0 * 250 }, T { 700.0 });
+    // water.setState(P { 101325.0 }, T { 398.15 });
 
     auto propsStatic = properties<Cp, Cv, P, T, V, Rho, H, S, U, X, Phase>(water).get<MyProps, MassUnits>();
 

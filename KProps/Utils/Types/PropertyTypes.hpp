@@ -454,76 +454,130 @@ namespace KProps
                                             fluent::ImplicitlyConvertibleTo<FLOAT>::templ>;
     using PrandtlNumber = PR;
 
-    /**
-     * @enum Phase
-     * @brief Enumerates the possible phases of matter in the context of thermodynamics.
-     *
-     * The Phase enum class provides a list of possible states or phases of matter that are commonly used
-     * in thermodynamics and fluid dynamics calculations. It includes Liquid, Gas, TwoPhase (representing a mixture of liquid and gas),
-     * Critical (representing the critical point at which the liquid and gas phases become indistinguishable),
-     * Supercritical (representing a state of matter beyond the critical point), and Unknown (representing an undefined or unknown phase).
-     *
-     * The use of this enum within the fluid dynamics framework ensures a standardized approach to phase
-     * specification, enhancing code readability, maintainability, and interoperability among different
-     * components and derived class implementations.
-     */
-    enum class Phase { Liquid, Gas, TwoPhase, Critical, Supercritical, Unknown };
-
-    /**
-     * @fn std::string phaseToString(Phase phase)
-     * @brief Converts a Phase enum value to a corresponding string representation.
-     *
-     * This function takes a Phase enum value as input and returns a string that represents the same phase.
-     * It supports all possible phases of matter defined in the Phase enum, including Liquid, Gas, TwoPhase,
-     * Critical, and Supercritical. If the input phase does not match any of these, the function returns "UNKNOWN".
-     *
-     * @param phase The Phase enum value to be converted to a string.
-     * @return A string representing the input phase. If the input phase does not correspond to a known phase, the function returns
-     * "UNKNOWN".
-     */
-    inline std::string phaseToString(Phase phase)
+    class Phase
     {
-        switch (phase) {
-            case Phase::Liquid:
-                return "LIQUID";
-            case Phase::Gas:
-                return "GAS";
-            case Phase::TwoPhase:
-                return "TWOPHASE";
-            case Phase::Critical:
-                return "CRITICAL";
-            case Phase::Supercritical:
-                return "SUPERCRITICAL";
-            default:
-                return "UNKNOWN";
+        static constexpr std::string_view strLiquid        = "LIQUID";
+        static constexpr std::string_view strGas           = "GAS";
+        static constexpr std::string_view strTwoPhase      = "TWOPHASE";
+        static constexpr std::string_view strCritical      = "CRITICAL";
+        static constexpr std::string_view strSupercritical = "SUPERCRITICAL";
+        static constexpr std::string_view strUnknown       = "UNKNOWN";
+
+    public:
+        enum class State { Liquid, Gas, TwoPhase, Critical, Supercritical, Unknown };
+
+        explicit Phase(State state) : m_state(state) {}
+
+        explicit Phase(std::string state)
+        {
+            std::transform(state.begin(), state.end(), state.begin(), ::toupper);
+
+            if (state == "LIQUID") {
+                m_state = State::Liquid;
+            }
+            else if (state == "GAS") {
+                m_state = State::Gas;
+            }
+            else if (state == "TWOPHASE") {
+                m_state = State::TwoPhase;
+            }
+            else if (state == "CRITICAL") {
+                m_state = State::Critical;
+            }
+            else if (state == "SUPERCRITICAL") {
+                m_state = State::Supercritical;
+            }
+            else {
+                m_state = State::Unknown;
+            }
         }
-    }
 
-    /**
-     * @fn std::ostream& operator<<(std::ostream& os, Phase phase)
-     * @brief Overloads the stream insertion operator for the Phase enum.
-     *
-     * This function overloads the stream insertion operator (<<) to enable direct output of Phase enum values
-     * to an output stream (such as std::cout or an std::ofstream). It uses the phaseToString function to convert
-     * the Phase enum value to a string representation, which is then inserted into the output stream.
-     *
-     * @param os The output stream where the Phase string representation will be inserted.
-     * @param phase The Phase enum value to be output.
-     * @return The same output stream passed as input, allowing for chaining of output operations.
-     */
-    inline std::ostream& operator<<(std::ostream& os, Phase phase)
+        template<typename TYPE = State>
+            requires std::same_as<TYPE, State> || std::same_as<TYPE, std::string>
+        [[nodiscard]]
+        TYPE state() const
+        {
+            if constexpr (std::same_as<TYPE, State>)
+                return m_state;
+            else {
+                switch (m_state) {
+                    case State::Liquid:
+                        return "LIQUID";
+                    case State::Gas:
+                        return "GAS";
+                    case State::TwoPhase:
+                        return "TWOPHASE";
+                    case State::Critical:
+                        return "CRITICAL";
+                    case State::Supercritical:
+                        return "SUPERCRITICAL";
+                    default:
+                        return "UNKNOWN";
+                }
+            }
+        }
+
+        operator const char*() const
+        {
+            switch (m_state) {
+                case State::Liquid:
+                    return strLiquid.data();
+                case State::Gas:
+                    return strGas.data();
+                case State::TwoPhase:
+                    return strTwoPhase.data();
+                case State::Critical:
+                    return strCritical.data();
+                case State::Supercritical:
+                    return strSupercritical.data();
+                default:
+                    return strUnknown.data();
+            }
+        }
+
+        operator std::string() const
+        {
+            switch (m_state) {
+                case State::Liquid:
+                    return std::string { strLiquid };
+                case State::Gas:
+                    return std::string { strGas };
+                case State::TwoPhase:
+                    return std::string { strTwoPhase };
+                case State::Critical:
+                    return std::string { strCritical };
+                case State::Supercritical:
+                    return std::string { strSupercritical };
+                default:
+                    return std::string { strUnknown };
+            }
+        }
+
+    private:
+        State m_state { State::Unknown };
+    };
+
+    inline std::ostream& operator<<(std::ostream& os, const Phase& phase)
     {
-        os << phaseToString(phase);
+        os << phase.state<std::string>();
         return os;
     }
 
- using Undefined            = fluent::NamedType<FLOAT,
-                                     struct UndefinedTag,
-                                     fluent::Printable,
-                                     fluent::Addable,
-                                     fluent::Subtractable,
-                                     fluent::Multiplicable,
-                                     fluent::ImplicitlyConvertibleTo<FLOAT>::templ>;
+    using Undefined = fluent::NamedType<FLOAT,
+                                        struct UndefinedTag,
+                                        fluent::Printable,
+                                        fluent::Addable,
+                                        fluent::Subtractable,
+                                        fluent::Multiplicable,
+                                        fluent::ImplicitlyConvertibleTo<FLOAT>::templ>;
+
+    using Unknown = fluent::NamedType<FLOAT,
+                                      struct UnknownTag,
+                                      fluent::Printable,
+                                      fluent::Addable,
+                                      fluent::Subtractable,
+                                      fluent::Multiplicable,
+                                      fluent::ImplicitlyConvertibleTo<FLOAT>::templ>;
 
     /**
      * @concept IsProperty
@@ -544,7 +598,8 @@ namespace KProps
         std::same_as<PROPERTY, V> || std::same_as<PROPERTY, Cp> || std::same_as<PROPERTY, Cv> || std::same_as<PROPERTY, Kappa> ||
         std::same_as<PROPERTY, W> || std::same_as<PROPERTY, Z> || std::same_as<PROPERTY, X> || std::same_as<PROPERTY, Eta> ||
         std::same_as<PROPERTY, Nu> || std::same_as<PROPERTY, TC> || std::same_as<PROPERTY, PR> || std::same_as<PROPERTY, MW> ||
-        std::same_as<PROPERTY, Alpha> || std::same_as<PROPERTY, Phase>|| std::same_as<PROPERTY, Undefined>;
+        std::same_as<PROPERTY, Alpha> || std::same_as<PROPERTY, Phase> || std::same_as<PROPERTY, Undefined> ||
+        std::same_as<PROPERTY, Unknown>;
 
     /**
      * @concept IsSpecificationPT

@@ -94,6 +94,12 @@ namespace KProps
             }
             else
                 []<bool flag = false> { static_assert(flag, "Invalid specification pair."); }();
+
+            if (vaporQuality() > 0.0 && vaporQuality() <= 0.0 + EPS)
+                setStatePX(P {pressure()}, X { 0.0 });
+
+            if (vaporQuality() >= 1.0 - EPS && vaporQuality() < 1.0)
+                setStatePX(P {pressure()}, X { 1.0 });
         }
 
         double twoPhaseProperty(auto func) const
@@ -222,18 +228,20 @@ namespace KProps
             switch (m_state->phase()) {
                 case CoolProp::iphase_liquid:
                 case CoolProp::iphase_supercritical_liquid:
-                    return Phase::Liquid;
+                    return Phase{Phase::State::Liquid};
                 case CoolProp::iphase_gas:
                 case CoolProp::iphase_supercritical_gas:
-                    return Phase::Gas;
+                    return Phase{Phase::State::Gas};
                 case CoolProp::iphase_twophase:
-                    return Phase::TwoPhase;
+                    if (vaporQuality() <= 0.0 + EPS) return Phase{Phase::State::Liquid};
+                    if (vaporQuality() >= 1.0 - EPS) return Phase{Phase::State::Gas};
+                    return Phase{Phase::State::TwoPhase};
                 case CoolProp::iphase_critical_point:
-                    return Phase::Critical;
+                    return Phase{Phase::State::Critical};
                 case CoolProp::iphase_supercritical:
-                    return Phase::Supercritical;
+                    return Phase{Phase::State::Supercritical};
                 default:
-                    return Phase::Unknown;
+                    return Phase{Phase::State::Unknown};
             }
         }
 

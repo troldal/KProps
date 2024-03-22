@@ -28,7 +28,9 @@ namespace KProps
                                          KProps::X,
                                          /*Eta, Nu, TC, PR,*/
                                          KProps::MW,
-                                         KProps::Phase, KProps::Undefined>
+                                         KProps::Phase,
+                                         KProps::Undefined,
+                                         KProps::Unknown>
     {
         using BASE = std::variant<KProps::T,
                                   KProps::P,
@@ -48,7 +50,9 @@ namespace KProps
                                   KProps::X,
                                   /*Eta, Nu, TC, PR,*/
                                   KProps::MW,
-                                  KProps::Phase, KProps::Undefined>;
+                                  KProps::Phase,
+                                  KProps::Undefined,
+                                  KProps::Unknown>;
 
     public:
         using BASE::BASE;
@@ -120,7 +124,9 @@ namespace KProps
 
             Phase = 17, /**< Phase (e.g., liquid, vapor, two-phase) */
 
-            Undefined = 18 /**< Placeholder for undefined or unknown properties */
+            Undefined = 18, /**< Placeholder for undefined properties */
+
+            Unknown = 19 /**< Placeholder for unknown properties */
         };
 
     private:
@@ -181,7 +187,7 @@ namespace KProps
 
         using TypeToStringPair = std::pair<Type, std::string_view>;
 
-        static constexpr std::array<TypeToStringPair, 44> TypeToString = { { // Basic properties
+        static constexpr std::array<TypeToStringPair, 20> TypeToString = { { // Basic properties
                                                                              { Type::T, "T" },
                                                                              { Type::P, "P" },
                                                                              { Type::H, "H" },
@@ -216,12 +222,13 @@ namespace KProps
                                                                              { Type::MW, "MW" },
                                                                              { Type::Phase, "PHASE" },
                                                                              // Unknown or undefined property
-                                                                             { Type::Undefined, "UNDEFINED" } } };
+                                                                             { Type::Undefined, "UNDEFINED" },
+                                                                             { Type::Unknown, "UNKNOWN" } } };
 
     public:
-        explicit Property(Type t) : BASE(T { 0.0 })
+        explicit Property(Type type) : BASE(T { 0.0 })
         {
-            switch (t) {
+            switch (type) {
                 case Type::T:
                     *this = T { 0.0 };
                     break;
@@ -282,19 +289,25 @@ namespace KProps
                     *this = MW { 0.0 };
                     break;
                 case Type::Phase:
-                    *this = Phase { Phase::Unknown };
+                    *this = Phase { Phase::State::Unknown };
                     break;
                 case Type::Undefined:
-                    *this = Undefined { 0.0 };
-                break;
+                    *this = Undefined { std::nan("") };
+                    break;
+                case Type::Unknown:
+                    *this = Unknown { std::nan("") };
+                    break;
                 // Add more cases as needed
                 default:
                     throw std::invalid_argument("Unsupported property");
             }
         }
 
+        explicit Property(const std::string& str) : Property(typeFromString(str)) {}
+
         template<typename TYPE = Type>
             requires std::same_as<TYPE, Type> || std::same_as<TYPE, std::string>
+        [[nodiscard]]
         auto type() const
         {
             if constexpr (std::same_as<TYPE, Type>)
@@ -310,17 +323,20 @@ namespace KProps
             }
         }
 
-        static Type typeFromString(const std::string& str)
+        static Type typeFromString(std::string str)
         {
+            if (str.empty()) return Type::Unknown;
+
+            std::transform(str.begin(), str.end(), str.begin(), ::toupper);
             auto it = std::find_if(StringToType.begin(), StringToType.end(), [&](const auto& pair) { return str == pair.first; });
 
             if (it != StringToType.end())
                 return it->second;
             else
-                return Type::Undefined;
+                return Type::Unknown;
         }
 
-        static std::string typeAsString(Type type)
+        static std::string typeToString(Type type)
         {
             auto it = std::find_if(TypeToString.begin(), TypeToString.end(), [=](const auto& pair) { return type == pair.first; });
 

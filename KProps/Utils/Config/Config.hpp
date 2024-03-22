@@ -46,7 +46,7 @@ namespace KProps
     /**
      * @brief The EPS constant defines the precision used in the calculations.
      */
-    constexpr FLOAT EPS = 1.0E-8;
+    constexpr FLOAT EPS = 1.0E-6;
 
     /**
      * @brief The MAXITER constant defines the maximum number of iterations used in the calculations.
