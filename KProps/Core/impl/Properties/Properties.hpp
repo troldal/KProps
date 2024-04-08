@@ -111,7 +111,7 @@ namespace KProps
      *
      * @return An instance of `DynamicProperties`, designed for flexible access to a runtime-specified set of properties.
      */
-    auto properties(const IFluid& model, std::initializer_list<Property::Type> proplist)    // NOLINT
+    inline auto properties(const IFluid& model, std::initializer_list<Property::Type> proplist)    // NOLINT
     {
         return detail::DynamicProperties(model, std::vector(proplist.begin(), proplist.end()));
     }
@@ -143,7 +143,7 @@ namespace KProps
      *
      * @return An instance of `DynamicProperties`, enabling flexible access to properties specified by string identifiers.
      */
-    auto properties(const IFluid& model, std::initializer_list<std::string> proplist)    // NOLINT
+    inline auto properties(const IFluid& model, std::initializer_list<std::string> proplist)    // NOLINT
     {
         return detail::DynamicProperties(model, std::vector(proplist.begin(), proplist.end()));
     }
