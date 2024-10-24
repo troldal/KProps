@@ -40,6 +40,9 @@ namespace KProps
         [[nodiscard]] double minPressure() const;
         [[nodiscard]] double maxTemperature() const;
         [[nodiscard]] double maxPressure() const;
+        [[nodiscard]] double tripleTemperature() const;
+        [[nodiscard]] double triplePressure() const;
+
 
         // Required property functions
         [[nodiscard]] double temperature() const;
@@ -65,6 +68,11 @@ namespace KProps
         [[nodiscard]] double saturationTemperature() const;
         [[nodiscard]] double saturationPressure() const;
         [[nodiscard]] Phase phase() const;
+        [[nodiscard]] double dynamicViscosity() const;
+        [[nodiscard]] double kinematicViscosity() const;
+        [[nodiscard]] double thermalConductivity() const;
+        [[nodiscard]] double prandtlNumber() const;
+
 
         explicit HEOS(const std::string& fluidName);
 

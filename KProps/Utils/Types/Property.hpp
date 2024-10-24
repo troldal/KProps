@@ -28,7 +28,10 @@ namespace KProps
                                          KProps::W,
                                          KProps::Z,
                                          KProps::X,
-                                         /*Eta, Nu, TC, PR,*/
+                                         KProps::Eta,
+                                         KProps::Nu,
+                                         KProps::TC,
+                                         KProps::PR,
                                          KProps::MW,
                                          KProps::Phase,
                                          KProps::Undefined,
@@ -50,7 +53,10 @@ namespace KProps
                                   KProps::W,
                                   KProps::Z,
                                   KProps::X,
-                                  /*Eta, Nu, TC, PR,*/
+                                  KProps::Eta,
+                                  KProps::Nu,
+                                  KProps::TC,
+                                  KProps::PR,
                                   KProps::MW,
                                   KProps::Phase,
                                   KProps::Undefined,
@@ -108,35 +114,55 @@ namespace KProps
             Q            = 15, /**< Vapor Quality (synonymous with X) */
             VaporQuality = 15, /**< Vapor Quality (synonymous with X and Q) */
 
-            //             Eta              = 16, /**< Dynamic Viscosity */
-            //             DynamicViscosity = 16, /**< Dynamic Viscosity (synonymous with Eta) */
-            //
-            //             Nu                 = 17, /**< Kinematic Viscosity */
-            //             KinematicViscosity = 17, /**< Kinematic Viscosity (synonymous with Nu) */
-            //
-            //             TC                  = 18, /**< Thermal Conductivity */
-            //             ThermalConductivity = 18, /**< Thermal Conductivity (synonymous with TC) */
-            //
-            //             PR            = 19, /**< Prandtl Number */
-            //             PrandtlNumber = 19, /**< Prandtl Number (synonymous with PR) */
+            Eta              = 16, /**< Dynamic Viscosity */
+            DynamicViscosity = 16, /**< Dynamic Viscosity (synonymous with Eta) */
 
-            MW              = 16, /**< Molecular Weight */
-            MolecularWeight = 16, /**< Molecular Weight (synonymous with MW) */
-            MolarMass       = 16, /**< Molecular Weight (synonymous with MW and MolecularWeight) */
+            Nu                 = 17, /**< Kinematic Viscosity */
+            KinematicViscosity = 17, /**< Kinematic Viscosity (synonymous with Nu) */
 
-            Phase = 17, /**< Phase (e.g., liquid, vapor, two-phase) */
+            TC                  = 18, /**< Thermal Conductivity */
+            ThermalConductivity = 18, /**< Thermal Conductivity (synonymous with TC) */
 
-            Undefined = 18, /**< Placeholder for undefined properties */
+            PR            = 19, /**< Prandtl Number */
+            PrandtlNumber = 19, /**< Prandtl Number (synonymous with PR) */
 
-            Unknown = 19 /**< Placeholder for unknown properties */
+            MW              = 20, /**< Molecular Weight */
+            MolecularWeight = 20, /**< Molecular Weight (synonymous with MW) */
+            MolarMass       = 20, /**< Molecular Weight (synonymous with MW and MolecularWeight) */
+
+            Phase = 21, /**< Phase (e.g., liquid, vapor, two-phase) */
+
+            Undefined = 22, /**< Placeholder for undefined properties */
+
+            Unknown = 23 /**< Placeholder for unknown properties */
         };
 
     private:
         using StringToTypePair = std::pair<std::string_view, Type>;
 
-        static constexpr std::array<StringToTypePair, 44> StringToType = { { // Basic properties
+        static constexpr std::array<StringToTypePair, 60> StringToType = { { // Basic properties
                                                                              { "T", Type::T },
                                                                              { "TEMPERATURE", Type::T },
+
+                                                                             { "PMIN", Type::P },
+                                                                             { "MINIMUM PRESSURE", Type::P },
+                                                                             { "PMAX", Type::P },
+                                                                             { "MAXIMUM PRESSURE", Type::P },
+                                                                             { "PCRIT", Type::P },
+                                                                             { "CRITICAL PRESSURE", Type::P },
+                                                                             { "PTRIP", Type::P },
+                                                                             { "TRIPLE POINT PRESSURE", Type::P },
+
+
+                                                                             { "TMIN", Type::T },
+                                                                             { "MINIMUM TEMPERATURE", Type::T },
+                                                                             { "TMAX", Type::T },
+                                                                             { "MAXIMUM TEMPERATURE", Type::T },
+                                                                             { "TCRIT", Type::T },
+                                                                             { "CRITICAL TEMPERATURE", Type::T },
+                                                                             { "TTRIP", Type::T },
+                                                                             { "TRIPLE POINT TEMPERATURE", Type::T },
+
                                                                              { "P", Type::P },
                                                                              { "PRESSURE", Type::P },
                                                                              { "H", Type::H },
@@ -173,14 +199,14 @@ namespace KProps
                                                                              { "Q", Type::X },
                                                                              { "VAPOR QUALITY", Type::X },
                                                                              // Viscosity, conductivity, and Prandtl number
-                                                                             // { "ETA", Type::Eta },
-                                                                             // { "DYNAMIC VISCOSITY", Type::Eta },
-                                                                             // { "NU", Type::Nu },
-                                                                             // { "KINEMATIC VISCOSITY", Type::Nu },
-                                                                             // { "TC", Type::TC },
-                                                                             // { "THERMAL CONDUCTIVITY", Type::TC },
-                                                                             // { "PR", Type::PR },
-                                                                             // { "PRANDTL NUMBER", Type::PR },
+                                                                             { "ETA", Type::Eta },
+                                                                             { "DYNAMIC VISCOSITY", Type::Eta },
+                                                                             { "NU", Type::Nu },
+                                                                             { "KINEMATIC VISCOSITY", Type::Nu },
+                                                                             { "TC", Type::TC },
+                                                                             { "THERMAL CONDUCTIVITY", Type::TC },
+                                                                             { "PR", Type::PR },
+                                                                             { "PRANDTL NUMBER", Type::PR },
                                                                              // Molecular weight
                                                                              { "MW", Type::MW },
                                                                              { "MOLAR MASS", Type::MW },
@@ -189,7 +215,7 @@ namespace KProps
 
         using TypeToStringPair = std::pair<Type, std::string_view>;
 
-        static constexpr std::array<TypeToStringPair, 20> TypeToString = { { // Basic properties
+        static constexpr std::array<TypeToStringPair, 24> TypeToString = { { // Basic properties
                                                                              { Type::T, "T" },
                                                                              { Type::P, "P" },
                                                                              { Type::H, "H" },
@@ -212,14 +238,10 @@ namespace KProps
                                                                              // Vapor quality
                                                                              { Type::X, "X" },
                                                                              // Viscosity, conductivity, and Prandtl number
-                                                                             // { "ETA", Type::Eta },
-                                                                             // { "DYNAMIC VISCOSITY", Type::Eta },
-                                                                             // { "NU", Type::Nu },
-                                                                             // { "KINEMATIC VISCOSITY", Type::Nu },
-                                                                             // { "TC", Type::TC },
-                                                                             // { "THERMAL CONDUCTIVITY", Type::TC },
-                                                                             // { "PR", Type::PR },
-                                                                             // { "PRANDTL NUMBER", Type::PR },
+                                                                             { Type::Eta, "ETA" },
+                                                                             { Type::Nu, "NU" },
+                                                                             { Type::TC, "TC" },
+                                                                             { Type::PR, "PR" },
                                                                              // Molecular weight
                                                                              { Type::MW, "MW" },
                                                                              { Type::Phase, "PHASE" },
@@ -228,7 +250,6 @@ namespace KProps
                                                                              { Type::Unknown, "UNKNOWN" } } };
 
     public:
-
         Property() : BASE(Unknown { std::nan("") }) {}
 
         template<typename VALUE_T = double>
@@ -283,14 +304,18 @@ namespace KProps
                 case Type::X:
                     *this = X { value };
                     break;
-                    //            case Property::Eta:
-                    //                return Eta{0.0};
-                    //            case Property::Nu:
-                    //                return Nu{0.0};
-                    //            case Property::TC:
-                    //                return TC{0.0};
-                    //            case Property::PR:
-                    //                return PR{0.0};
+                case Type::Eta:
+                    *this = Eta { value };
+                    break;
+                case Type::Nu:
+                    *this = Nu { value };
+                    break;
+                case Type::TC:
+                    *this = TC { value };
+                    break;
+                case Type::PR:
+                    *this = PR { value };
+                    break;
                 case Type::MW:
                     *this = MW { value };
                     break;
@@ -319,7 +344,7 @@ namespace KProps
             if constexpr (std::same_as<TYPE, Type>)
                 return static_cast<Type>(index());
             else {
-                auto t  = type<Type>();
+                auto       t  = type<Type>();
                 const auto it = rng::find_if(TypeToString, [=](const auto& pair) { return t == pair.first; });
 
                 if (it != TypeToString.end())
@@ -376,10 +401,14 @@ namespace KProps
                 return typeToString(Type::Alpha);
             else if constexpr (std::same_as<PROPERTY_T, W>)
                 return typeToString(Type::W);
-            // else if constexpr (std::same_as<PROPERTY_T, Nu>)
-            //     return typeToString(Type::Nu);
-            // else if constexpr (std::same_as<PROPERTY_T, PR>)
-            //     return typeToString(Type::PR);
+            else if constexpr (std::same_as<PROPERTY_T, Eta>)
+                return typeToString(Type::Eta);
+            else if constexpr (std::same_as<PROPERTY_T, Nu>)
+                return typeToString(Type::Nu);
+            else if constexpr (std::same_as<PROPERTY_T, TC>)
+                return typeToString(Type::TC);
+            else if constexpr (std::same_as<PROPERTY_T, PR>)
+                return typeToString(Type::PR);
             else if constexpr (std::same_as<PROPERTY_T, Z>)
                 return typeToString(Type::Z);
             else if constexpr (std::same_as<PROPERTY_T, X>)
@@ -422,10 +451,14 @@ namespace KProps
                 return Type::Alpha;
             else if constexpr (std::same_as<PROPERTY_T, W>)
                 return Type::W;
-            // else if constexpr (std::same_as<PROPERTY_T, Nu>)
-            //     return Type::Nu;
-            // else if constexpr (std::same_as<PROPERTY_T, PR>)
-            //     return Type::PR;
+            else if constexpr (std::same_as<PROPERTY_T, Eta>)
+                return Type::Eta;
+            else if constexpr (std::same_as<PROPERTY_T, Nu>)
+                return Type::Nu;
+            else if constexpr (std::same_as<PROPERTY_T, TC>)
+                return Type::TC;
+            else if constexpr (std::same_as<PROPERTY_T, PR>)
+                return Type::PR;
             else if constexpr (std::same_as<PROPERTY_T, Z>)
                 return Type::Z;
             else if constexpr (std::same_as<PROPERTY_T, X>)

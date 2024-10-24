@@ -94,6 +94,14 @@ namespace KProps
                                           fluent::ImplicitlyConvertibleTo<FLOAT>::templ>;
     using Temperature = T;
 
+  using TCrit           = fluent::NamedType<T,
+                                      struct TCritTag,
+                                      fluent::Printable,
+                                      fluent::Addable,
+                                      fluent::Subtractable,
+                                      fluent::Multiplicable,
+                                      fluent::ImplicitlyConvertibleTo<T>::templ>;
+
     /**
      * @typedef P
      * @brief Defines a named type for Pressure, enhancing type safety and code clarity.
@@ -112,6 +120,14 @@ namespace KProps
                                        fluent::Multiplicable,
                                        fluent::ImplicitlyConvertibleTo<FLOAT>::templ>;
     using Pressure = P;
+
+  using P2        = fluent::NamedType<P,
+                                   struct PressureTag2,
+                                   fluent::Printable,
+                                   fluent::Addable,
+                                   fluent::Subtractable,
+                                   fluent::Multiplicable,
+                                   fluent::ImplicitlyConvertibleTo<FLOAT>::templ>;
 
     /**
      * @typedef H

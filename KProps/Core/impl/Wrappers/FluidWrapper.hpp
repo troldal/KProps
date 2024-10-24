@@ -86,7 +86,6 @@ namespace KProps
         friend BASE;
 
     public:
-
         /**
          * @brief Constructs a FluidWrapper object with a copy of an existing fluid property implementation.
          *
@@ -145,7 +144,7 @@ namespace KProps
          *
          * @return A non-const reference to the encapsulated fluid property implementation (IMPL_T).
          */
-        auto&       impl() { return m_impl; }
+        auto& impl() { return m_impl; }
 
         /**
          * @brief Provides const access to the encapsulated fluid property implementation.
@@ -170,7 +169,8 @@ namespace KProps
          * @param temperature The temperature of the fluid.
          * @throws std::runtime_error If setting state by pressure and temperature is not supported.
          */
-        void setStatePT(P pressure, T temperature) {
+        void setStatePT(P pressure, T temperature)
+        {
             if constexpr (detail::SupportsSpecPT<IMPL_T>)
                 m_impl.setStatePT(pressure, temperature);
             else
@@ -183,7 +183,8 @@ namespace KProps
          * @param vaporQuality The vapor quality of the fluid.
          * @throws std::runtime_error If setting state by pressure and vapor quality is not supported.
          */
-        void setStatePX(P pressure, X vaporQuality) {
+        void setStatePX(P pressure, X vaporQuality)
+        {
             if constexpr (detail::SupportsSpecPX<IMPL_T>)
                 m_impl.setStatePX(pressure, vaporQuality);
             else
@@ -196,7 +197,8 @@ namespace KProps
          * @param enthalpy The enthalpy of the fluid.
          * @throws std::runtime_error If setting state by pressure and enthalpy is not supported.
          */
-        void setStatePH(P pressure, H enthalpy) {
+        void setStatePH(P pressure, H enthalpy)
+        {
             if constexpr (detail::SupportsSpecPH<IMPL_T>)
                 m_impl.setStatePH(pressure, enthalpy);
             else
@@ -209,7 +211,8 @@ namespace KProps
          * @param entropy The entropy of the fluid.
          * @throws std::runtime_error If setting state by pressure and entropy is not supported.
          */
-        void setStatePS(P pressure, S entropy) {
+        void setStatePS(P pressure, S entropy)
+        {
             if constexpr (detail::SupportsSpecPS<IMPL_T>)
                 m_impl.setStatePS(pressure, entropy);
             else
@@ -222,7 +225,8 @@ namespace KProps
          * @param pressure The pressure of the fluid.
          * @throws std::runtime_error If setting state by density and pressure is not supported.
          */
-        void setStateDP(Rho density, P pressure) {
+        void setStateDP(Rho density, P pressure)
+        {
             if constexpr (detail::SupportsSpecDP<IMPL_T>)
                 m_impl.setStateDP(density, pressure);
             else
@@ -235,7 +239,8 @@ namespace KProps
          * @param temperature The temperature of the fluid.
          * @throws std::runtime_error If setting state by density and temperature is not supported.
          */
-        void setStateDT(Rho density, T temperature) {
+        void setStateDT(Rho density, T temperature)
+        {
             if constexpr (detail::SupportsSpecDT<IMPL_T>)
                 m_impl.setStateDT(density, temperature);
             else
@@ -248,7 +253,8 @@ namespace KProps
          * @param entropy The entropy of the fluid.
          * @throws std::runtime_error If setting state by density and entropy is not supported.
          */
-        void setStateDS(Rho density, S entropy) {
+        void setStateDS(Rho density, S entropy)
+        {
             if constexpr (detail::SupportsSpecDS<IMPL_T>)
                 m_impl.setStateDS(density, entropy);
             else
@@ -261,7 +267,8 @@ namespace KProps
          * @param enthalpy The enthalpy of the fluid.
          * @throws std::runtime_error If setting state by density and enthalpy is not supported.
          */
-        void setStateDH(Rho density, H enthalpy) {
+        void setStateDH(Rho density, H enthalpy)
+        {
             if constexpr (detail::SupportsSpecDH<IMPL_T>)
                 m_impl.setStateDH(density, enthalpy);
             else
@@ -274,7 +281,8 @@ namespace KProps
          * @param internalEnergy The internal energy of the fluid.
          * @throws std::runtime_error If setting state by density and internal energy is not supported.
          */
-        void setStateDU(Rho density, U internalEnergy) {
+        void setStateDU(Rho density, U internalEnergy)
+        {
             if constexpr (detail::SupportsSpecDU<IMPL_T>)
                 m_impl.setStateDU(density, internalEnergy);
             else
@@ -287,7 +295,8 @@ namespace KProps
          * @param entropy The entropy of the fluid.
          * @throws std::runtime_error If setting state by enthalpy and entropy is not supported.
          */
-        void setStateHS(H enthalpy, S entropy) {
+        void setStateHS(H enthalpy, S entropy)
+        {
             if constexpr (detail::SupportsSpecHS<IMPL_T>)
                 m_impl.setStateHS(enthalpy, entropy);
             else
@@ -300,7 +309,8 @@ namespace KProps
          * @param internalEnergy The internal energy of the fluid.
          * @throws std::runtime_error If setting state by pressure and internal energy is not supported.
          */
-        void setStatePU(P pressure, U internalEnergy) {
+        void setStatePU(P pressure, U internalEnergy)
+        {
             if constexpr (detail::SupportsSpecPU<IMPL_T>)
                 m_impl.setStatePU(pressure, internalEnergy);
             else
@@ -313,7 +323,8 @@ namespace KProps
          * @param entropy The entropy of the fluid.
          * @throws std::runtime_error If setting state by temperature and entropy is not supported.
          */
-        void setStateTS(T temperature, S entropy) {
+        void setStateTS(T temperature, S entropy)
+        {
             if constexpr (detail::SupportsSpecTS<IMPL_T>)
                 m_impl.setStateTS(temperature, entropy);
             else
@@ -326,7 +337,8 @@ namespace KProps
          * @param quality The vapor quality of the fluid.
          * @throws std::runtime_error If setting state by temperature and vapor quality is not supported.
          */
-        void setStateTX(T temperature, X quality) {
+        void setStateTX(T temperature, X quality)
+        {
             if constexpr (detail::SupportsSpecTX<IMPL_T>)
                 m_impl.setStateTX(temperature, quality);
             else
@@ -373,7 +385,7 @@ namespace KProps
         [[nodiscard]]
         X vaporQuality() const
         {
-            if (pressure() >= criticalPressure() && temperature() >= criticalTemperature()) return X{std::nan("")};
+            if (pressure() >= criticalPressure() && temperature() >= criticalTemperature()) return X { std::nan("") };
             return X { m_impl.vaporQuality() };
         }
 
@@ -421,7 +433,8 @@ namespace KProps
 
         /**
          * @brief Retrieves the volume of the fluid.
-         * @details If the underlying implementation supports direct volume calculation, it is used. Otherwise, volume is calculated as the inverse of density.
+         * @details If the underlying implementation supports direct volume calculation, it is used. Otherwise, volume is calculated as the
+         * inverse of density.
          * @return The volume of the fluid.
          */
         [[nodiscard]]
@@ -435,7 +448,8 @@ namespace KProps
 
         /**
          * @brief Retrieves the Gibbs energy of the fluid.
-         * @details If the underlying implementation supports direct Gibbs energy calculation, it is used. Otherwise, Gibbs energy is calculated using the relation G = H - T*S.
+         * @details If the underlying implementation supports direct Gibbs energy calculation, it is used. Otherwise, Gibbs energy is
+         * calculated using the relation G = H - T*S.
          * @return The Gibbs energy of the fluid.
          */
         [[nodiscard]]
@@ -449,7 +463,8 @@ namespace KProps
 
         /**
          * @brief Retrieves the Helmholtz energy of the fluid.
-         * @details If the underlying implementation supports direct Helmholtz energy calculation, it is used. Otherwise, Helmholtz energy is calculated using the relation A = U - T*S.
+         * @details If the underlying implementation supports direct Helmholtz energy calculation, it is used. Otherwise, Helmholtz energy
+         * is calculated using the relation A = U - T*S.
          * @return The Helmholtz energy of the fluid.
          */
         [[nodiscard]]
@@ -463,7 +478,8 @@ namespace KProps
 
         /**
          * @brief Retrieves the compressibility factor (Z) of the fluid.
-         * @details If the underlying implementation supports direct calculation of the compressibility factor, it is used. Otherwise, compressibility factor is estimated from the ideal gas law.
+         * @details If the underlying implementation supports direct calculation of the compressibility factor, it is used. Otherwise,
+         * compressibility factor is estimated from the ideal gas law.
          * @return The compressibility factor of the fluid.
          */
         [[nodiscard]]
@@ -564,7 +580,7 @@ namespace KProps
             if constexpr (detail::HasSatT<IMPL_T>)
                 return T { m_impl.saturationTemperature() };
             else {
-                if (m_impl.pressure() > m_impl.criticalPressure()) return T {std::nan("")};
+                if (m_impl.pressure() > m_impl.criticalPressure()) return T { std::nan("") };
                 IMPL_T fluid = m_impl;
                 fluid.setStatePX(P { m_impl.pressure() }, X { 0.5 });
                 return T { fluid.temperature() };
@@ -582,7 +598,7 @@ namespace KProps
             if constexpr (detail::HasSatP<IMPL_T>)
                 return P { m_impl.saturationPressure() };
             else {
-                if (m_impl.temperature() > m_impl.criticalTemperature()) return P {std::nan("")};
+                if (m_impl.temperature() > m_impl.criticalTemperature()) return P { std::nan("") };
                 IMPL_T fluid = m_impl;
                 fluid.setStateTX(T { m_impl.temperature() }, X { 0.5 });
                 return P { fluid.pressure() };
@@ -600,7 +616,6 @@ namespace KProps
             if constexpr (detail::HasPhase<IMPL_T>)
                 return m_impl.phase();
             else {
-
                 auto p = m_impl.pressure();
                 auto t = m_impl.temperature();
 
@@ -617,6 +632,46 @@ namespace KProps
                 if (t >= satT + EPS) return Phase::Gas;
 
                 return Phase::Unknown;
+            }
+        }
+
+        [[nodiscard]]
+        Eta dynamicViscosity() const
+        {
+            if constexpr (detail::HasDynViscosity<IMPL_T>)
+                return Eta { m_impl.dynamicViscosity() };
+            else {
+                return Eta { std::nan("") };
+            }
+        }
+
+        [[nodiscard]]
+        Nu kinematicViscosity() const
+        {
+            if constexpr (detail::HasKinViscosity<IMPL_T>)
+                return Nu { m_impl.kinematicViscosity() };
+            else {
+                return Nu { std::nan("") };
+            }
+        }
+
+        [[nodiscard]]
+        TC thermalConductivity() const
+        {
+            if constexpr (detail::HasThermalConductivity<IMPL_T>)
+                return TC { m_impl.thermalConductivity() };
+            else {
+                return TC { std::nan("") };
+            }
+        }
+
+        [[nodiscard]]
+        PR prandtlNumber() const
+        {
+            if constexpr (detail::HasPrandtlNumber<IMPL_T>)
+                return PR { m_impl.prandtlNumber() };
+            else {
+                return PR { std::nan("") };
             }
         }
 
@@ -683,5 +738,17 @@ namespace KProps
         {
             return P { m_impl.maxPressure() };
         }
+
+        [[nodiscard]]
+        T tripleTemperature() const
+        {
+            return T { m_impl.tripleTemperature() };
+        }
+
+        [[nodiscard]]
+        P triplePressure() const
+        {
+            return P { m_impl.triplePressure() };
+        }
     };
-}    // namespace pcprops
+}    // namespace KProps

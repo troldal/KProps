@@ -79,7 +79,7 @@ namespace KProps
      * @return FlashResults object containing the results of the flash calculation, including any relevant properties
      * of the fluid in the specified units after the equilibrium state is reached.
      *
-     * @note The function doesnt actually perform the calculation, but rather initializes a FlashResults object with the
+     * @note The function doesn't actually perform the calculation, but rather initializes a FlashResults object with the
      * given properties. The actual flash calculation is performed when the FlashResults object is used to access the results.
      */
     template<typename UNITS_T = MolarUnits, IsProperty P1, IsProperty P2>

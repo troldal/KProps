@@ -142,6 +142,8 @@ namespace KProps
         double minPressure() const { return m_state->p_triple(); }
         double maxTemperature() const { return m_state->Tmax(); }
         double maxPressure() const { return m_state->pmax(); }
+        double tripleTemperature() const { return m_state->Ttriple(); }
+        double triplePressure() const { return m_state->p_triple(); }
 
         // Required property functions
         double temperature() const { return m_state->T(); }
@@ -244,6 +246,10 @@ namespace KProps
                     return Phase{Phase::State::Unknown};
             }
         }
+        double dynamicViscosity() const { return m_state->viscosity(); }
+        double kinematicViscosity() const { return m_state->viscosity() / m_state->rhomass(); }
+        double thermalConductivity() const { return m_state->conductivity(); }
+        double prandtlNumber() const { return m_state->Prandtl(); }
 
         explicit impl(const std::string& fluidName)
             : m_state(CoolProp::AbstractState::factory("HEOS", fluidName)),
@@ -342,6 +348,8 @@ namespace KProps
     double HEOS::minPressure() const { return m_impl->minPressure(); }
     double HEOS::maxTemperature() const { return m_impl->maxTemperature(); }
     double HEOS::maxPressure() const { return m_impl->maxPressure();}
+    double HEOS::tripleTemperature() const { return m_impl->tripleTemperature(); }
+    double HEOS::triplePressure() const { return m_impl->triplePressure(); }
 
     double HEOS::temperature() const { return m_impl->temperature(); }
     double HEOS::pressure() const { return m_impl->pressure();}
@@ -374,6 +382,11 @@ namespace KProps
     double HEOS::saturationTemperature() const { return m_impl->saturationTemperature(); }
     double HEOS::saturationPressure() const { return m_impl->saturationPressure();}
     Phase  HEOS::phase() const { return m_impl->phase(); }
+    double HEOS::dynamicViscosity() const { return m_impl->dynamicViscosity(); }
+    double HEOS::kinematicViscosity() const { return m_impl->kinematicViscosity(); }
+    double HEOS::thermalConductivity() const { return m_impl->thermalConductivity(); }
+    double HEOS::prandtlNumber() const { return m_impl->prandtlNumber(); }
+
 
     HEOS::HEOS(const std::string& fluidName) : m_impl {std::make_unique<impl>(fluidName)} {}
     HEOS::HEOS(const HEOS& other) : m_impl(std::make_unique<impl>(*other.m_impl)) {}

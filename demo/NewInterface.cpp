@@ -43,7 +43,7 @@ int main()
     using namespace KProps;
     std::cout << std::fixed << std::setprecision(20);
 
-    auto water = FluidWrapper(HEOS("Water"));
+    auto water = FluidWrapper(HEOS("Ammonia"));
     //water.setState(P { 101325.0 }, T { 298.15 });
     water.setState(P { 101325.0 }, X { 1.0 });
     //water.setState(P { 101325.0 * 250 }, T { 700.0 });

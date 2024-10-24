@@ -1,5 +1,5 @@
 {
-  "name" : "ksteam",
+  "name" : "kprops",
   "version-string" : "1.0.0",
   "builtin-baseline" : "1c5a340f6e10985e2d92af174a68dbd15c1fa4e1",
   "dependencies" : [ {
@@ -21,6 +21,12 @@
     "name" : "lapack",
     "version>=" : "2023-06-10#2"
   }, {
+    "name" : "lapack-reference",
+    "version>=" : "3.11.0#6"
+  }, {
+    "name" : "blas",
+    "version>=" : "2023-04-14#1"
+  },{
     "name" : "openblas",
     "version>=" : "0.3.27#1"
   } ]

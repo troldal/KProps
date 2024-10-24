@@ -232,14 +232,15 @@ namespace KProps::detail
                 return PROPERTY_T { std::nan("") };
             else if constexpr (std::same_as<PROPERTY_T, Unknown>)
                 return PROPERTY_T { std::nan("") };
-            //            else if constexpr (std::same_as<PROPERTY_T, Eta>)
-            //                return PROPERTY_T { 0.0 };
-            //            else if constexpr (std::same_as<PROPERTY_T, Nu>)
-            //                return PROPERTY_T { 0.0 };
-            //            else if constexpr (std::same_as<PROPERTY_T, TC>)
-            //                return PROPERTY_T { 0.0 };
-            //            else if constexpr (std::same_as<PROPERTY_T, PR>)
-            //                return PROPERTY_T { 0.0 };
+
+            else if constexpr (std::same_as<PROPERTY_T, Eta>)
+                return PROPERTY_T { derived().dynamicViscosity() };
+            else if constexpr (std::same_as<PROPERTY_T, Nu>)
+                return PROPERTY_T { derived().kinematicViscosity() };
+            else if constexpr (std::same_as<PROPERTY_T, TC>)
+                return PROPERTY_T { derived().thermalConductivity() };
+            else if constexpr (std::same_as<PROPERTY_T, PR>)
+                return PROPERTY_T { derived().prandtlNumber() };
 
             else
                 std::invoke([]<bool flag = false>() { static_assert(flag, "Invalid property"); });
@@ -306,20 +307,34 @@ namespace KProps::detail
                     return property<Cv, UNITS_T>();
                 case Property::Type::Kappa:
                     return phase.state() != Phase::State::TwoPhase ? Property { property<Kappa, UNITS_T>() }
-                                                                  : Property { property<Undefined, UNITS_T>() };
+                                                                   : Property { property<Undefined, UNITS_T>() };
                 case Property::Type::Alpha:
                     return phase.state() != Phase::State::TwoPhase ? Property { property<Alpha, UNITS_T>() }
-                                                                  : Property { property<Undefined, UNITS_T>() };
+                                                                   : Property { property<Undefined, UNITS_T>() };
                 case Property::Type::W:
                     return phase.state() != Phase::State::TwoPhase ? Property { property<W, UNITS_T>() }
-                                                                  : Property { property<Undefined, UNITS_T>() };
+                                                                   : Property { property<Undefined, UNITS_T>() };
                 case Property::Type::Z:
                     return phase.state() != Phase::State::TwoPhase ? Property { property<Z, UNITS_T>() }
-                                                                  : Property { property<Undefined, UNITS_T>() };
+                                                                   : Property { property<Undefined, UNITS_T>() };
                 case Property::Type::X:
                     return phase.state() != Phase::State::Critical && phase.state() != Phase::State::Supercritical
                                ? Property { property<X, UNITS_T>() }
                                : Property { property<Undefined, UNITS_T>() };
+
+                case Property::Type::Eta:
+                    return phase.state() != Phase::State::TwoPhase ? Property { property<Eta, UNITS_T>() }
+                                                                   : Property { property<Undefined, UNITS_T>() };
+                case Property::Type::Nu:
+                    return phase.state() != Phase::State::TwoPhase ? Property { property<Nu, UNITS_T>() }
+                                                                   : Property { property<Undefined, UNITS_T>() };
+                case Property::Type::TC:
+                    return phase.state() != Phase::State::TwoPhase ? Property { property<TC, UNITS_T>() }
+                                                                   : Property { property<Undefined, UNITS_T>() };
+                case Property::Type::PR:
+                    return phase.state() != Phase::State::TwoPhase ? Property { property<PR, UNITS_T>() }
+                                                                   : Property { property<Undefined, UNITS_T>() };
+
                 case Property::Type::MW:
                     return property<MW, UNITS_T>();
                 case Property::Type::Phase:
@@ -442,6 +457,17 @@ namespace KProps::detail
                 return PROPERTY_T { derived().criticalTemperature() };
             else
                 return PROPERTY_T { derived().criticalPressure() };
+        }
+
+        template<IsProperty PROPERTY_T>
+            requires std::same_as<PROPERTY_T, T> || std::same_as<PROPERTY_T, P>
+        [[nodiscard]]
+        auto triple() const
+        {
+            if constexpr (std::same_as<PROPERTY_T, T>)
+                return PROPERTY_T { derived().tripleTemperature() };
+            else
+                return PROPERTY_T { derived().triplePressure() };
         }
 
         /**

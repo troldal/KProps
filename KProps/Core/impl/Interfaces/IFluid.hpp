@@ -74,6 +74,10 @@ namespace KProps
         [[nodiscard]] T     saturationTemperature() const { return m_pimpl->saturationTemperature(); }
         [[nodiscard]] P     saturationPressure() const { return m_pimpl->saturationPressure(); }
         [[nodiscard]] Phase phase() const { return m_pimpl->phase(); }
+        [[nodiscard]] Eta    dynamicViscosity() const { return m_pimpl->dynamicViscosity(); }
+        [[nodiscard]] Nu    kinematicViscosity() const { return m_pimpl->kinematicViscosity(); }
+        [[nodiscard]] TC    thermalConductivity() const { return m_pimpl->thermalConductivity(); }
+        [[nodiscard]] PR    prandtlNumber() const { return m_pimpl->prandtlNumber(); }
 
         // Trivial properties (required)
         [[nodiscard]] T criticalTemperature() const { return m_pimpl->criticalTemperature(); }
@@ -128,6 +132,11 @@ namespace KProps
             [[nodiscard]] virtual T saturationTemperature() const         = 0;
             [[nodiscard]] virtual P saturationPressure() const            = 0;
             [[nodiscard]] virtual Phase phase() const                = 0;
+            [[nodiscard]] virtual Eta    dynamicViscosity() const                        = 0;
+            [[nodiscard]] virtual Nu    kinematicViscosity() const                        = 0;
+            [[nodiscard]] virtual TC    thermalConductivity() const                        = 0;
+            [[nodiscard]] virtual PR    prandtlNumber() const                        = 0;
+
 
             // Trivial properties
             [[nodiscard]] virtual T criticalTemperature() const     = 0;
@@ -187,6 +196,10 @@ namespace KProps
             [[nodiscard]] T saturationTemperature() const override { return m_fluid.template saturation<T>(); }
             [[nodiscard]] P saturationPressure() const override { return m_fluid.template saturation<P>(); }
             [[nodiscard]] Phase phase() const override { return m_fluid.template property<Phase>(); }
+            [[nodiscard]] Eta    dynamicViscosity() const override { return m_fluid.template property<Eta>(); }
+            [[nodiscard]] Nu    kinematicViscosity() const override { return m_fluid.template property<Nu>(); }
+            [[nodiscard]] TC    thermalConductivity() const override { return m_fluid.template property<TC>(); }
+            [[nodiscard]] PR    prandtlNumber() const override { return m_fluid.template property<PR>(); }
 
             // Trivial properties
             [[nodiscard]] T criticalTemperature() const override { return m_fluid.template critical<T>(); }

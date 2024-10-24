@@ -102,6 +102,34 @@ namespace KProps::detail
     };
 
     template<typename T>
+    concept HasDynViscosity = requires(T t) {
+        {
+            t.dynamicViscosity()
+        } -> std::convertible_to<FLOAT>;    // Adjust the return type as needed
+    };
+
+    template<typename T>
+    concept HasKinViscosity = requires(T t) {
+        {
+            t.kinematicViscosity()
+        } -> std::convertible_to<FLOAT>;    // Adjust the return type as needed
+    };
+
+    template<typename T>
+    concept HasThermalConductivity = requires(T t) {
+        {
+            t.thermalConductivity()
+        } -> std::convertible_to<FLOAT>;    // Adjust the return type as needed
+    };
+
+    template<typename T>
+    concept HasPrandtlNumber = requires(T t) {
+        {
+            t.prandtlNumber()
+        } -> std::convertible_to<FLOAT>;    // Adjust the return type as needed
+    };
+
+    template<typename T>
     concept HasZ = requires(T t) {
         {
             t.compressibility()
@@ -199,4 +227,4 @@ namespace KProps::detail
         };
     };
 
-}    // namespace pcprops::detail
+}    // namespace KProps::detail
