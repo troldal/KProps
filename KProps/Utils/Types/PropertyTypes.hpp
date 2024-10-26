@@ -569,6 +569,13 @@ namespace KProps
             }
         }
 
+        static Phase Liquid() { return Phase(State::Liquid); }
+        static Phase Gas() { return Phase(State::Gas); }
+        static Phase TwoPhase() { return Phase(State::TwoPhase); }
+        static Phase Critical() { return Phase(State::Critical); }
+        static Phase Supercritical() { return Phase(State::Supercritical); }
+        static Phase Unknown() { return Phase(State::Unknown); }
+
     private:
         State m_state { State::Unknown };
     };

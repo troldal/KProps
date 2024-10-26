@@ -20,8 +20,12 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # as computing properties and derivatives.
 # The KProps::Core library should be used in conjunction with a specific backend,
 # such as one of the bundled backend implementations, or a custom backend.
+
+
+find_package(units CONFIG REQUIRED)
+
 add_library(KPropsCore INTERFACE)
 target_include_directories(KPropsCore INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}>)
-target_link_libraries(KPropsCore INTERFACE KPropsUtils numerixx::deriv)
+target_link_libraries(KPropsCore INTERFACE units::units KPropsUtils numerixx::deriv)
 
 add_library(KProps::Core ALIAS KPropsCore)

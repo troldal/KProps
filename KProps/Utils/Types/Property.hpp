@@ -153,7 +153,6 @@ namespace KProps
                                                                              { "PTRIP", Type::P },
                                                                              { "TRIPLE POINT PRESSURE", Type::P },
 
-
                                                                              { "TMIN", Type::T },
                                                                              { "MINIMUM TEMPERATURE", Type::T },
                                                                              { "TMAX", Type::T },
@@ -336,22 +335,44 @@ namespace KProps
 
         explicit Property(const std::string& str) : Property(typeFromString(str)) {}
 
+        // template<typename TYPE = Type>
+        //     requires std::same_as<TYPE, Type> || std::same_as<TYPE, std::string>
+        // [[nodiscard]]
+        // auto type() const
+        // {
+        //     if constexpr (std::same_as<TYPE, Type>)
+        //         return static_cast<Type>(index());
+        //     else {
+        //         auto       t  = type<Type>();
+        //         const auto it = rng::find_if(TypeToString, [=](const auto& pair) { return t == pair.first; });
+        //
+        //         if (it != TypeToString.end())
+        //             return it->second;
+        //         else
+        //             return TypeToString.back().second;
+        //     }
+        // }
+
         template<typename TYPE = Type>
-            requires std::same_as<TYPE, Type> || std::same_as<TYPE, std::string>
+            requires std::same_as<TYPE, Type>
         [[nodiscard]]
         auto type() const
         {
-            if constexpr (std::same_as<TYPE, Type>)
-                return static_cast<Type>(index());
-            else {
-                auto       t  = type<Type>();
-                const auto it = rng::find_if(TypeToString, [=](const auto& pair) { return t == pair.first; });
+            return static_cast<Type>(index());
+        }
 
-                if (it != TypeToString.end())
-                    return it->second;
-                else
-                    return TypeToString.back().second;
-            }
+        template<typename TYPE = Type>
+            requires std::same_as<TYPE, std::string>
+        [[nodiscard]]
+        auto type() const
+        {
+            auto       t  = type<Type>();
+            const auto it = rng::find_if(TypeToString, [=](const auto& pair) { return t == pair.first; });
+
+            if (it != TypeToString.end())
+                return it->second;
+            else
+                return TypeToString.back().second;
         }
 
         static Type typeFromString(std::string str)

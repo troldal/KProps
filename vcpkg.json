@@ -26,8 +26,11 @@
   }, {
     "name" : "blas",
     "version>=" : "2023-04-14#1"
-  },{
+  }, {
     "name" : "openblas",
     "version>=" : "0.3.27#1"
+  }, {
+    "name" : "units",
+    "version>=" : "2.3.3#1"
   } ]
 }

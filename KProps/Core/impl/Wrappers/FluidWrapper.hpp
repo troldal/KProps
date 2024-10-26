@@ -619,19 +619,19 @@ namespace KProps
                 auto p = m_impl.pressure();
                 auto t = m_impl.temperature();
 
-                if (p > m_impl.criticalPressure() && t > m_impl.criticalTemperature()) return Phase::Supercritical;
-                if (p > m_impl.criticalPressure() - EPS && t > m_impl.criticalTemperature() - EPS) return Phase::Critical;
+                if (p > m_impl.criticalPressure() && t > m_impl.criticalTemperature()) return Phase::Supercritical();
+                if (p > m_impl.criticalPressure() - EPS && t > m_impl.criticalTemperature() - EPS) return Phase::Critical();
 
                 auto satP = saturationPressure().get();
                 auto satT = saturationTemperature().get();
 
-                if (p < satP + EPS && p > satP - EPS) return Phase::TwoPhase;
-                if (t < satT + EPS && t > satT - EPS) return Phase::TwoPhase;
+                if (p < satP + EPS && p > satP - EPS) return Phase::TwoPhase();
+                if (t < satT + EPS && t > satT - EPS) return Phase::TwoPhase();
 
-                if (p >= satP + EPS) return Phase::Liquid;
-                if (t >= satT + EPS) return Phase::Gas;
+                if (p >= satP + EPS) return Phase::Liquid();
+                if (t >= satT + EPS) return Phase::Gas();
 
-                return Phase::Unknown;
+                return Phase::Unknown();
             }
         }
 
