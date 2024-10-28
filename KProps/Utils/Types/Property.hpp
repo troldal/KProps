@@ -12,55 +12,38 @@ namespace rng = std::ranges;
 
 namespace KProps
 {
-    class Property : public std::variant<KProps::T,
-                                         KProps::P,
-                                         KProps::H,
-                                         KProps::S,
-                                         KProps::U,
-                                         KProps::A,
-                                         KProps::G,
-                                         KProps::Rho,
-                                         KProps::V,
-                                         KProps::Cp,
-                                         KProps::Cv,
-                                         KProps::Kappa,
-                                         KProps::Alpha,
-                                         KProps::W,
-                                         KProps::Z,
-                                         KProps::X,
-                                         KProps::Eta,
-                                         KProps::Nu,
-                                         KProps::TC,
-                                         KProps::PR,
-                                         KProps::MW,
-                                         KProps::Phase,
-                                         KProps::Undefined,
-                                         KProps::Unknown>
+
+    namespace detail
     {
-        using BASE = std::variant<KProps::T,
-                                  KProps::P,
-                                  KProps::H,
-                                  KProps::S,
-                                  KProps::U,
-                                  KProps::A,
-                                  KProps::G,
-                                  KProps::Rho,
-                                  KProps::V,
-                                  KProps::Cp,
-                                  KProps::Cv,
-                                  KProps::Kappa,
-                                  KProps::Alpha,
-                                  KProps::W,
-                                  KProps::Z,
-                                  KProps::X,
-                                  KProps::Eta,
-                                  KProps::Nu,
-                                  KProps::TC,
-                                  KProps::PR,
-                                  KProps::MW,
-                                  KProps::Phase,
-                                  KProps::Undefined,
-                                  KProps::Unknown>;
+        using PropertyVariant = std::variant<KProps::T,
+                                             KProps::P,
+                                             KProps::H,
+                                             KProps::S,
+                                             KProps::U,
+                                             KProps::A,
+                                             KProps::G,
+                                             KProps::Rho,
+                                             KProps::V,
+                                             KProps::Cp,
+                                             KProps::Cv,
+                                             KProps::Kappa,
+                                             KProps::Alpha,
+                                             KProps::W,
+                                             KProps::Z,
+                                             KProps::X,
+                                             KProps::Eta,
+                                             KProps::Nu,
+                                             KProps::TC,
+                                             KProps::PR,
+                                             KProps::MW,
+                                             KProps::Phase,
+                                             KProps::Undefined,
+                                             KProps::Unknown>;
+    }
+
+    class Property : public detail::PropertyVariant
+    {
+        using BASE = detail::PropertyVariant;
 
     public:
         using BASE::BASE;
