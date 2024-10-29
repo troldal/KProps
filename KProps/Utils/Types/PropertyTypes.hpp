@@ -48,7 +48,6 @@
 #pragma once
 
 // ===== External Includes =====
-#include <NamedType/named_type.hpp>
 
 // ===== Standard Includes =====
 #include <algorithm>
