@@ -14,9 +14,10 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 add_subdirectory(_external)
 
 find_package(units CONFIG REQUIRED)
+find_package(strong_type CONFIG REQUIRED)
 
 add_library(KPropsUtils INTERFACE)
 target_include_directories(KPropsUtils INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}>)
-target_link_libraries(KPropsUtils INTERFACE units::units external)
+target_link_libraries(KPropsUtils INTERFACE units::units strong_type::strong_type external)
 
 add_library(KProps::Utils ALIAS KPropsUtils)

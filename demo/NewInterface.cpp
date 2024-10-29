@@ -43,15 +43,6 @@ int main()
     using namespace KProps;
     std::cout << std::fixed << std::setprecision(20);
 
-    constexpr auto phase = Phase::Create("liquid");
-
-    if constexpr (!phase.has_value())
-        return 0;
-
-    if constexpr (phase != Phase::Liquid())
-        std::cout << "Not Liquid phase" << std::endl;
-    else
-        std::cout << "Liquid phase" << std::endl;
 
     auto water = FluidWrapper(HEOS("Ammonia"));
     //water.setState(P { 101325.0 }, T { 298.15 });
