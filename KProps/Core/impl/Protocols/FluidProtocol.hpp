@@ -306,33 +306,33 @@ namespace KProps::detail
                 case Property::Type::Cv:
                     return property<Cv, UNITS_T>();
                 case Property::Type::Kappa:
-                    return phase.state() != Phase::State::TwoPhase ? Property { property<Kappa, UNITS_T>() }
+                    return phase != Phase::TwoPhase() ? Property { property<Kappa, UNITS_T>() }
                                                                    : Property { property<Undefined, UNITS_T>() };
                 case Property::Type::Alpha:
-                    return phase.state() != Phase::State::TwoPhase ? Property { property<Alpha, UNITS_T>() }
+                    return phase != Phase::TwoPhase() ? Property { property<Alpha, UNITS_T>() }
                                                                    : Property { property<Undefined, UNITS_T>() };
                 case Property::Type::W:
-                    return phase.state() != Phase::State::TwoPhase ? Property { property<W, UNITS_T>() }
+                    return phase != Phase::TwoPhase() ? Property { property<W, UNITS_T>() }
                                                                    : Property { property<Undefined, UNITS_T>() };
                 case Property::Type::Z:
-                    return phase.state() != Phase::State::TwoPhase ? Property { property<Z, UNITS_T>() }
+                    return phase != Phase::TwoPhase() ? Property { property<Z, UNITS_T>() }
                                                                    : Property { property<Undefined, UNITS_T>() };
                 case Property::Type::X:
-                    return phase.state() != Phase::State::Critical && phase.state() != Phase::State::Supercritical
+                    return phase != Phase::Critical() && phase != Phase::Supercritical()
                                ? Property { property<X, UNITS_T>() }
                                : Property { property<Undefined, UNITS_T>() };
 
                 case Property::Type::Eta:
-                    return phase.state() != Phase::State::TwoPhase ? Property { property<Eta, UNITS_T>() }
+                    return phase != Phase::TwoPhase() ? Property { property<Eta, UNITS_T>() }
                                                                    : Property { property<Undefined, UNITS_T>() };
                 case Property::Type::Nu:
-                    return phase.state() != Phase::State::TwoPhase ? Property { property<Nu, UNITS_T>() }
+                    return phase != Phase::TwoPhase() ? Property { property<Nu, UNITS_T>() }
                                                                    : Property { property<Undefined, UNITS_T>() };
                 case Property::Type::TC:
-                    return phase.state() != Phase::State::TwoPhase ? Property { property<TC, UNITS_T>() }
+                    return phase != Phase::TwoPhase() ? Property { property<TC, UNITS_T>() }
                                                                    : Property { property<Undefined, UNITS_T>() };
                 case Property::Type::PR:
-                    return phase.state() != Phase::State::TwoPhase ? Property { property<PR, UNITS_T>() }
+                    return phase != Phase::TwoPhase() ? Property { property<PR, UNITS_T>() }
                                                                    : Property { property<Undefined, UNITS_T>() };
 
                 case Property::Type::MW:

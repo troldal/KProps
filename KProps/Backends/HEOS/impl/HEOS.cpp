@@ -230,20 +230,20 @@ namespace KProps
             switch (m_state->phase()) {
                 case CoolProp::iphase_liquid:
                 case CoolProp::iphase_supercritical_liquid:
-                    return Phase{Phase::State::Liquid};
+                    return Phase::Liquid();
                 case CoolProp::iphase_gas:
                 case CoolProp::iphase_supercritical_gas:
-                    return Phase{Phase::State::Gas};
+                    return Phase::Gas();
                 case CoolProp::iphase_twophase:
-                    if (vaporQuality() <= 0.0 + EPS) return Phase{Phase::State::Liquid};
-                    if (vaporQuality() >= 1.0 - EPS) return Phase{Phase::State::Gas};
-                    return Phase{Phase::State::TwoPhase};
+                    if (vaporQuality() <= 0.0 + EPS) return Phase::Liquid();
+                    if (vaporQuality() >= 1.0 - EPS) return Phase::Gas();
+                    return Phase::TwoPhase();
                 case CoolProp::iphase_critical_point:
-                    return Phase{Phase::State::Critical};
+                    return Phase::Critical();
                 case CoolProp::iphase_supercritical:
-                    return Phase{Phase::State::Supercritical};
+                    return Phase::Supercritical();
                 default:
-                    return Phase{Phase::State::Unknown};
+                    return Phase::Unknown();
             }
         }
         double dynamicViscosity() const { return m_state->viscosity(); }

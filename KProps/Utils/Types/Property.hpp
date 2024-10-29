@@ -302,7 +302,7 @@ namespace KProps
                     *this = MW { value };
                     break;
                 case Type::Phase:
-                    *this = Phase { Phase::State::Unknown };
+                    *this = Phase::Unknown();
                     break;
                 case Type::Undefined:
                     *this = Undefined { std::nan("") };

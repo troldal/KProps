@@ -53,6 +53,8 @@
 // ===== Standard Includes =====
 #include <algorithm>
 #include <array>
+#include <optional>
+#include <ranges>
 #include <variant>
 
 namespace KProps
@@ -94,13 +96,13 @@ namespace KProps
                                           fluent::ImplicitlyConvertibleTo<FLOAT>::templ>;
     using Temperature = T;
 
-  using TCrit           = fluent::NamedType<T,
-                                      struct TCritTag,
-                                      fluent::Printable,
-                                      fluent::Addable,
-                                      fluent::Subtractable,
-                                      fluent::Multiplicable,
-                                      fluent::ImplicitlyConvertibleTo<T>::templ>;
+    using TCrit = fluent::NamedType<T,
+                                    struct TCritTag,
+                                    fluent::Printable,
+                                    fluent::Addable,
+                                    fluent::Subtractable,
+                                    fluent::Multiplicable,
+                                    fluent::ImplicitlyConvertibleTo<T>::templ>;
 
     /**
      * @typedef P
@@ -121,13 +123,13 @@ namespace KProps
                                        fluent::ImplicitlyConvertibleTo<FLOAT>::templ>;
     using Pressure = P;
 
-  using P2        = fluent::NamedType<P,
-                                   struct PressureTag2,
-                                   fluent::Printable,
-                                   fluent::Addable,
-                                   fluent::Subtractable,
-                                   fluent::Multiplicable,
-                                   fluent::ImplicitlyConvertibleTo<FLOAT>::templ>;
+    using P2 = fluent::NamedType<P,
+                                 struct PressureTag2,
+                                 fluent::Printable,
+                                 fluent::Addable,
+                                 fluent::Subtractable,
+                                 fluent::Multiplicable,
+                                 fluent::ImplicitlyConvertibleTo<FLOAT>::templ>;
 
     /**
      * @typedef H
@@ -477,30 +479,32 @@ namespace KProps
         static constexpr std::string_view strTwoPhase      = "TWOPHASE";
         static constexpr std::string_view strCritical      = "CRITICAL";
         static constexpr std::string_view strSupercritical = "SUPERCRITICAL";
-        static constexpr std::string_view strUnknown       = "UNKNOWN";
 
-    public:
         enum class State { Liquid, Gas, TwoPhase, Critical, Supercritical, Unknown };
 
-        explicit Phase(State state) : m_state(state) {}
+        constexpr explicit Phase(State state) : m_state(state) {}
 
-        explicit Phase(std::string state)
+        constexpr explicit Phase(std::string_view state)
         {
-            std::transform(state.begin(), state.end(), state.begin(), ::toupper);
+            auto isEqualTo = [state](std::string_view str) constexpr {
+                return state.size() == str.size() && std::equal(state.begin(), state.end(), str.begin(), [](char ch1, char ch2) {
+                           return (ch1 >= 'a' && ch1 <= 'z' ? ch1 - 'a' + 'A' : ch1) == (ch2 >= 'a' && ch2 <= 'z' ? ch2 - 'a' + 'A' : ch2);
+                       });
+            };
 
-            if (state == "LIQUID") {
+            if (isEqualTo(strLiquid)) {
                 m_state = State::Liquid;
             }
-            else if (state == "GAS") {
+            else if (isEqualTo(strGas)) {
                 m_state = State::Gas;
             }
-            else if (state == "TWOPHASE") {
+            else if (isEqualTo(strTwoPhase)) {
                 m_state = State::TwoPhase;
             }
-            else if (state == "CRITICAL") {
+            else if (isEqualTo(strCritical)) {
                 m_state = State::Critical;
             }
-            else if (state == "SUPERCRITICAL") {
+            else if (isEqualTo(strSupercritical)) {
                 m_state = State::Supercritical;
             }
             else {
@@ -508,81 +512,74 @@ namespace KProps
             }
         }
 
-        template<typename TYPE = State>
-            requires std::same_as<TYPE, State> || std::same_as<TYPE, std::string>
-        [[nodiscard]]
-        TYPE state() const
-        {
-            if constexpr (std::same_as<TYPE, State>)
-                return m_state;
-            else {
-                switch (m_state) {
-                    case State::Liquid:
-                        return "LIQUID";
-                    case State::Gas:
-                        return "GAS";
-                    case State::TwoPhase:
-                        return "TWOPHASE";
-                    case State::Critical:
-                        return "CRITICAL";
-                    case State::Supercritical:
-                        return "SUPERCRITICAL";
-                    default:
-                        return "UNKNOWN";
-                }
-            }
-        }
-
-        operator const char*() const
-        {
-            switch (m_state) {
-                case State::Liquid:
-                    return strLiquid.data();
-                case State::Gas:
-                    return strGas.data();
-                case State::TwoPhase:
-                    return strTwoPhase.data();
-                case State::Critical:
-                    return strCritical.data();
-                case State::Supercritical:
-                    return strSupercritical.data();
-                default:
-                    return strUnknown.data();
-            }
-        }
-
-        operator std::string() const
-        {
-            switch (m_state) {
-                case State::Liquid:
-                    return std::string { strLiquid };
-                case State::Gas:
-                    return std::string { strGas };
-                case State::TwoPhase:
-                    return std::string { strTwoPhase };
-                case State::Critical:
-                    return std::string { strCritical };
-                case State::Supercritical:
-                    return std::string { strSupercritical };
-                default:
-                    return std::string { strUnknown };
-            }
-        }
-
-        static Phase Liquid() { return Phase(State::Liquid); }
-        static Phase Gas() { return Phase(State::Gas); }
-        static Phase TwoPhase() { return Phase(State::TwoPhase); }
-        static Phase Critical() { return Phase(State::Critical); }
-        static Phase Supercritical() { return Phase(State::Supercritical); }
-        static Phase Unknown() { return Phase(State::Unknown); }
-
-    private:
         State m_state { State::Unknown };
+
+    public:
+        static constexpr Phase Liquid() { return Phase(State::Liquid); }
+        static constexpr Phase Gas() { return Phase(State::Gas); }
+        static constexpr Phase TwoPhase() { return Phase(State::TwoPhase); }
+        static constexpr Phase Critical() { return Phase(State::Critical); }
+        static constexpr Phase Supercritical() { return Phase(State::Supercritical); }
+        static constexpr Phase Unknown() { return Phase(State::Unknown); }
+
+        static constexpr std::optional<Phase> Create(std::string_view phase)
+        {
+            auto isEqualTo = [phase](std::string_view str) constexpr {
+                return phase.size() == str.size() && std::equal(phase.begin(), phase.end(), str.begin(), [](char ch1, char ch2) {
+                           return (ch1 >= 'a' && ch1 <= 'z' ? ch1 - 'a' + 'A' : ch1) == (ch2 >= 'a' && ch2 <= 'z' ? ch2 - 'a' + 'A' : ch2);
+                       });
+            };
+
+            if (isEqualTo(strLiquid)) {
+                return Phase(phase);
+            }
+            if (isEqualTo(strGas)) {
+                return Phase(phase);
+            }
+            if (isEqualTo(strTwoPhase)) {
+                return Phase(phase);
+            }
+            if (isEqualTo(strCritical)) {
+                return Phase(phase);
+            }
+            if (isEqualTo(strSupercritical)) {
+                return Phase(phase);
+            }
+
+            return std::nullopt;
+        }
+
+        // ===== Friend declarations
+        friend constexpr bool operator==(const Phase& lhs, const Phase& rhs);
     };
+
+    constexpr bool operator==(const Phase& lhs, const Phase& rhs) { return lhs.m_state == rhs.m_state; }
+    constexpr bool operator!=(const Phase& lhs, const Phase& rhs) { return !(lhs == rhs); }
+
+    inline std::string to_string(const Phase& phase)
+    {
+        if (phase == Phase::Liquid()) {
+            return "LIQUID";
+        }
+        if (phase == Phase::Gas()) {
+            return "GAS";
+        }
+        if (phase == Phase::TwoPhase()) {
+            return "TWOPHASE";
+        }
+        if (phase == Phase::Critical()) {
+            return "CRITICAL";
+        }
+        if (phase == Phase::Supercritical()) {
+            return "SUPERCRITICAL";
+        }
+
+        return "UNKNOWN";
+    }
 
     inline std::ostream& operator<<(std::ostream& os, const Phase& phase)
     {
-        os << phase.state<std::string>();
+        os << to_string(phase);
         return os;
     }
 
