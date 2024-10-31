@@ -5,7 +5,6 @@
 #include "_external.hpp"
 
 #include <HEOS.hpp>
-#include <IF97.hpp>
 #include <KProps.hpp>
 
 #include <deque>

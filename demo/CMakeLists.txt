@@ -52,7 +52,7 @@ target_sources(NewInterface
 )
 target_link_libraries(NewInterface
         PRIVATE
-        KProps::Core KProps::HEOS KProps::IF97 FastCSV sciplot::sciplot
+        KProps::Core KProps::HEOS FastCSV sciplot::sciplot
 )
 
 add_executable(PropertyPX EXCLUDE_FROM_ALL "")

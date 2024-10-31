@@ -149,7 +149,7 @@ namespace KProps::detail
             else if constexpr (std::same_as<P1, V>)
                 setState<UNITS_T>(Rho { 1.0 / p1.get() }, p2);
             else if constexpr (std::same_as<P2, V>)
-                setState<UNITS_T>(p1, Rho { 1.0 / p2.get() });
+                setState<UNITS_T>(p1, Rho { 1.0 / p2.value_of() });
             else
                 std::invoke([]<bool flag = false>() { static_assert(flag, "Invalid specification"); });
         }

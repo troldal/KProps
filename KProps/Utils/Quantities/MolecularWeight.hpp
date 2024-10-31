@@ -24,6 +24,7 @@ namespace KProps
                             strong::equality,
                             strong::arithmetic,
                             strong::iostreamable,
+                           strong::formattable,
                             strong::implicitly_convertible_to<FLOAT>>;
 
     using MolecularWeight = MW;

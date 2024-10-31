@@ -7,7 +7,7 @@ project(KProps.Backends VERSION 0.1.0 LANGUAGES CXX)
 #==============================================================================
 # Set compiler settings
 #==============================================================================
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -20,18 +20,18 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 # Create HEOS backend library
 #==============================================================================
 #
-add_library(KPropsHEOS SHARED)
-target_sources(KPropsHEOS PUBLIC HEOS/impl/HEOS.cpp)
-target_include_directories(KPropsHEOS PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}>/HEOS)
-target_link_libraries(KPropsHEOS PUBLIC CoolProp KProps::Utils)
+add_library(KPropsHEOS STATIC HEOS/src/HEOS.cpp)
+#target_sources(KPropsHEOS PUBLIC HEOS/src/HEOS.cpp)
+target_include_directories(KPropsHEOS PUBLIC ${CMAKE_CURRENT_LIST_DIR}/HEOS/include/)
+target_link_libraries(KPropsHEOS PRIVATE CoolProp KProps::Utils)
 
 add_library(KProps::HEOS ALIAS KPropsHEOS)
 
 #==============================================================================
 # Create IF97 backend library
 #==============================================================================
-add_library(KPropsIF97 INTERFACE)
-target_include_directories(KPropsIF97 INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}>/IF97)
-target_link_libraries(KPropsIF97 INTERFACE KProps::Utils CoolProp)
+#add_library(KPropsIF97 INTERFACE)
+#target_include_directories(KPropsIF97 INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}>/IF97)
+#target_link_libraries(KPropsIF97 INTERFACE KProps::Utils CoolProp)
 
-add_library(KProps::IF97 ALIAS KPropsIF97)
+#add_library(KProps::IF97 ALIAS KPropsIF97)

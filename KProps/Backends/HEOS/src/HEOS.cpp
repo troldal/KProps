@@ -2,7 +2,7 @@
 // Created by kenne on 06/03/2024.
 //
 
-#include "../HEOS.hpp"
+#include "../include/HEOS.hpp"
 
 #include <AbstractState.h>
 #include <CoolProp.h>
