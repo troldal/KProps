@@ -4,51 +4,24 @@
 
 #pragma once
 
+#include <ranges>
 #include <string>
 
 namespace KProps
 {
     class Phase
     {
-        static constexpr std::string_view strLiquid        = "LIQUID";
-        static constexpr std::string_view strGas           = "GAS";
-        static constexpr std::string_view strTwoPhase      = "TWOPHASE";
-        static constexpr std::string_view strCritical      = "CRITICAL";
-        static constexpr std::string_view strSupercritical = "SUPERCRITICAL";
-
         enum class State { Liquid, Gas, TwoPhase, Critical, Supercritical, Unknown };
+        State m_state { State::Unknown };
+
+        using StateList                      = std::array<std::pair<std::string_view, State>, 5>;
+        static constexpr StateList stateList = { { { "LIQUID", State::Liquid },
+                                                   { "GAS", State::Gas },
+                                                   { "TWOPHASE", State::TwoPhase },
+                                                   { "CRITICAL", State::Critical },
+                                                   { "SUPERCRITICAL", State::Supercritical } } };
 
         constexpr explicit Phase(State state) : m_state(state) {}
-
-        constexpr explicit Phase(std::string_view state)
-        {
-            auto isEqualTo = [state](std::string_view str) constexpr {
-                return state.size() == str.size() && std::equal(state.begin(), state.end(), str.begin(), [](char ch1, char ch2) {
-                           return (ch1 >= 'a' && ch1 <= 'z' ? ch1 - 'a' + 'A' : ch1) == (ch2 >= 'a' && ch2 <= 'z' ? ch2 - 'a' + 'A' : ch2);
-                       });
-            };
-
-            if (isEqualTo(strLiquid)) {
-                m_state = State::Liquid;
-            }
-            else if (isEqualTo(strGas)) {
-                m_state = State::Gas;
-            }
-            else if (isEqualTo(strTwoPhase)) {
-                m_state = State::TwoPhase;
-            }
-            else if (isEqualTo(strCritical)) {
-                m_state = State::Critical;
-            }
-            else if (isEqualTo(strSupercritical)) {
-                m_state = State::Supercritical;
-            }
-            else {
-                m_state = State::Unknown;
-            }
-        }
-
-        State m_state { State::Unknown };
 
     public:
         static constexpr Phase Liquid() { return Phase(State::Liquid); }
@@ -60,29 +33,19 @@ namespace KProps
 
         static constexpr std::optional<Phase> Create(std::string_view phase)
         {
-            auto isEqualTo = [phase](std::string_view str) constexpr {
-                return phase.size() == str.size() && std::equal(phase.begin(), phase.end(), str.begin(), [](char ch1, char ch2) {
+            auto it = std::ranges::find_if(stateList, [phase](const auto& pair) {
+                return phase.size() == pair.first.size() &&
+                       std::equal(phase.begin(), phase.end(), pair.first.begin(), [](char ch1, char ch2) {
                            return (ch1 >= 'a' && ch1 <= 'z' ? ch1 - 'a' + 'A' : ch1) == (ch2 >= 'a' && ch2 <= 'z' ? ch2 - 'a' + 'A' : ch2);
                        });
-            };
+            });
 
-            if (isEqualTo(strLiquid)) {
-                return Phase(phase);
+            switch (it != stateList.end()) {
+                case true:
+                    return Phase(it->second);
+                default:
+                    return std::nullopt;
             }
-            if (isEqualTo(strGas)) {
-                return Phase(phase);
-            }
-            if (isEqualTo(strTwoPhase)) {
-                return Phase(phase);
-            }
-            if (isEqualTo(strCritical)) {
-                return Phase(phase);
-            }
-            if (isEqualTo(strSupercritical)) {
-                return Phase(phase);
-            }
-
-            return std::nullopt;
         }
 
         // ===== Friend declarations

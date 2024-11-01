@@ -46,7 +46,6 @@ namespace KProps
         detail::PropertyVariant m_property;
 
     public:
-
         enum class Type {
             T           = 0, /**< Temperature */
             Temperature = 0, /**< Temperature (synonymous with T) */
@@ -231,17 +230,73 @@ namespace KProps
                                                                              { Type::Unknown, "UNKNOWN" } } };
 
     public:
-        Property()
+        class Type2
         {
-            m_property = KProps::Unknown { std::nan("") };
-        }
+            // enum class State { Liquid, Gas, TwoPhase, Critical, Supercritical, Unknown };
+            Type m_type { Type::Unknown };
+
+            using TypeList                      = std::array<std::pair<std::string_view, Type>, 60>;
+            static constexpr TypeList typeList = StringToType;
+
+            constexpr explicit Type2(Type type) : m_type(type) {}
+
+        public:
+            static constexpr Type2 Temperature() { return Type2 { Type::Temperature }; }
+            static constexpr Type2 Pressure() { return Type2 { Type::Pressure }; }
+            static constexpr Type2 Enthalpy() { return Type2 { Type::Enthalpy }; }
+            static constexpr Type2 Entropy() { return Type2 { Type::Entropy }; }
+            static constexpr Type2 InternalEnergy() { return Type2 { Type::InternalEnergy }; }
+            static constexpr Type2 HelmholtzEnergy() { return Type2 { Type::HelmholtzEnergy }; }
+            static constexpr Type2 GibbsEnergy() { return Type2 { Type::GibbsEnergy }; }
+            static constexpr Type2 Density() { return Type2 { Type::Density }; }
+            static constexpr Type2 Volume() { return Type2 { Type::Volume }; }
+            static constexpr Type2 Cp() { return Type2 { Type::Cp }; }
+            static constexpr Type2 Cv() { return Type2 { Type::Cv }; }
+            static constexpr Type2 IsothermalCompressibility() { return Type2 { Type::Kappa }; }
+            static constexpr Type2 ThermalExpansion() { return Type2 { Type::Alpha }; }
+            static constexpr Type2 SpeedOfSound() { return Type2 { Type::W }; }
+            static constexpr Type2 CompressibilityFactor() { return Type2 { Type::Z }; }
+            static constexpr Type2 VaporQuality() { return Type2 { Type::X }; }
+            static constexpr Type2 DynamicViscosity() { return Type2 { Type::Eta }; }
+            static constexpr Type2 KinematicViscosity() { return Type2 { Type::Nu }; }
+            static constexpr Type2 ThermalConductivity() { return Type2 { Type::TC }; }
+            static constexpr Type2 PrandtlNumber() { return Type2 { Type::PR }; }
+            static constexpr Type2 MolecularWeight() { return Type2 { Type::MW }; }
+            static constexpr Type2 Phase() { return Type2 { Type::Phase }; }
+            static constexpr Type2 Undefined() { return Type2 { Type::Undefined }; }
+            static constexpr Type2 Unknown() { return Type2 { Type::Unknown }; }
+
+            static constexpr std::optional<Type2> Create(std::string_view type)
+            {
+                auto it = std::ranges::find_if(typeList, [type](const auto& pair) {
+                    return type.size() == pair.first.size() &&
+                           std::equal(type.begin(), type.end(), pair.first.begin(), [](char ch1, char ch2) {
+                               return (ch1 >= 'a' && ch1 <= 'z' ? ch1 - 'a' + 'A' : ch1) ==
+                                      (ch2 >= 'a' && ch2 <= 'z' ? ch2 - 'a' + 'A' : ch2);
+                           });
+                });
+
+                switch (it != typeList.end()) {
+                    case true:
+                        return Type2(it->second);
+                    default:
+                        return std::nullopt;
+                }
+            }
+
+            // ===== Friend declarations
+            friend constexpr bool operator==(const Property::Type2& lhs, const Property::Type2& rhs);
+        };
+
+        Property() { m_property = KProps::Unknown { std::nan("") }; }
 
         template<typename TProperty>
-        requires IsProperty<TProperty>
-        Property(TProperty property) : m_property(property) {}
+            requires IsProperty<TProperty>
+        Property(TProperty property) : m_property(property)
+        {}
 
         template<typename TProperty>
-        requires IsProperty<TProperty>
+            requires IsProperty<TProperty>
         Property& operator=(TProperty property)
         {
             m_property = property;
@@ -249,7 +304,7 @@ namespace KProps
         }
 
         template<typename TProperty>
-        requires IsProperty<TProperty>
+            requires IsProperty<TProperty>
         TProperty get() const
         {
             return std::get<TProperty>(m_property);
@@ -351,37 +406,34 @@ namespace KProps
             return std::visit(std::forward<Callable>(callable), m_property);
         }
 
-
-        static Property Temperature(double value = 0.0) { return Property {T {value}}; }
-        static Property Pressure(double value = 0.0) { return Property {P {value}}; }
-        static Property Enthalpy(double value = 0.0) { return Property {H {value}}; }
-        static Property Entropy(double value = 0.0) { return Property {S {value}}; }
-        static Property InternalEnergy(double value = 0.0) { return Property {U {value}}; }
-        static Property HelmholtzEnergy(double value = 0.0) { return Property {A {value}}; }
-        static Property GibbsEnergy(double value = 0.0) { return Property {G {value}}; }
-        static Property Density(double value = 0.0) { return Property {Rho {value}}; }
-        static Property Volume(double value = 0.0) { return Property {V {value}}; }
-        static Property Cp(double value = 0.0) { return Property {KProps::Cp {value}}; }
-        static Property Cv(double value = 0.0) { return Property {KProps::Cv {value}}; }
-        static Property IsothermalCompressibility(double value = 0.0) { return Property {Kappa {value}}; }
-        static Property ThermalExpansion(double value = 0.0) { return Property {Alpha {value}}; }
-        static Property SpeedOfSound(double value = 0.0) { return Property {W {value}}; }
-        static Property CompressibilityFactor(double value = 0.0) { return Property {Z {value}}; }
-        static Property VaporQuality(double value = 0.0) { return Property {X {value}}; }
-        static Property DynamicViscosity(double value = 0.0) { return Property {Eta {value}}; }
-        static Property KinematicViscosity(double value = 0.0) { return Property {Nu {value}}; }
-        static Property ThermalConductivity(double value = 0.0) { return Property {TC {value}}; }
-        static Property PrandtlNumber(double value = 0.0) { return Property {PR {value}}; }
-        static Property MolecularWeight(double value = 0.0) { return Property {MW {value}}; }
-        static Property Phase() { return Property {Phase::Unknown()}; }
-        static Property Undefined(double value = 0.0) { return Property {KProps::Undefined {value}}; }
-        static Property Unknown(double value = 0.0) { return Property {KProps::Unknown {value}}; }
-
+        static Property Temperature(double value = 0.0) { return Property { T { value } }; }
+        static Property Pressure(double value = 0.0) { return Property { P { value } }; }
+        static Property Enthalpy(double value = 0.0) { return Property { H { value } }; }
+        static Property Entropy(double value = 0.0) { return Property { S { value } }; }
+        static Property InternalEnergy(double value = 0.0) { return Property { U { value } }; }
+        static Property HelmholtzEnergy(double value = 0.0) { return Property { A { value } }; }
+        static Property GibbsEnergy(double value = 0.0) { return Property { G { value } }; }
+        static Property Density(double value = 0.0) { return Property { Rho { value } }; }
+        static Property Volume(double value = 0.0) { return Property { V { value } }; }
+        static Property Cp(double value = 0.0) { return Property { KProps::Cp { value } }; }
+        static Property Cv(double value = 0.0) { return Property { KProps::Cv { value } }; }
+        static Property IsothermalCompressibility(double value = 0.0) { return Property { Kappa { value } }; }
+        static Property ThermalExpansion(double value = 0.0) { return Property { Alpha { value } }; }
+        static Property SpeedOfSound(double value = 0.0) { return Property { W { value } }; }
+        static Property CompressibilityFactor(double value = 0.0) { return Property { Z { value } }; }
+        static Property VaporQuality(double value = 0.0) { return Property { X { value } }; }
+        static Property DynamicViscosity(double value = 0.0) { return Property { Eta { value } }; }
+        static Property KinematicViscosity(double value = 0.0) { return Property { Nu { value } }; }
+        static Property ThermalConductivity(double value = 0.0) { return Property { TC { value } }; }
+        static Property PrandtlNumber(double value = 0.0) { return Property { PR { value } }; }
+        static Property MolecularWeight(double value = 0.0) { return Property { MW { value } }; }
+        static Property Phase() { return Property { Phase::Unknown() }; }
+        static Property Undefined(double value = 0.0) { return Property { KProps::Undefined { value } }; }
+        static Property Unknown(double value = 0.0) { return Property { KProps::Unknown { value } }; }
 
         static std::optional<Property> Create(Type type, double value = 0.0)
         {
-            switch (type)
-            {
+            switch (type) {
                 case Type::T:
                     return Temperature(value);
                 case Type::P:
@@ -443,9 +495,12 @@ namespace KProps
 
     inline std::ostream& operator<<(std::ostream& os, const Property& prop)
     {
-        //std::visit([&os](const auto& p) { os << p; }, prop);
+        // std::visit([&os](const auto& p) { os << p; }, prop);
         prop.visit([&](const auto& p) { os << p; });
         return os;
     }
+
+    constexpr bool operator==(const Property::Type2& lhs, const Property::Type2& rhs) { return lhs.m_type == rhs.m_type; }
+    constexpr bool operator!=(const Property::Type2& lhs, const Property::Type2& rhs) { return !(lhs == rhs); }
 
 }    // namespace KProps

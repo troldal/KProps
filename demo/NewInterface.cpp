@@ -42,11 +42,10 @@ int main()
     using namespace KProps;
     std::cout << std::fixed << std::setprecision(20);
 
-    auto ph1 = Phase::Liquid();
-        auto ph2 = ph1;
-    Phase ph3 = Phase::Gas();
-    ph3 = ph1;
 
+    constexpr auto type = Property::Type2::Create("TEMPERATURE");
+    if constexpr (type == Property::Type2::Pressure())
+        return 0;
 
     auto water = FluidWrapper(HEOS("Ammonia"));
     //water.setState(P { 101325.0 }, T { 298.15 });
