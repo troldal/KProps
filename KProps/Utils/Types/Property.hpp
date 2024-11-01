@@ -41,12 +41,11 @@ namespace KProps
                                              KProps::Unknown>;
     }
 
-    class Property : public detail::PropertyVariant
+    class Property
     {
-        using BASE = detail::PropertyVariant;
+        detail::PropertyVariant m_property;
 
     public:
-        using BASE::BASE;
 
         enum class Type {
             T           = 0, /**< Temperature */
@@ -232,116 +231,36 @@ namespace KProps
                                                                              { Type::Unknown, "UNKNOWN" } } };
 
     public:
-        Property() : BASE(Unknown { std::nan("") }) {}
-
-        template<typename VALUE_T = double>
-        explicit Property(const Type type, VALUE_T value = 0.0) : BASE(Unknown { value })
+        Property()
         {
-            switch (type) {
-                case Type::T:
-                    *this = T { value };
-                    break;
-                case Type::P:
-                    *this = P { value };
-                    break;
-                case Type::H:
-                    *this = H { value };
-                    break;
-                case Type::S:
-                    *this = S { value };
-                    break;
-                case Type::U:
-                    *this = U { value };
-                    break;
-                case Type::A:
-                    *this = A { value };
-                    break;
-                case Type::G:
-                    *this = G { value };
-                    break;
-                case Type::Rho:
-                    *this = Rho { value };
-                    break;
-                case Type::V:
-                    *this = V { value };
-                    break;
-                case Type::Cp:
-                    *this = Cp { value };
-                    break;
-                case Type::Cv:
-                    *this = Cv { value };
-                    break;
-                case Type::Kappa:
-                    *this = Kappa { value };
-                    break;
-                case Type::Alpha:
-                    *this = Alpha { value };
-                    break;
-                case Type::W:
-                    *this = W { value };
-                    break;
-                case Type::Z:
-                    *this = Z { value };
-                    break;
-                case Type::X:
-                    *this = X { value };
-                    break;
-                case Type::Eta:
-                    *this = Eta { value };
-                    break;
-                case Type::Nu:
-                    *this = Nu { value };
-                    break;
-                case Type::TC:
-                    *this = TC { value };
-                    break;
-                case Type::PR:
-                    *this = PR { value };
-                    break;
-                case Type::MW:
-                    *this = MW { value };
-                    break;
-                case Type::Phase:
-                    *this = Phase::Unknown();
-                    break;
-                case Type::Undefined:
-                    *this = Undefined { std::nan("") };
-                    break;
-                case Type::Unknown:
-                    *this = Unknown { std::nan("") };
-                    break;
-                // Add more cases as needed
-                default:
-                    throw std::invalid_argument("Unsupported property");
-            }
+            m_property = KProps::Unknown { std::nan("") };
         }
 
-        explicit Property(const std::string& str) : Property(typeFromString(str)) {}
+        template<typename TProperty>
+        requires IsProperty<TProperty>
+        Property(TProperty property) : m_property(property) {}
 
-        // template<typename TYPE = Type>
-        //     requires std::same_as<TYPE, Type> || std::same_as<TYPE, std::string>
-        // [[nodiscard]]
-        // auto type() const
-        // {
-        //     if constexpr (std::same_as<TYPE, Type>)
-        //         return static_cast<Type>(index());
-        //     else {
-        //         auto       t  = type<Type>();
-        //         const auto it = rng::find_if(TypeToString, [=](const auto& pair) { return t == pair.first; });
-        //
-        //         if (it != TypeToString.end())
-        //             return it->second;
-        //         else
-        //             return TypeToString.back().second;
-        //     }
-        // }
+        template<typename TProperty>
+        requires IsProperty<TProperty>
+        Property& operator=(TProperty property)
+        {
+            m_property = property;
+            return *this;
+        }
+
+        template<typename TProperty>
+        requires IsProperty<TProperty>
+        TProperty get() const
+        {
+            return std::get<TProperty>(m_property);
+        }
 
         template<typename TYPE = Type>
             requires std::same_as<TYPE, Type>
         [[nodiscard]]
         auto type() const
         {
-            return static_cast<Type>(index());
+            return static_cast<Type>(m_property.index());
         }
 
         template<typename TYPE = Type>
@@ -395,9 +314,9 @@ namespace KProps
                 return typeToString(Type::A);
             else if constexpr (std::same_as<PROPERTY_T, G>)
                 return typeToString(Type::G);
-            else if constexpr (std::same_as<PROPERTY_T, Cp>)
+            else if constexpr (std::same_as<PROPERTY_T, KProps::Cp>)
                 return typeToString(Type::Cp);
-            else if constexpr (std::same_as<PROPERTY_T, Cv>)
+            else if constexpr (std::same_as<PROPERTY_T, KProps::Cv>)
                 return typeToString(Type::Cv);
             else if constexpr (std::same_as<PROPERTY_T, Kappa>)
                 return typeToString(Type::Kappa);
@@ -419,67 +338,113 @@ namespace KProps
                 return typeToString(Type::X);
             else if constexpr (std::same_as<PROPERTY_T, MW>)
                 return typeToString(Type::MW);
-            else if constexpr (std::same_as<PROPERTY_T, Phase>)
+            else if constexpr (std::same_as<PROPERTY_T, KProps::Phase>)
                 return typeToString(Type::Phase);
-            else if constexpr (std::same_as<PROPERTY_T, Undefined>)
+            else if constexpr (std::same_as<PROPERTY_T, KProps::Undefined>)
                 return typeToString(Type::Undefined);
             return typeToString(Type::Unknown);
         }
 
-        template<IsProperty PROPERTY_T>
-        static Type aliasToType()
+        template<typename Callable>
+        auto visit(Callable&& callable) const
         {
-            if constexpr (std::same_as<PROPERTY_T, P>)
-                return Type::P;
-            else if constexpr (std::same_as<PROPERTY_T, T>)
-                return Type::T;
-            else if constexpr (std::same_as<PROPERTY_T, Rho>)
-                return Type::Rho;
-            else if constexpr (std::same_as<PROPERTY_T, H>)
-                return Type::H;
-            else if constexpr (std::same_as<PROPERTY_T, S>)
-                return Type::S;
-            else if constexpr (std::same_as<PROPERTY_T, U>)
-                return Type::U;
-            else if constexpr (std::same_as<PROPERTY_T, A>)
-                return Type::A;
-            else if constexpr (std::same_as<PROPERTY_T, G>)
-                return Type::G;
-            else if constexpr (std::same_as<PROPERTY_T, Cp>)
-                return Type::Cp;
-            else if constexpr (std::same_as<PROPERTY_T, Cv>)
-                return Type::Cv;
-            else if constexpr (std::same_as<PROPERTY_T, Kappa>)
-                return Type::Kappa;
-            else if constexpr (std::same_as<PROPERTY_T, Alpha>)
-                return Type::Alpha;
-            else if constexpr (std::same_as<PROPERTY_T, W>)
-                return Type::W;
-            else if constexpr (std::same_as<PROPERTY_T, Eta>)
-                return Type::Eta;
-            else if constexpr (std::same_as<PROPERTY_T, Nu>)
-                return Type::Nu;
-            else if constexpr (std::same_as<PROPERTY_T, TC>)
-                return Type::TC;
-            else if constexpr (std::same_as<PROPERTY_T, PR>)
-                return Type::PR;
-            else if constexpr (std::same_as<PROPERTY_T, Z>)
-                return Type::Z;
-            else if constexpr (std::same_as<PROPERTY_T, X>)
-                return Type::X;
-            else if constexpr (std::same_as<PROPERTY_T, MW>)
-                return Type::MW;
-            else if constexpr (std::same_as<PROPERTY_T, Phase>)
-                return Type::Phase;
-            else if constexpr (std::same_as<PROPERTY_T, Undefined>)
-                return Type::Undefined;
-            return Type::Unknown;
+            return std::visit(std::forward<Callable>(callable), m_property);
+        }
+
+
+        static Property Temperature(double value = 0.0) { return Property {T {value}}; }
+        static Property Pressure(double value = 0.0) { return Property {P {value}}; }
+        static Property Enthalpy(double value = 0.0) { return Property {H {value}}; }
+        static Property Entropy(double value = 0.0) { return Property {S {value}}; }
+        static Property InternalEnergy(double value = 0.0) { return Property {U {value}}; }
+        static Property HelmholtzEnergy(double value = 0.0) { return Property {A {value}}; }
+        static Property GibbsEnergy(double value = 0.0) { return Property {G {value}}; }
+        static Property Density(double value = 0.0) { return Property {Rho {value}}; }
+        static Property Volume(double value = 0.0) { return Property {V {value}}; }
+        static Property Cp(double value = 0.0) { return Property {KProps::Cp {value}}; }
+        static Property Cv(double value = 0.0) { return Property {KProps::Cv {value}}; }
+        static Property IsothermalCompressibility(double value = 0.0) { return Property {Kappa {value}}; }
+        static Property ThermalExpansion(double value = 0.0) { return Property {Alpha {value}}; }
+        static Property SpeedOfSound(double value = 0.0) { return Property {W {value}}; }
+        static Property CompressibilityFactor(double value = 0.0) { return Property {Z {value}}; }
+        static Property VaporQuality(double value = 0.0) { return Property {X {value}}; }
+        static Property DynamicViscosity(double value = 0.0) { return Property {Eta {value}}; }
+        static Property KinematicViscosity(double value = 0.0) { return Property {Nu {value}}; }
+        static Property ThermalConductivity(double value = 0.0) { return Property {TC {value}}; }
+        static Property PrandtlNumber(double value = 0.0) { return Property {PR {value}}; }
+        static Property MolecularWeight(double value = 0.0) { return Property {MW {value}}; }
+        static Property Phase() { return Property {Phase::Unknown()}; }
+        static Property Undefined(double value = 0.0) { return Property {KProps::Undefined {value}}; }
+        static Property Unknown(double value = 0.0) { return Property {KProps::Unknown {value}}; }
+
+
+        static std::optional<Property> Create(Type type, double value = 0.0)
+        {
+            switch (type)
+            {
+                case Type::T:
+                    return Temperature(value);
+                case Type::P:
+                    return Pressure(value);
+                case Type::H:
+                    return Enthalpy(value);
+                case Type::S:
+                    return Entropy(value);
+                case Type::U:
+                    return InternalEnergy(value);
+                case Type::A:
+                    return HelmholtzEnergy(value);
+                case Type::G:
+                    return GibbsEnergy(value);
+                case Type::Rho:
+                    return Density(value);
+                case Type::V:
+                    return Volume(value);
+                case Type::Cp:
+                    return Cp(value);
+                case Type::Cv:
+                    return Cv(value);
+                case Type::Kappa:
+                    return IsothermalCompressibility(value);
+                case Type::Alpha:
+                    return ThermalExpansion(value);
+                case Type::W:
+                    return SpeedOfSound(value);
+                case Type::Z:
+                    return CompressibilityFactor(value);
+                case Type::X:
+                    return VaporQuality(value);
+                case Type::Eta:
+                    return DynamicViscosity(value);
+                case Type::Nu:
+                    return KinematicViscosity(value);
+                case Type::TC:
+                    return ThermalConductivity(value);
+                case Type::PR:
+                    return PrandtlNumber(value);
+                case Type::MW:
+                    return MolecularWeight(value);
+                case Type::Phase:
+                    return Phase();
+                case Type::Undefined:
+                    return Undefined(value);
+                case Type::Unknown:
+                    return Unknown(value);
+                default:
+                    return std::nullopt;
+            }
+        }
+
+        static std::optional<Property> Create(std::string_view type, double value = 0.0)
+        {
+            return Create(typeFromString(type.data()), value);
         }
     };
 
     inline std::ostream& operator<<(std::ostream& os, const Property& prop)
     {
-        std::visit([&os](const auto& p) { os << p; }, prop);
+        //std::visit([&os](const auto& p) { os << p; }, prop);
+        prop.visit([&](const auto& p) { os << p; });
         return os;
     }
 

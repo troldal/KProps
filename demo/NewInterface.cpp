@@ -42,6 +42,11 @@ int main()
     using namespace KProps;
     std::cout << std::fixed << std::setprecision(20);
 
+    auto ph1 = Phase::Liquid();
+        auto ph2 = ph1;
+    Phase ph3 = Phase::Gas();
+    ph3 = ph1;
+
 
     auto water = FluidWrapper(HEOS("Ammonia"));
     //water.setState(P { 101325.0 }, T { 298.15 });
@@ -76,7 +81,7 @@ int main()
 
     //auto propsStaticDeque = results.properties<Cp, Cv, P, T, V, Rho, H, S, U, X, Phase>().get<std::deque, MassUnits>();
     auto propsStaticDeque = properties<Cp, Cv, P, T, V, Rho, H, S, U, X, Phase>(water).get<std::deque, MassUnits>();
-    for (auto prop : propsStaticDeque) printProperty(prop);
+    for (auto prop : propsStaticDeque) printProperty(prop.value());
     std::cout << std::endl;
 
     using Type = Property::Type;
@@ -86,12 +91,12 @@ int main()
     auto propsDynamic =
     properties(water, { Type::Cp, Type::Cv, Type::P, Type::T, Type::V, Type::Rho, Type::H, Type::S, Type::U, Type::X, Type::Phase })
         .get<std::deque, MassUnits>();
-    for (auto prop : propsDynamic) printProperty(prop);
+    for (auto prop : propsDynamic) printProperty(prop.value());
     std::cout << std::endl;
 
     //auto propsString = results.properties({ "Cp", "Cv", "P", "T", "V", "Rho", "H", "S", "U", "X", "PHASE", "UNDEFINED" }).get<std::deque, MassUnits>();
     auto propsString = properties(water, { "Cp", "Cv", "P", "T", "V", "Rho", "H", "S", "U", "X", "PHASE" }).get<std::deque, MassUnits>();
-    for (auto prop : propsString) printProperty(prop);
+    for (auto prop : propsString) printProperty(prop.value());
     std::cout << std::endl;
 
     return EXIT_SUCCESS;

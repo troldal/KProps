@@ -5,6 +5,7 @@
 #pragma once
 
 #include <utility>
+#include <optional>
 
 #include <KPropsUtils.hpp>
 
@@ -244,12 +245,12 @@ namespace KProps::detail
          * requirements.
          */
         template<template<typename...> typename CONTAINER_T, typename UNITS_T = MolarUnits>    // typename VALUE_T = FLOAT>
-            requires detail::IsContainer<CONTAINER_T<Property>>    // Check if container is a homogeneous container
+            requires detail::IsContainer<CONTAINER_T<std::optional<Property>>>    // Check if container is a homogeneous container
         auto get() &&
         {
-            CONTAINER_T<Property> container;
+            CONTAINER_T<std::optional<Property>> container;
             // Adjust the container's size upfront, which might lead to default initialization of elements
-            container.resize(sizeof...(PROPERTIES_T), T { std::nan("") });
+            container.resize(sizeof...(PROPERTIES_T));//, T { std::nan("") });
 
             // Since direct emplacement is not ideal after resize (due to default initialization),
             // we should assign the values. Assuming we can iterate and assign:
@@ -323,11 +324,11 @@ namespace KProps::detail
          * of type `PropertyVariant` and supports the `emplace_back` method.
          */
         template<template<typename...> typename CONTAINER_T, typename UNITS_T = MolarUnits>    // typename VALUE_T = FLOAT>
-            requires detail::IsContainer<CONTAINER_T<Property>>    // Check if container is a homogeneous container
+            requires detail::IsContainer<CONTAINER_T<std::optional<Property>>>    // Check if container is a homogeneous container
         auto get() &&
         {
-            CONTAINER_T<Property> container;
-            container.resize(m_properties.size(), T { std::nan("") });    // Optimize for number of elements
+            CONTAINER_T<std::optional<Property>> container;
+            container.resize(m_properties.size());//, T { std::nan("") });    // Optimize for number of elements
 
             std::transform(m_properties.begin(), m_properties.end(), container.begin(), [this](auto prop) {
                 return m_fluid.property<UNITS_T>(prop);
