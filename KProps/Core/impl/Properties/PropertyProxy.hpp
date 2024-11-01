@@ -298,7 +298,7 @@ namespace KProps::detail
               m_properties { [&] {
                   std::vector<Property::Type> result;
                   result.reserve(properties.size());
-                  for (const auto& prop : properties) result.emplace_back(Property::typeFromString(prop));
+                  for (const auto& prop : properties) result.emplace_back(Property::Type::Create(prop).value());
                   return result;
               }() }
         {}

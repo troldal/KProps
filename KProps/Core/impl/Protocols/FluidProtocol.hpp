@@ -282,70 +282,93 @@ namespace KProps::detail
         {
             auto phase = property<Phase>();
 
-            switch (prop) {
-                case Property::Type::T:
-                    return property<T, UNITS_T>();
-                case Property::Type::P:
-                    return property<P, UNITS_T>();
-                case Property::Type::H:
-                    return property<H, UNITS_T>();
-                case Property::Type::S:
-                    return property<S, UNITS_T>();
-                case Property::Type::U:
-                    return property<U, UNITS_T>();
-                case Property::Type::A:
-                    return property<A, UNITS_T>();
-                case Property::Type::G:
-                    return property<G, UNITS_T>();
-                case Property::Type::Rho:
-                    return property<Rho, UNITS_T>();
-                case Property::Type::V:
-                    return property<V, UNITS_T>();
-                case Property::Type::Cp:
-                    return property<Cp, UNITS_T>();
-                case Property::Type::Cv:
-                    return property<Cv, UNITS_T>();
-                case Property::Type::Kappa:
-                    return phase != Phase::TwoPhase() ? Property { property<Kappa, UNITS_T>() }
-                                                                   : Property { property<Undefined, UNITS_T>() };
-                case Property::Type::Alpha:
-                    return phase != Phase::TwoPhase() ? Property { property<Alpha, UNITS_T>() }
-                                                                   : Property { property<Undefined, UNITS_T>() };
-                case Property::Type::W:
-                    return phase != Phase::TwoPhase() ? Property { property<W, UNITS_T>() }
-                                                                   : Property { property<Undefined, UNITS_T>() };
-                case Property::Type::Z:
-                    return phase != Phase::TwoPhase() ? Property { property<Z, UNITS_T>() }
-                                                                   : Property { property<Undefined, UNITS_T>() };
-                case Property::Type::X:
-                    return phase != Phase::Critical() && phase != Phase::Supercritical()
-                               ? Property { property<X, UNITS_T>() }
-                               : Property { property<Undefined, UNITS_T>() };
+            if (prop == Property::Type::Temperature()) return property<T, UNITS_T>();
+            if (prop == Property::Type::Pressure()) return property<P, UNITS_T>();
+            if (prop == Property::Type::Enthalpy()) return property<H, UNITS_T>();
+            if (prop == Property::Type::Entropy()) return property<S, UNITS_T>();
+            if (prop == Property::Type::InternalEnergy()) return property<U, UNITS_T>();
+            if (prop == Property::Type::HelmholtzEnergy()) return property<A, UNITS_T>();
+            if (prop == Property::Type::GibbsEnergy()) return property<G, UNITS_T>();
+            if (prop == Property::Type::Density()) return property<Rho, UNITS_T>();
+            if (prop == Property::Type::Volume()) return property<V, UNITS_T>();
+            if (prop == Property::Type::Cp()) return property<Cp, UNITS_T>();
+            if (prop == Property::Type::Cv()) return property<Cv, UNITS_T>();
+            if (prop == Property::Type::IsothermalCompressibility())
+                return phase != Phase::TwoPhase() ? Property { property<Kappa, UNITS_T>() } : Property { property<Undefined, UNITS_T>() };
+            if (prop == Property::Type::ThermalExpansion())
+                return phase != Phase::TwoPhase() ? Property { property<Alpha, UNITS_T>() } : Property { property<Undefined, UNITS_T>() };
+            if (prop == Property::Type::SpeedOfSound())
+                return phase != Phase::TwoPhase() ? Property { property<W, UNITS_T>() } : Property { property<Undefined, UNITS_T>() };
+            if (prop == Property::Type::CompressibilityFactor())
+                return phase != Phase::TwoPhase() ? Property { property<Z, UNITS_T>() } : Property { property<Undefined, UNITS_T>() };
+            if (prop == Property::Type::VaporQuality())
+                return phase != Phase::Critical() && phase != Phase::Supercritical() ? Property { property<X, UNITS_T>() }
+                                                                                     : Property { property<Undefined, UNITS_T>() };
+            if (prop == Property::Type::DynamicViscosity())
+                return phase != Phase::TwoPhase() ? Property { property<Eta, UNITS_T>() } : Property { property<Undefined, UNITS_T>() };
+            if (prop == Property::Type::KinematicViscosity())
+                return phase != Phase::TwoPhase() ? Property { property<Nu, UNITS_T>() } : Property { property<Undefined, UNITS_T>() };
+            if (prop == Property::Type::ThermalConductivity())
+                return phase != Phase::TwoPhase() ? Property { property<TC, UNITS_T>() } : Property { property<Undefined, UNITS_T>() };
+            if (prop == Property::Type::PrandtlNumber())
+                return phase != Phase::TwoPhase() ? Property { property<PR, UNITS_T>() } : Property { property<Undefined, UNITS_T>() };
+            if (prop == Property::Type::MolecularWeight()) return property<MW, UNITS_T>();
+            if (prop == Property::Type::Phase()) return phase;
+            if (prop == Property::Type::Undefined()) return property<Undefined, UNITS_T>();
+            if (prop == Property::Type::Unknown()) return property<Unknown, UNITS_T>();
+            throw std::runtime_error("Invalid property type");
 
-                case Property::Type::Eta:
-                    return phase != Phase::TwoPhase() ? Property { property<Eta, UNITS_T>() }
-                                                                   : Property { property<Undefined, UNITS_T>() };
-                case Property::Type::Nu:
-                    return phase != Phase::TwoPhase() ? Property { property<Nu, UNITS_T>() }
-                                                                   : Property { property<Undefined, UNITS_T>() };
-                case Property::Type::TC:
-                    return phase != Phase::TwoPhase() ? Property { property<TC, UNITS_T>() }
-                                                                   : Property { property<Undefined, UNITS_T>() };
-                case Property::Type::PR:
-                    return phase != Phase::TwoPhase() ? Property { property<PR, UNITS_T>() }
-                                                                   : Property { property<Undefined, UNITS_T>() };
-
-                case Property::Type::MW:
-                    return property<MW, UNITS_T>();
-                case Property::Type::Phase:
-                    return phase;
-                case Property::Type::Undefined:
-                    return property<Undefined, UNITS_T>();
-                case Property::Type::Unknown:
-                    return property<Unknown, UNITS_T>();
-                default:
-                    throw std::runtime_error("Invalid property type");
-            }
+            // case Property::Type2::Pressure():
+            //     return property<P, UNITS_T>();
+            // case Property::Type2::Enthalpy():
+            //     return property<H, UNITS_T>();
+            // case Property::Type2::Entropy():
+            //     return property<S, UNITS_T>();
+            // case Property::Type2::InternalEnergy():
+            //     return property<U, UNITS_T>();
+            // case Property::Type2::HelmholtzEnergy():
+            //     return property<A, UNITS_T>();
+            // case Property::Type2::GibbsEnergy():
+            //     return property<G, UNITS_T>();
+            // case Property::Type2::Density():
+            //     return property<Rho, UNITS_T>();
+            // case Property::Type2::Volume():
+            //     return property<V, UNITS_T>();
+            // case Property::Type2::Cp():
+            //     return property<Cp, UNITS_T>();
+            // case Property::Type2::Cv():
+            //     return property<Cv, UNITS_T>();
+            // case Property::Type2::IsothermalCompressibility():
+            //     return phase != Phase::TwoPhase() ? Property { property<Kappa, UNITS_T>() } : Property { property<Undefined, UNITS_T>() };
+            // case Property::Type2::ThermalExpansion():
+            //     return phase != Phase::TwoPhase() ? Property { property<Alpha, UNITS_T>() } : Property { property<Undefined, UNITS_T>() };
+            // case Property::Type2::SpeedOfSound():
+            //     return phase != Phase::TwoPhase() ? Property { property<W, UNITS_T>() } : Property { property<Undefined, UNITS_T>() };
+            // case Property::Type2::CompressibilityFactor():
+            //     return phase != Phase::TwoPhase() ? Property { property<Z, UNITS_T>() } : Property { property<Undefined, UNITS_T>() };
+            // case Property::Type2::VaporQuality():
+            //     return phase != Phase::Critical() && phase != Phase::Supercritical() ? Property { property<X, UNITS_T>() }
+            //                                                                          : Property { property<Undefined, UNITS_T>() };
+            //
+            // case Property::Type2::DynamicViscosity():
+            //     return phase != Phase::TwoPhase() ? Property { property<Eta, UNITS_T>() } : Property { property<Undefined, UNITS_T>() };
+            // case Property::Type2::KinematicViscosity():
+            //     return phase != Phase::TwoPhase() ? Property { property<Nu, UNITS_T>() } : Property { property<Undefined, UNITS_T>() };
+            // case Property::Type2::ThermalConductivity():
+            //     return phase != Phase::TwoPhase() ? Property { property<TC, UNITS_T>() } : Property { property<Undefined, UNITS_T>() };
+            // case Property::Type2::PrandtlNumber():
+            //     return phase != Phase::TwoPhase() ? Property { property<PR, UNITS_T>() } : Property { property<Undefined, UNITS_T>() };
+            //
+            // case Property::Type2::MolecularWeight():
+            //     return property<MW, UNITS_T>();
+            // case Property::Type2::Phase():
+            //     return phase;
+            // case Property::Type2::Undefined():
+            //     return property<Undefined, UNITS_T>();
+            // case Property::Type2::Unknown():
+            //     return property<Unknown, UNITS_T>();
+            // default:
+            //     throw std::runtime_error("Invalid property type");
         }
 
         /**
@@ -385,7 +408,7 @@ namespace KProps::detail
         auto property(std::string propertyString) const
         {
             std::transform(propertyString.begin(), propertyString.end(), propertyString.begin(), ::toupper);
-            return property<UNITS_T>(Property::typeFromString(propertyString));
+            return property<UNITS_T>(Property::Type::Create(propertyString).value());
         }
 
         /**

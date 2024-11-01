@@ -46,227 +46,185 @@ namespace KProps
         detail::PropertyVariant m_property;
 
     public:
-        enum class Type {
-            T           = 0, /**< Temperature */
-            Temperature = 0, /**< Temperature (synonymous with T) */
-
-            P        = 1, /**< Pressure */
-            Pressure = 1, /**< Pressure (synonymous with P) */
-
-            H        = 2, /**< Enthalpy */
-            Enthalpy = 2, /**< Enthalpy (synonymous with H) */
-
-            S       = 3, /**< Entropy */
-            Entropy = 3, /**< Entropy (synonymous with S) */
-
-            U              = 4, /**< Internal Energy */
-            InternalEnergy = 4, /**< Internal Energy (synonymous with U) */
-
-            A               = 5, /**< Helmholtz Energy */
-            HelmholtzEnergy = 5, /**< Helmholtz Energy (synonymous with A) */
-
-            G           = 6, /**< Gibbs Energy */
-            GibbsEnergy = 6, /**< Gibbs Energy (synonymous with G) */
-
-            Rho     = 7, /**< Density */
-            Density = 7, /**< Density (synonymous with Rho) */
-
-            V      = 8, /**< Volume */
-            Volume = 8, /**< Volume (synonymous with V) */
-            Vol    = 8, /**< Volume (synonymous with V and Volume) */
-
-            Cp = 9, /**< Specific Heat at Constant Pressure */
-
-            Cv = 10, /**< Specific Heat at Constant Volume */
-
-            Kappa                     = 11, /**< Isothermal Compressibility */
-            IsothermalCompressibility = 11, /**< Isothermal Compressibility (synonymous with Kappa) */
-
-            Alpha            = 12, /**< Thermal Expansion */
-            ThermalExpansion = 12, /**< Thermal Expansion (synonymous with Alpha) */
-
-            W            = 13, /**< Speed of Sound */
-            SpeedOfSound = 13, /**< Speed of Sound (synonymous with W) */
-
-            Z                     = 14, /**< Compressibility Factor */
-            CompressibilityFactor = 14, /**< Compressibility Factor (synonymous with Z) */
-
-            X            = 15, /**< Vapor Quality */
-            Q            = 15, /**< Vapor Quality (synonymous with X) */
-            VaporQuality = 15, /**< Vapor Quality (synonymous with X and Q) */
-
-            Eta              = 16, /**< Dynamic Viscosity */
-            DynamicViscosity = 16, /**< Dynamic Viscosity (synonymous with Eta) */
-
-            Nu                 = 17, /**< Kinematic Viscosity */
-            KinematicViscosity = 17, /**< Kinematic Viscosity (synonymous with Nu) */
-
-            TC                  = 18, /**< Thermal Conductivity */
-            ThermalConductivity = 18, /**< Thermal Conductivity (synonymous with TC) */
-
-            PR            = 19, /**< Prandtl Number */
-            PrandtlNumber = 19, /**< Prandtl Number (synonymous with PR) */
-
-            MW              = 20, /**< Molecular Weight */
-            MolecularWeight = 20, /**< Molecular Weight (synonymous with MW) */
-            MolarMass       = 20, /**< Molecular Weight (synonymous with MW and MolecularWeight) */
-
-            Phase = 21, /**< Phase (e.g., liquid, vapor, two-phase) */
-
-            Undefined = 22, /**< Placeholder for undefined properties */
-
-            Unknown = 23 /**< Placeholder for unknown properties */
-        };
-
-    private:
-        using StringToTypePair = std::pair<std::string_view, Type>;
-
-        static constexpr std::array<StringToTypePair, 60> StringToType = { { // Basic properties
-                                                                             { "T", Type::T },
-                                                                             { "TEMPERATURE", Type::T },
-
-                                                                             { "PMIN", Type::P },
-                                                                             { "MINIMUM PRESSURE", Type::P },
-                                                                             { "PMAX", Type::P },
-                                                                             { "MAXIMUM PRESSURE", Type::P },
-                                                                             { "PCRIT", Type::P },
-                                                                             { "CRITICAL PRESSURE", Type::P },
-                                                                             { "PTRIP", Type::P },
-                                                                             { "TRIPLE POINT PRESSURE", Type::P },
-
-                                                                             { "TMIN", Type::T },
-                                                                             { "MINIMUM TEMPERATURE", Type::T },
-                                                                             { "TMAX", Type::T },
-                                                                             { "MAXIMUM TEMPERATURE", Type::T },
-                                                                             { "TCRIT", Type::T },
-                                                                             { "CRITICAL TEMPERATURE", Type::T },
-                                                                             { "TTRIP", Type::T },
-                                                                             { "TRIPLE POINT TEMPERATURE", Type::T },
-
-                                                                             { "P", Type::P },
-                                                                             { "PRESSURE", Type::P },
-                                                                             { "H", Type::H },
-                                                                             { "ENTHALPY", Type::H },
-                                                                             { "S", Type::S },
-                                                                             { "ENTROPY", Type::S },
-                                                                             { "U", Type::U },
-                                                                             { "INTERNAL ENERGY", Type::U },
-                                                                             { "A", Type::A },
-                                                                             { "HELMHOLTZ ENERGY", Type::A },
-                                                                             { "G", Type::G },
-                                                                             { "GIBBS ENERGY", Type::G },
-                                                                             // Density and volume
-                                                                             { "RHO", Type::Rho },
-                                                                             { "DENSITY", Type::Rho },
-                                                                             { "V", Type::V },
-                                                                             { "VOLUME", Type::V },
-                                                                             { "VOL", Type::V },
-                                                                             // Specific heats
-                                                                             { "CP", Type::Cp },
-                                                                             { "CV", Type::Cv },
-                                                                             // Compressibility and expansion
-                                                                             { "KAPPA", Type::Kappa },
-                                                                             { "ISOTHERMAL COMPRESSIBILITY", Type::Kappa },
-                                                                             { "ALPHA", Type::Alpha },
-                                                                             { "THERMAL EXPANSION", Type::Alpha },
-                                                                             // Speed of sound and compressibility factor
-                                                                             { "W", Type::W },
-                                                                             { "SPEED OF SOUND", Type::W },
-                                                                             { "Z", Type::Z },
-                                                                             { "COMPRESSIBILITY FACTOR", Type::Z },
-                                                                             // Vapor quality
-                                                                             { "X", Type::X },
-                                                                             { "Q", Type::X },
-                                                                             { "VAPOR QUALITY", Type::X },
-                                                                             // Viscosity, conductivity, and Prandtl number
-                                                                             { "ETA", Type::Eta },
-                                                                             { "DYNAMIC VISCOSITY", Type::Eta },
-                                                                             { "NU", Type::Nu },
-                                                                             { "KINEMATIC VISCOSITY", Type::Nu },
-                                                                             { "TC", Type::TC },
-                                                                             { "THERMAL CONDUCTIVITY", Type::TC },
-                                                                             { "PR", Type::PR },
-                                                                             { "PRANDTL NUMBER", Type::PR },
-                                                                             // Molecular weight
-                                                                             { "MW", Type::MW },
-                                                                             { "MOLAR MASS", Type::MW },
-                                                                             { "MOLECULAR WEIGHT", Type::MW },
-                                                                             { "PHASE", Type::Phase } } };
-
-        using TypeToStringPair = std::pair<Type, std::string_view>;
-
-        static constexpr std::array<TypeToStringPair, 24> TypeToString = { { // Basic properties
-                                                                             { Type::T, "T" },
-                                                                             { Type::P, "P" },
-                                                                             { Type::H, "H" },
-                                                                             { Type::S, "S" },
-                                                                             { Type::U, "U" },
-                                                                             { Type::A, "A" },
-                                                                             { Type::G, "G" },
-                                                                             // Density and volume
-                                                                             { Type::Rho, "RHO" },
-                                                                             { Type::V, "V" },
-                                                                             // Specific heats
-                                                                             { Type::Cp, "CP" },
-                                                                             { Type::Cv, "CV" },
-                                                                             // Compressibility and expansion
-                                                                             { Type::Kappa, "KAPPA" },
-                                                                             { Type::Alpha, "ALPHA" },
-                                                                             // Speed of sound and compressibility factor
-                                                                             { Type::W, "W" },
-                                                                             { Type::Z, "Z" },
-                                                                             // Vapor quality
-                                                                             { Type::X, "X" },
-                                                                             // Viscosity, conductivity, and Prandtl number
-                                                                             { Type::Eta, "ETA" },
-                                                                             { Type::Nu, "NU" },
-                                                                             { Type::TC, "TC" },
-                                                                             { Type::PR, "PR" },
-                                                                             // Molecular weight
-                                                                             { Type::MW, "MW" },
-                                                                             { Type::Phase, "PHASE" },
-                                                                             // Unknown or undefined property
-                                                                             { Type::Undefined, "UNDEFINED" },
-                                                                             { Type::Unknown, "UNKNOWN" } } };
-
-    public:
-        class Type2
+        class Type
         {
+            enum class TypeEnum {
+                T           = 0, /**< Temperature */
+                Temperature = 0, /**< Temperature (synonymous with T) */
+
+                P        = 1, /**< Pressure */
+                Pressure = 1, /**< Pressure (synonymous with P) */
+
+                H        = 2, /**< Enthalpy */
+                Enthalpy = 2, /**< Enthalpy (synonymous with H) */
+
+                S       = 3, /**< Entropy */
+                Entropy = 3, /**< Entropy (synonymous with S) */
+
+                U              = 4, /**< Internal Energy */
+                InternalEnergy = 4, /**< Internal Energy (synonymous with U) */
+
+                A               = 5, /**< Helmholtz Energy */
+                HelmholtzEnergy = 5, /**< Helmholtz Energy (synonymous with A) */
+
+                G           = 6, /**< Gibbs Energy */
+                GibbsEnergy = 6, /**< Gibbs Energy (synonymous with G) */
+
+                Rho     = 7, /**< Density */
+                Density = 7, /**< Density (synonymous with Rho) */
+
+                V      = 8, /**< Volume */
+                Volume = 8, /**< Volume (synonymous with V) */
+                Vol    = 8, /**< Volume (synonymous with V and Volume) */
+
+                Cp = 9, /**< Specific Heat at Constant Pressure */
+
+                Cv = 10, /**< Specific Heat at Constant Volume */
+
+                Kappa                     = 11, /**< Isothermal Compressibility */
+                IsothermalCompressibility = 11, /**< Isothermal Compressibility (synonymous with Kappa) */
+
+                Alpha            = 12, /**< Thermal Expansion */
+                ThermalExpansion = 12, /**< Thermal Expansion (synonymous with Alpha) */
+
+                W            = 13, /**< Speed of Sound */
+                SpeedOfSound = 13, /**< Speed of Sound (synonymous with W) */
+
+                Z                     = 14, /**< Compressibility Factor */
+                CompressibilityFactor = 14, /**< Compressibility Factor (synonymous with Z) */
+
+                X            = 15, /**< Vapor Quality */
+                Q            = 15, /**< Vapor Quality (synonymous with X) */
+                VaporQuality = 15, /**< Vapor Quality (synonymous with X and Q) */
+
+                Eta              = 16, /**< Dynamic Viscosity */
+                DynamicViscosity = 16, /**< Dynamic Viscosity (synonymous with Eta) */
+
+                Nu                 = 17, /**< Kinematic Viscosity */
+                KinematicViscosity = 17, /**< Kinematic Viscosity (synonymous with Nu) */
+
+                TC                  = 18, /**< Thermal Conductivity */
+                ThermalConductivity = 18, /**< Thermal Conductivity (synonymous with TC) */
+
+                PR            = 19, /**< Prandtl Number */
+                PrandtlNumber = 19, /**< Prandtl Number (synonymous with PR) */
+
+                MW              = 20, /**< Molecular Weight */
+                MolecularWeight = 20, /**< Molecular Weight (synonymous with MW) */
+                MolarMass       = 20, /**< Molecular Weight (synonymous with MW and MolecularWeight) */
+
+                Phase = 21, /**< Phase (e.g., liquid, vapor, two-phase) */
+
+                Undefined = 22, /**< Placeholder for undefined properties */
+
+                Unknown = 23 /**< Placeholder for unknown properties */
+            };
+
             // enum class State { Liquid, Gas, TwoPhase, Critical, Supercritical, Unknown };
-            Type m_type { Type::Unknown };
+            TypeEnum m_type { TypeEnum::Unknown };
 
-            using TypeList                      = std::array<std::pair<std::string_view, Type>, 60>;
-            static constexpr TypeList typeList = StringToType;
+            using TypeList                     = std::array<std::pair<std::string_view, TypeEnum>, 60>;
+            static constexpr TypeList typeList = { { // Basic properties
+                                                     { "T", TypeEnum::T },
+                                                     { "TEMPERATURE", TypeEnum::T },
 
-            constexpr explicit Type2(Type type) : m_type(type) {}
+                                                     { "PMIN", TypeEnum::P },
+                                                     { "MINIMUM PRESSURE", TypeEnum::P },
+                                                     { "PMAX", TypeEnum::P },
+                                                     { "MAXIMUM PRESSURE", TypeEnum::P },
+                                                     { "PCRIT", TypeEnum::P },
+                                                     { "CRITICAL PRESSURE", TypeEnum::P },
+                                                     { "PTRIP", TypeEnum::P },
+                                                     { "TRIPLE POINT PRESSURE", TypeEnum::P },
+
+                                                     { "TMIN", TypeEnum::T },
+                                                     { "MINIMUM TEMPERATURE", TypeEnum::T },
+                                                     { "TMAX", TypeEnum::T },
+                                                     { "MAXIMUM TEMPERATURE", TypeEnum::T },
+                                                     { "TCRIT", TypeEnum::T },
+                                                     { "CRITICAL TEMPERATURE", TypeEnum::T },
+                                                     { "TTRIP", TypeEnum::T },
+                                                     { "TRIPLE POINT TEMPERATURE", TypeEnum::T },
+
+                                                     { "P", TypeEnum::P },
+                                                     { "PRESSURE", TypeEnum::P },
+                                                     { "H", TypeEnum::H },
+                                                     { "ENTHALPY", TypeEnum::H },
+                                                     { "S", TypeEnum::S },
+                                                     { "ENTROPY", TypeEnum::S },
+                                                     { "U", TypeEnum::U },
+                                                     { "INTERNAL ENERGY", TypeEnum::U },
+                                                     { "A", TypeEnum::A },
+                                                     { "HELMHOLTZ ENERGY", TypeEnum::A },
+                                                     { "G", TypeEnum::G },
+                                                     { "GIBBS ENERGY", TypeEnum::G },
+                                                     // Density and volume
+                                                     { "RHO", TypeEnum::Rho },
+                                                     { "DENSITY", TypeEnum::Rho },
+                                                     { "V", TypeEnum::V },
+                                                     { "VOLUME", TypeEnum::V },
+                                                     { "VOL", TypeEnum::V },
+                                                     // Specific heats
+                                                     { "CP", TypeEnum::Cp },
+                                                     { "CV", TypeEnum::Cv },
+                                                     // Compressibility and expansion
+                                                     { "KAPPA", TypeEnum::Kappa },
+                                                     { "ISOTHERMAL COMPRESSIBILITY", TypeEnum::Kappa },
+                                                     { "ALPHA", TypeEnum::Alpha },
+                                                     { "THERMAL EXPANSION", TypeEnum::Alpha },
+                                                     // Speed of sound and compressibility factor
+                                                     { "W", TypeEnum::W },
+                                                     { "SPEED OF SOUND", TypeEnum::W },
+                                                     { "Z", TypeEnum::Z },
+                                                     { "COMPRESSIBILITY FACTOR", TypeEnum::Z },
+                                                     // Vapor quality
+                                                     { "X", TypeEnum::X },
+                                                     { "Q", TypeEnum::X },
+                                                     { "VAPOR QUALITY", TypeEnum::X },
+                                                     // Viscosity, conductivity, and Prandtl number
+                                                     { "ETA", TypeEnum::Eta },
+                                                     { "DYNAMIC VISCOSITY", TypeEnum::Eta },
+                                                     { "NU", TypeEnum::Nu },
+                                                     { "KINEMATIC VISCOSITY", TypeEnum::Nu },
+                                                     { "TC", TypeEnum::TC },
+                                                     { "THERMAL CONDUCTIVITY", TypeEnum::TC },
+                                                     { "PR", TypeEnum::PR },
+                                                     { "PRANDTL NUMBER", TypeEnum::PR },
+                                                     // Molecular weight
+                                                     { "MW", TypeEnum::MW },
+                                                     { "MOLAR MASS", TypeEnum::MW },
+                                                     { "MOLECULAR WEIGHT", TypeEnum::MW },
+                                                     { "PHASE", TypeEnum::Phase } } };
+
+            constexpr explicit Type(TypeEnum type) : m_type(type) {}
 
         public:
-            static constexpr Type2 Temperature() { return Type2 { Type::Temperature }; }
-            static constexpr Type2 Pressure() { return Type2 { Type::Pressure }; }
-            static constexpr Type2 Enthalpy() { return Type2 { Type::Enthalpy }; }
-            static constexpr Type2 Entropy() { return Type2 { Type::Entropy }; }
-            static constexpr Type2 InternalEnergy() { return Type2 { Type::InternalEnergy }; }
-            static constexpr Type2 HelmholtzEnergy() { return Type2 { Type::HelmholtzEnergy }; }
-            static constexpr Type2 GibbsEnergy() { return Type2 { Type::GibbsEnergy }; }
-            static constexpr Type2 Density() { return Type2 { Type::Density }; }
-            static constexpr Type2 Volume() { return Type2 { Type::Volume }; }
-            static constexpr Type2 Cp() { return Type2 { Type::Cp }; }
-            static constexpr Type2 Cv() { return Type2 { Type::Cv }; }
-            static constexpr Type2 IsothermalCompressibility() { return Type2 { Type::Kappa }; }
-            static constexpr Type2 ThermalExpansion() { return Type2 { Type::Alpha }; }
-            static constexpr Type2 SpeedOfSound() { return Type2 { Type::W }; }
-            static constexpr Type2 CompressibilityFactor() { return Type2 { Type::Z }; }
-            static constexpr Type2 VaporQuality() { return Type2 { Type::X }; }
-            static constexpr Type2 DynamicViscosity() { return Type2 { Type::Eta }; }
-            static constexpr Type2 KinematicViscosity() { return Type2 { Type::Nu }; }
-            static constexpr Type2 ThermalConductivity() { return Type2 { Type::TC }; }
-            static constexpr Type2 PrandtlNumber() { return Type2 { Type::PR }; }
-            static constexpr Type2 MolecularWeight() { return Type2 { Type::MW }; }
-            static constexpr Type2 Phase() { return Type2 { Type::Phase }; }
-            static constexpr Type2 Undefined() { return Type2 { Type::Undefined }; }
-            static constexpr Type2 Unknown() { return Type2 { Type::Unknown }; }
+            static constexpr Type Temperature() { return Type { TypeEnum::Temperature }; }
+            static constexpr Type Pressure() { return Type { TypeEnum::Pressure }; }
+            static constexpr Type Enthalpy() { return Type { TypeEnum::Enthalpy }; }
+            static constexpr Type Entropy() { return Type { TypeEnum::Entropy }; }
+            static constexpr Type InternalEnergy() { return Type { TypeEnum::InternalEnergy }; }
+            static constexpr Type HelmholtzEnergy() { return Type { TypeEnum::HelmholtzEnergy }; }
+            static constexpr Type GibbsEnergy() { return Type { TypeEnum::GibbsEnergy }; }
+            static constexpr Type Density() { return Type { TypeEnum::Density }; }
+            static constexpr Type Volume() { return Type { TypeEnum::Volume }; }
+            static constexpr Type Cp() { return Type { TypeEnum::Cp }; }
+            static constexpr Type Cv() { return Type { TypeEnum::Cv }; }
+            static constexpr Type IsothermalCompressibility() { return Type { TypeEnum::Kappa }; }
+            static constexpr Type ThermalExpansion() { return Type { TypeEnum::Alpha }; }
+            static constexpr Type SpeedOfSound() { return Type { TypeEnum::W }; }
+            static constexpr Type CompressibilityFactor() { return Type { TypeEnum::Z }; }
+            static constexpr Type VaporQuality() { return Type { TypeEnum::X }; }
+            static constexpr Type DynamicViscosity() { return Type { TypeEnum::Eta }; }
+            static constexpr Type KinematicViscosity() { return Type { TypeEnum::Nu }; }
+            static constexpr Type ThermalConductivity() { return Type { TypeEnum::TC }; }
+            static constexpr Type PrandtlNumber() { return Type { TypeEnum::PR }; }
+            static constexpr Type MolecularWeight() { return Type { TypeEnum::MW }; }
+            static constexpr Type Phase() { return Type { TypeEnum::Phase }; }
+            static constexpr Type Undefined() { return Type { TypeEnum::Undefined }; }
+            static constexpr Type Unknown() { return Type { TypeEnum::Unknown }; }
 
-            static constexpr std::optional<Type2> Create(std::string_view type)
+            static constexpr std::optional<Type> Create(std::string_view type)
             {
                 auto it = std::ranges::find_if(typeList, [type](const auto& pair) {
                     return type.size() == pair.first.size() &&
@@ -278,14 +236,14 @@ namespace KProps
 
                 switch (it != typeList.end()) {
                     case true:
-                        return Type2(it->second);
+                        return Type(it->second);
                     default:
                         return std::nullopt;
                 }
             }
 
             // ===== Friend declarations
-            friend constexpr bool operator==(const Property::Type2& lhs, const Property::Type2& rhs);
+            friend constexpr bool operator==(const Property::Type& lhs, const Property::Type& rhs);
         };
 
         Property() { m_property = KProps::Unknown { std::nan("") }; }
@@ -310,94 +268,41 @@ namespace KProps
             return std::get<TProperty>(m_property);
         }
 
-        template<typename TYPE = Type>
-            requires std::same_as<TYPE, Type>
+        //template<typename TYPE = Type2>
+        //    requires std::same_as<TYPE, Type2>
         [[nodiscard]]
-        auto type() const
+        Type type() const
         {
-            return static_cast<Type>(m_property.index());
-        }
+            //return static_cast<Type2>(m_property.index());
 
-        template<typename TYPE = Type>
-            requires std::same_as<TYPE, std::string>
-        [[nodiscard]]
-        auto type() const
-        {
-            auto       t  = type<Type>();
-            const auto it = rng::find_if(TypeToString, [=](const auto& pair) { return t == pair.first; });
+            switch (m_property.index()) {
+                case 0: return Type::Temperature();
+                case 1: return Type::Pressure();
+                case 2: return Type::Enthalpy();
+                case 3: return Type::Entropy();
+                case 4: return Type::InternalEnergy();
+                case 5: return Type::HelmholtzEnergy();
+                case 6: return Type::GibbsEnergy();
+                case 7: return Type::Density();
+                case 8: return Type::Volume();
+                case 9: return Type::Cp();
+                case 10: return Type::Cv();
+                case 11: return Type::IsothermalCompressibility();
+                case 12: return Type::ThermalExpansion();
+                case 13: return Type::SpeedOfSound();
+                case 14: return Type::CompressibilityFactor();
+                case 15: return Type::VaporQuality();
+                case 16: return Type::DynamicViscosity();
+                case 17: return Type::KinematicViscosity();
+                case 18: return Type::ThermalConductivity();
+                case 19: return Type::PrandtlNumber();
+                case 20: return Type::MolecularWeight();
+                case 21: return Type::Phase();
+                case 22: return Type::Undefined();
+                case 23: return Type::Unknown();
+                default: return Type::Unknown();
+            }
 
-            if (it != TypeToString.end())
-                return it->second;
-            else
-                return TypeToString.back().second;
-        }
-
-        static Type typeFromString(std::string str)
-        {
-            if (str.empty()) return Type::Unknown;
-
-            rng::transform(str, str.begin(), ::toupper);
-
-            if (const auto it = rng::find_if(StringToType, [&](const auto& pair) { return str == pair.first; }); it != StringToType.end())
-                return it->second;
-            return Type::Unknown;
-        }
-
-        static std::string typeToString(Type type)
-        {
-            if (const auto it = rng::find_if(TypeToString, [=](const auto& pair) { return type == pair.first; }); it != TypeToString.end())
-                return std::string { it->second };
-            return std::string { TypeToString.back().second };
-        }
-
-        template<IsProperty PROPERTY_T>
-        static std::string aliasToString()
-        {
-            if constexpr (std::same_as<PROPERTY_T, P>)
-                return typeToString(Type::P);
-            else if constexpr (std::same_as<PROPERTY_T, T>)
-                return typeToString(Type::T);
-            else if constexpr (std::same_as<PROPERTY_T, Rho>)
-                return typeToString(Type::Rho);
-            else if constexpr (std::same_as<PROPERTY_T, H>)
-                return typeToString(Type::H);
-            else if constexpr (std::same_as<PROPERTY_T, S>)
-                return typeToString(Type::S);
-            else if constexpr (std::same_as<PROPERTY_T, U>)
-                return typeToString(Type::U);
-            else if constexpr (std::same_as<PROPERTY_T, A>)
-                return typeToString(Type::A);
-            else if constexpr (std::same_as<PROPERTY_T, G>)
-                return typeToString(Type::G);
-            else if constexpr (std::same_as<PROPERTY_T, KProps::Cp>)
-                return typeToString(Type::Cp);
-            else if constexpr (std::same_as<PROPERTY_T, KProps::Cv>)
-                return typeToString(Type::Cv);
-            else if constexpr (std::same_as<PROPERTY_T, Kappa>)
-                return typeToString(Type::Kappa);
-            else if constexpr (std::same_as<PROPERTY_T, Alpha>)
-                return typeToString(Type::Alpha);
-            else if constexpr (std::same_as<PROPERTY_T, W>)
-                return typeToString(Type::W);
-            else if constexpr (std::same_as<PROPERTY_T, Eta>)
-                return typeToString(Type::Eta);
-            else if constexpr (std::same_as<PROPERTY_T, Nu>)
-                return typeToString(Type::Nu);
-            else if constexpr (std::same_as<PROPERTY_T, TC>)
-                return typeToString(Type::TC);
-            else if constexpr (std::same_as<PROPERTY_T, PR>)
-                return typeToString(Type::PR);
-            else if constexpr (std::same_as<PROPERTY_T, Z>)
-                return typeToString(Type::Z);
-            else if constexpr (std::same_as<PROPERTY_T, X>)
-                return typeToString(Type::X);
-            else if constexpr (std::same_as<PROPERTY_T, MW>)
-                return typeToString(Type::MW);
-            else if constexpr (std::same_as<PROPERTY_T, KProps::Phase>)
-                return typeToString(Type::Phase);
-            else if constexpr (std::same_as<PROPERTY_T, KProps::Undefined>)
-                return typeToString(Type::Undefined);
-            return typeToString(Type::Unknown);
         }
 
         template<typename Callable>
@@ -433,63 +338,41 @@ namespace KProps
 
         static std::optional<Property> Create(Type type, double value = 0.0)
         {
-            switch (type) {
-                case Type::T:
-                    return Temperature(value);
-                case Type::P:
-                    return Pressure(value);
-                case Type::H:
-                    return Enthalpy(value);
-                case Type::S:
-                    return Entropy(value);
-                case Type::U:
-                    return InternalEnergy(value);
-                case Type::A:
-                    return HelmholtzEnergy(value);
-                case Type::G:
-                    return GibbsEnergy(value);
-                case Type::Rho:
-                    return Density(value);
-                case Type::V:
-                    return Volume(value);
-                case Type::Cp:
-                    return Cp(value);
-                case Type::Cv:
-                    return Cv(value);
-                case Type::Kappa:
-                    return IsothermalCompressibility(value);
-                case Type::Alpha:
-                    return ThermalExpansion(value);
-                case Type::W:
-                    return SpeedOfSound(value);
-                case Type::Z:
-                    return CompressibilityFactor(value);
-                case Type::X:
-                    return VaporQuality(value);
-                case Type::Eta:
-                    return DynamicViscosity(value);
-                case Type::Nu:
-                    return KinematicViscosity(value);
-                case Type::TC:
-                    return ThermalConductivity(value);
-                case Type::PR:
-                    return PrandtlNumber(value);
-                case Type::MW:
-                    return MolecularWeight(value);
-                case Type::Phase:
-                    return Phase();
-                case Type::Undefined:
-                    return Undefined(value);
-                case Type::Unknown:
-                    return Unknown(value);
-                default:
-                    return std::nullopt;
-            }
+            if (type == Type::Temperature()) return Temperature(value);
+            if (type == Type::Pressure()) return Pressure(value);
+            if (type == Type::Enthalpy()) return Enthalpy(value);
+            if (type == Type::Entropy()) return Entropy(value);
+            if (type == Type::InternalEnergy()) return InternalEnergy(value);
+            if (type == Type::HelmholtzEnergy()) return HelmholtzEnergy(value);
+            if (type == Type::GibbsEnergy()) return GibbsEnergy(value);
+            if (type == Type::Density()) return Density(value);
+            if (type == Type::Volume()) return Volume(value);
+            if (type == Type::Cp()) return Cp(value);
+            if (type == Type::Cv()) return Cv(value);
+            if (type == Type::IsothermalCompressibility()) return IsothermalCompressibility(value);
+            if (type == Type::ThermalExpansion()) return ThermalExpansion(value);
+            if (type == Type::SpeedOfSound()) return SpeedOfSound(value);
+            if (type == Type::CompressibilityFactor()) return CompressibilityFactor(value);
+            if (type == Type::VaporQuality()) return VaporQuality(value);
+            if (type == Type::DynamicViscosity()) return DynamicViscosity(value);
+            if (type == Type::KinematicViscosity()) return KinematicViscosity(value);
+            if (type == Type::ThermalConductivity()) return ThermalConductivity(value);
+            if (type == Type::PrandtlNumber()) return PrandtlNumber(value);
+            if (type == Type::MolecularWeight()) return MolecularWeight(value);
+            if (type == Type::Phase()) return Phase();
+            if (type == Type::Undefined()) return Undefined(value);
+            if (type == Type::Unknown()) return Unknown(value);
+            return std::nullopt;
         }
 
         static std::optional<Property> Create(std::string_view type, double value = 0.0)
         {
-            return Create(typeFromString(type.data()), value);
+            //return Create(typeFromString(type.data()), value);
+            auto t = Type::Create(type);
+            if (t.has_value())
+                return Create(t.value(), value);
+
+            return std::nullopt;
         }
     };
 
@@ -500,7 +383,66 @@ namespace KProps
         return os;
     }
 
-    constexpr bool operator==(const Property::Type2& lhs, const Property::Type2& rhs) { return lhs.m_type == rhs.m_type; }
-    constexpr bool operator!=(const Property::Type2& lhs, const Property::Type2& rhs) { return !(lhs == rhs); }
+    constexpr bool operator==(const Property::Type& lhs, const Property::Type& rhs) { return lhs.m_type == rhs.m_type; }
+    constexpr bool operator!=(const Property::Type& lhs, const Property::Type& rhs) { return !(lhs == rhs); }
+
+    inline std::string to_string(const Property::Type& type)
+    {
+
+        if (type == Property::Type::Temperature())
+            return "TEMPERATURE";
+        if (type == Property::Type::Pressure())
+            return "PRESSURE";
+        if (type == Property::Type::Enthalpy())
+            return "ENTHALPY";
+        if (type == Property::Type::Entropy())
+            return "ENTROPY";
+        if (type == Property::Type::InternalEnergy())
+            return "INTERNAL ENERGY";
+        if (type == Property::Type::HelmholtzEnergy())
+            return "HELMHOLTZ ENERGY";
+        if (type == Property::Type::GibbsEnergy())
+            return "GIBBS ENERGY";
+        if (type == Property::Type::Density())
+            return "DENSITY";
+        if (type == Property::Type::Volume())
+            return "VOLUME";
+        if (type == Property::Type::Cp())
+            return "CP";
+        if (type == Property::Type::Cv())
+            return "CV";
+        if (type == Property::Type::IsothermalCompressibility())
+            return "ISOTHERMAL COMPRESSIBILITY";
+        if (type == Property::Type::ThermalExpansion())
+            return "THERMAL EXPANSION";
+        if (type == Property::Type::SpeedOfSound())
+            return "SPEED OF SOUND";
+        if (type == Property::Type::CompressibilityFactor())
+            return "COMPRESSIBILITY FACTOR";
+        if (type == Property::Type::VaporQuality())
+            return "VAPOR QUALITY";
+        if (type == Property::Type::DynamicViscosity())
+            return "DYNAMIC VISCOSITY";
+        if (type == Property::Type::KinematicViscosity())
+            return "KINEMATIC VISCOSITY";
+        if (type == Property::Type::ThermalConductivity())
+            return "THERMAL CONDUCTIVITY";
+        if (type == Property::Type::PrandtlNumber())
+            return "PRANDTL NUMBER";
+        if (type == Property::Type::MolecularWeight())
+            return "MOLECULAR WEIGHT";
+        if (type == Property::Type::Phase())
+            return "PHASE";
+        if (type == Property::Type::Undefined())
+            return "UNDEFINED";
+
+        return "UNKNOWN";
+    }
+
+    inline std::ostream& operator<<(std::ostream& os, const Property::Type& type)
+    {
+        os << to_string(type);
+        return os;
+    }
 
 }    // namespace KProps

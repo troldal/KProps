@@ -31,9 +31,9 @@ struct MyProps
 
 void printProperty(kp::Property prop)
 {
-    auto propName = prop.type<std::string>();
+    auto propName = to_string(prop.type());
     std::cout << propName;
-    for (size_t i = 0; i < 10 - propName.size(); ++i) std::cout << " ";
+    for (size_t i = 0; i < 30 - propName.size(); ++i) std::cout << " ";
     std::cout << ": " << prop << std::endl;
 }
 
@@ -43,11 +43,11 @@ int main()
     std::cout << std::fixed << std::setprecision(20);
 
 
-    constexpr auto type = Property::Type2::Create("TEMPERATURE");
-    if constexpr (type == Property::Type2::Pressure())
+    constexpr auto type = Property::Type::Create("TEMPERATURE");
+    if constexpr (type == Property::Type::Pressure())
         return 0;
 
-    auto water = FluidWrapper(HEOS("Ammonia"));
+    auto water = FluidWrapper(HEOS("Water"));
     //water.setState(P { 101325.0 }, T { 298.15 });
     water.setState(P { 101325.0 }, X { 1.0 });
     //water.setState(P { 101325.0 * 250 }, T { 700.0 });
@@ -88,7 +88,7 @@ int main()
     //     results.properties({ Type::Cp, Type::Cv, Type::P, Type::T, Type::V, Type::Rho, Type::H, Type::S, Type::U, Type::X, Type::Phase, Type::Undefined })
     //         .get<std::deque, MassUnits>();
     auto propsDynamic =
-    properties(water, { Type::Cp, Type::Cv, Type::P, Type::T, Type::V, Type::Rho, Type::H, Type::S, Type::U, Type::X, Type::Phase })
+    properties(water, { Type::Cp(), Type::Cv(), Type::Pressure(), Type::Temperature(), Type::Volume(), Type::Density(), Type::Enthalpy(), Type::Entropy(), Type::InternalEnergy(), Type::VaporQuality(), Type::Phase() })
         .get<std::deque, MassUnits>();
     for (auto prop : propsDynamic) printProperty(prop.value());
     std::cout << std::endl;
