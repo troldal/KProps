@@ -26,7 +26,7 @@ struct MyProps
     kp::S     s { 0.0 };
     kp::U     u { 0.0 };
     kp::X     x { 0.0 };
-    kp::Phase phase { kp::Phase::Unknown() };
+    kp::Phase phase { kp::Phase::Unknown };
 };
 
 void printProperty(kp::Property prop)

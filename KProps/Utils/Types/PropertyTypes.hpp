@@ -106,7 +106,7 @@ namespace KProps
         std::same_as<PROPERTY, W> || std::same_as<PROPERTY, Z> || std::same_as<PROPERTY, X> || std::same_as<PROPERTY, Eta> ||
         std::same_as<PROPERTY, Nu> || std::same_as<PROPERTY, TC> || std::same_as<PROPERTY, PR> || std::same_as<PROPERTY, MW> ||
         std::same_as<PROPERTY, Alpha> || std::same_as<PROPERTY, Phase> || std::same_as<PROPERTY, Undefined> ||
-        std::same_as<PROPERTY, Unknown>;
+        std::same_as<PROPERTY, Unknown> || std::same_as<PROPERTY, Phase::BASE>;
 
     /**
      * @concept IsSpecificationPT

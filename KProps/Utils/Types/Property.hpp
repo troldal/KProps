@@ -234,8 +234,8 @@ namespace KProps
                            });
                 });
 
-                switch (it != typeList.end()) {
-                    case true:
+                switch (it == typeList.end()) {
+                    case false:
                         return Type(it->second);
                     default:
                         return std::nullopt;
@@ -332,7 +332,7 @@ namespace KProps
         static Property ThermalConductivity(double value = 0.0) { return Property { TC { value } }; }
         static Property PrandtlNumber(double value = 0.0) { return Property { PR { value } }; }
         static Property MolecularWeight(double value = 0.0) { return Property { MW { value } }; }
-        static Property Phase() { return Property { Phase::Unknown() }; }
+        static Property Phase() { return Property { Phase::Unknown }; }
         static Property Undefined(double value = 0.0) { return Property { KProps::Undefined { value } }; }
         static Property Unknown(double value = 0.0) { return Property { KProps::Unknown { value } }; }
 

@@ -294,24 +294,24 @@ namespace KProps::detail
             if (prop == Property::Type::Cp()) return property<Cp, UNITS_T>();
             if (prop == Property::Type::Cv()) return property<Cv, UNITS_T>();
             if (prop == Property::Type::IsothermalCompressibility())
-                return phase != Phase::TwoPhase() ? Property { property<Kappa, UNITS_T>() } : Property { property<Undefined, UNITS_T>() };
+                return phase != Phase::TwoPhase ? Property { property<Kappa, UNITS_T>() } : Property { property<Undefined, UNITS_T>() };
             if (prop == Property::Type::ThermalExpansion())
-                return phase != Phase::TwoPhase() ? Property { property<Alpha, UNITS_T>() } : Property { property<Undefined, UNITS_T>() };
+                return phase != Phase::TwoPhase ? Property { property<Alpha, UNITS_T>() } : Property { property<Undefined, UNITS_T>() };
             if (prop == Property::Type::SpeedOfSound())
-                return phase != Phase::TwoPhase() ? Property { property<W, UNITS_T>() } : Property { property<Undefined, UNITS_T>() };
+                return phase != Phase::TwoPhase ? Property { property<W, UNITS_T>() } : Property { property<Undefined, UNITS_T>() };
             if (prop == Property::Type::CompressibilityFactor())
-                return phase != Phase::TwoPhase() ? Property { property<Z, UNITS_T>() } : Property { property<Undefined, UNITS_T>() };
+                return phase != Phase::TwoPhase ? Property { property<Z, UNITS_T>() } : Property { property<Undefined, UNITS_T>() };
             if (prop == Property::Type::VaporQuality())
-                return phase != Phase::Critical() && phase != Phase::Supercritical() ? Property { property<X, UNITS_T>() }
+                return phase != Phase::Critical && phase != Phase::Supercritical ? Property { property<X, UNITS_T>() }
                                                                                      : Property { property<Undefined, UNITS_T>() };
             if (prop == Property::Type::DynamicViscosity())
-                return phase != Phase::TwoPhase() ? Property { property<Eta, UNITS_T>() } : Property { property<Undefined, UNITS_T>() };
+                return phase != Phase::TwoPhase ? Property { property<Eta, UNITS_T>() } : Property { property<Undefined, UNITS_T>() };
             if (prop == Property::Type::KinematicViscosity())
-                return phase != Phase::TwoPhase() ? Property { property<Nu, UNITS_T>() } : Property { property<Undefined, UNITS_T>() };
+                return phase != Phase::TwoPhase ? Property { property<Nu, UNITS_T>() } : Property { property<Undefined, UNITS_T>() };
             if (prop == Property::Type::ThermalConductivity())
-                return phase != Phase::TwoPhase() ? Property { property<TC, UNITS_T>() } : Property { property<Undefined, UNITS_T>() };
+                return phase != Phase::TwoPhase ? Property { property<TC, UNITS_T>() } : Property { property<Undefined, UNITS_T>() };
             if (prop == Property::Type::PrandtlNumber())
-                return phase != Phase::TwoPhase() ? Property { property<PR, UNITS_T>() } : Property { property<Undefined, UNITS_T>() };
+                return phase != Phase::TwoPhase ? Property { property<PR, UNITS_T>() } : Property { property<Undefined, UNITS_T>() };
             if (prop == Property::Type::MolecularWeight()) return property<MW, UNITS_T>();
             if (prop == Property::Type::Phase()) return phase;
             if (prop == Property::Type::Undefined()) return property<Undefined, UNITS_T>();

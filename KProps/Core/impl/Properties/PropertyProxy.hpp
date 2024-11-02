@@ -30,7 +30,7 @@ namespace KProps::detail
     PROPERTY_T makeDefault()
     {
         if constexpr (std::same_as<PROPERTY_T, Phase>)
-            return Phase::Unknown();
+            return Phase::Unknown;
         else
             return PROPERTY_T { std::nan("") };
     }

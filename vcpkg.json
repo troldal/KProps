@@ -35,5 +35,8 @@
   }, {
     "name" : "strong-type",
     "version>=" : "14"
+  }, {
+    "name" : "fixed-string",
+    "version>=" : "0.1.1"
   } ]
 }

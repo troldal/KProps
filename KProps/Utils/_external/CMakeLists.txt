@@ -5,3 +5,4 @@
 #=======================================================================================================================
 add_library(external INTERFACE)
 target_include_directories(external SYSTEM INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}>)
+target_link_libraries(external INTERFACE fixed_string::fixed_string)
