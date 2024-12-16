@@ -193,7 +193,7 @@ namespace KProps
                                                      // Molecular weight
                                                      { "MW", TypeEnum::MW },
                                                      { "MOLAR MASS", TypeEnum::MW },
-                                                     { "MOLECULAR WEIGHT", TypeEnum::MW },
+                                                     { "MOLAR WEIGHT", TypeEnum::MW },
                                                      { "PHASE", TypeEnum::Phase } } };
 
             constexpr explicit Type(TypeEnum type) : m_type(type) {}
