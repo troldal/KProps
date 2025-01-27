@@ -15,6 +15,7 @@ include(FetchContent)
 #==============================================================================
 # Import Numerixx
 #==============================================================================
+set(NUMERIXX_DERIV ON)
 set(FETCHCONTENT_SOURCE_DIR_NUMERIXX ${CMAKE_CURRENT_LIST_DIR}/../Numerixx)
 FetchContent_Declare(numerixx
         GIT_REPOSITORY https://github.com/troldal/Numerixx.git

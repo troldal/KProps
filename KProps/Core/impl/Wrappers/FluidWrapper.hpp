@@ -622,8 +622,8 @@ namespace KProps
                 if (p > m_impl.criticalPressure() && t > m_impl.criticalTemperature()) return Phase::Supercritical;
                 if (p > m_impl.criticalPressure() - EPS && t > m_impl.criticalTemperature() - EPS) return Phase::Critical;
 
-                auto satP = saturationPressure().get();
-                auto satT = saturationTemperature().get();
+                auto satP = saturationPressure().value_of();
+                auto satT = saturationTemperature().value_of();
 
                 if (p < satP + EPS && p > satP - EPS) return Phase::TwoPhase;
                 if (t < satT + EPS && t > satT - EPS) return Phase::TwoPhase;

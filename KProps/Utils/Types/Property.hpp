@@ -299,7 +299,7 @@ namespace KProps
                 case 20: return Type::MolecularWeight();
                 case 21: return Type::Phase();
                 case 22: return Type::Undefined();
-                case 23: return Type::Unknown();
+                case 23:
                 default: return Type::Unknown();
             }
 

@@ -6,29 +6,11 @@
     "name" : "gcem",
     "version>=" : "1.16.0"
   }, {
-    "name" : "tl-expected",
-    "version>=" : "1.1.0"
-  }, {
     "name" : "boost-multiprecision",
-    "version>=" : "1.84.0"
-  }, {
-    "name" : "boost-stacktrace",
     "version>=" : "1.84.0"
   }, {
     "name" : "sciplot",
     "version>=" : "0.3.1#1"
-  }, {
-    "name" : "lapack",
-    "version>=" : "2023-06-10#2"
-  }, {
-    "name" : "lapack-reference",
-    "version>=" : "3.11.0#6"
-  }, {
-    "name" : "blas",
-    "version>=" : "2023-04-14#1"
-  }, {
-    "name" : "openblas",
-    "version>=" : "0.3.27#1"
   }, {
     "name" : "units",
     "version>=" : "2.3.3#1"
